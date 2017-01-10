@@ -1,0 +1,13 @@
+[run]
+branch = True
+source =
+    environ
+
+[paths]
+source =
+   src/environ
+   .tox/*/lib/python*/site-packages/environ
+   .tox/pypy/site-packages/environ
+
+[report]
+show_missing = True
