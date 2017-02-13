@@ -74,24 +74,21 @@ def group(cls):
     )
 
 
-def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None,
-              debug=False):
+def to_config(config_cls, environ=os.environ, debug=False):
     debug = debug or (environ.get("ENVIRON_CONFIG_DEBUG", "0") != "0")
-    if prefix is None:
-        prefix = config_cls._prefix or ""
-    if vault_prefix is None:
-        vault_prefix = config_cls._vault_prefix or ""
-
     if debug is True:
         print(
             "environ_config: variables found: %r." % (list(environ.keys()),),
             file=sys.stderr
         )
 
-    return _to_config(config_cls, environ, prefix, vault_prefix, debug)
+    prefix = config_cls._prefix or ""
+    vault_prefix = config_cls._vault_prefix or ""
+
+    return _to_config(config_cls, environ, debug, prefix, vault_prefix)
 
 
-def _to_config(config_cls, environ, prefix, vault_prefix, debug):
+def _to_config(config_cls, environ, debug, prefix, vault_prefix):
     vals = {}
     for a in attr.fields(config_cls):
         name = a.name.upper()
@@ -122,11 +119,9 @@ def _to_config(config_cls, environ, prefix, vault_prefix, debug):
                 vault_prefix = vault_prefix.replace("{env}", val.upper())
         else:
             val = _to_config(
-                cm.sub_cls, environ,
-                prefix + "_" + name,
-                vault_prefix + "_" + name
-                if vault_prefix is not None else None,
-                debug=debug,
+                cm.sub_cls, environ, debug,
+                prefix + "_" + name if prefix else name,
+                vault_prefix + "_" + name if vault_prefix else name,
             )
 
         vals[a.name] = val

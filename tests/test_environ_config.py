@@ -209,3 +209,27 @@ environ_config: variables found: ['ENVIRON_CONFIG_DEBUG'].
         environ.to_config(C, environ=env, debug=False)
 
         assert ("", debug_err,) == capsys.readouterr()
+
+    def test_no_prefixes(self):
+        """
+        If no prefixes are wished, nothing is prepended.
+        """
+        @environ.config(prefix=None, vault_prefix=None)
+        class C(object):
+            @environ.config
+            class Sub(object):
+                y = environ.var()
+                z = environ.vault_var()
+
+            x = environ.var()
+            y = environ.var()
+            sub = environ.group(Sub)
+
+        cfg = environ.to_config(C, environ={
+            "X": "x",
+            "Y": "y",
+            "SUB_Y": "sub_y",
+            "SECRET_SUB_Z": "secret_sub_z",
+        })
+
+        assert C("x", "y", C.Sub("sub_y", "secret_sub_z")) == cfg
