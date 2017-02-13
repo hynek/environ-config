@@ -8,6 +8,20 @@ import environ
 from environ._environ_config import _SecretStr
 
 
+@environ.config(prefix="XYZ", vault_prefix="ABC")
+class Nested(object):
+    """
+    A nested configuration example.
+    """
+    @environ.config
+    class Sub(object):
+        y = environ.var()
+        z = environ.vault_var()
+
+    x = environ.var()
+    sub = environ.group(Sub)
+
+
 class TestEnvironConfig(object):
     def test_empty(self):
         """
@@ -37,41 +51,57 @@ class TestEnvironConfig(object):
 
         assert Flat(x="foo", y="bar") == cfg
 
-    def test_nested(self):
+    @pytest.mark.parametrize("debug", [True, False])
+    def test_nested(self, debug, capsys):
         """
-        Nested config is extracted, prefix and vault_prefix are propagated.
+        Nested config is extracted, prefix and vault_prefix are propagated. If
+        debug is True, the variable names are printed out as we look for them.
         """
-        @environ.config(prefix="XYZ", vault_prefix="ABC")
-        class Nested(object):
-            @environ.config
-            class Sub(object):
-                y = environ.var()
-                z = environ.vault_var()
-
-            x = environ.var()
-            sub = environ.group(Sub)
-
-        cfg = environ.to_config(Nested, environ={
+        env = {
             "APP_X": "nope",
             "XYZ_X": "foo",
             "XYZ_SUB_Y": "bar",
             "SECRET_ABC_SUB_Z": "qux",
-        })
+        }
+        debug_err = """\
+environ_config: variables found: %r.
+environ_config: looking for 'XYZ_X'.
+environ_config: looking for 'XYZ_SUB_Y'.
+environ_config: looking for 'SECRET_ABC_SUB_Z'.
+""" % (list(env.keys()),)
+
+        cfg = environ.to_config(Nested, environ=env, debug=debug)
 
         assert Nested(x="foo", sub=Nested.Sub(y="bar", z="qux")) == cfg
 
-    def test_missing(self):
+        if debug:
+            assert ("", debug_err) == capsys.readouterr()
+        else:
+            assert ("", "") == capsys.readouterr()
+
+    @pytest.mark.parametrize("debug", [True, False])
+    def test_missing(self, debug, capsys):
         """
         If a var is missing, a human-readable MissingEnvValueError is raised.
         """
+        debug_err = """\
+environ_config: variables found: ['y'].
+environ_config: looking for 'APP_X'.
+"""
+
         @environ.config
         class Mandatory(object):
             x = environ.var()
 
         with pytest.raises(environ.MissingEnvValueError) as e:
-            environ.to_config(Mandatory, environ={})
+            environ.to_config(Mandatory, environ={"y": "boring"}, debug=debug)
 
         assert ("APP_X",) == e.value.args
+
+        if debug:
+            assert ("", debug_err) == capsys.readouterr()
+        else:
+            assert ("", "") == capsys.readouterr()
 
     def test_default(self):
         """
@@ -158,3 +188,24 @@ class TestEnvironConfig(object):
         })
 
         assert C("foo", "bar") == cfg
+
+    def test_debug_env(self, capsys):
+        """
+        Setting "ENVIRON_CONFIG_DEBUG" has the same effect as passing True to
+        `debug`.
+        """
+        debug_err = """\
+environ_config: variables found: ['ENVIRON_CONFIG_DEBUG'].
+"""
+
+        @environ.config
+        class C(object):
+            pass
+
+        env = {
+            "ENVIRON_CONFIG_DEBUG": "1",
+        }
+
+        environ.to_config(C, environ=env, debug=False)
+
+        assert ("", debug_err,) == capsys.readouterr()

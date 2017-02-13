@@ -74,12 +74,24 @@ def group(cls):
     )
 
 
-def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None):
+def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None,
+              debug=False):
+    debug = debug or (environ.get("ENVIRON_CONFIG_DEBUG", "0") != "0")
     if prefix is None:
         prefix = config_cls._prefix or ""
     if vault_prefix is None:
         vault_prefix = config_cls._vault_prefix or ""
 
+    if debug is True:
+        print(
+            "environ_config: variables found: %r." % (list(environ.keys()),),
+            file=sys.stderr
+        )
+
+    return _to_config(config_cls, environ, prefix, vault_prefix, debug)
+
+
+def _to_config(config_cls, environ, prefix, vault_prefix, debug):
     vals = {}
     for a in attr.fields(config_cls):
         name = a.name.upper()
@@ -94,6 +106,11 @@ def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None):
                 p = vault_prefix + "_" if vault_prefix else ""
                 var = "SECRET_" + p + name
 
+            if debug is True:
+                print(
+                    "environ_config: looking for '%s'." % (var,),
+                    file=sys.stderr
+                )
             val = environ.get(var, cm.default)
             if val is RAISE:
                 raise MissingEnvValueError(var)
@@ -104,11 +121,12 @@ def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None):
             if name == "ENV" and "{env}" in vault_prefix:
                 vault_prefix = vault_prefix.replace("{env}", val.upper())
         else:
-            val = to_config(
+            val = _to_config(
                 cm.sub_cls, environ,
                 prefix + "_" + name,
                 vault_prefix + "_" + name
                 if vault_prefix is not None else None,
+                debug=debug,
             )
 
         vals[a.name] = val
