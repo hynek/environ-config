@@ -141,3 +141,20 @@ class TestEnvironConfig(object):
         })
 
         assert C("foo", "bar") == cfg
+
+    def test_overwrite(self):
+        """
+        The env variable name can be overwritten.
+        """
+        @environ.config
+        class C(object):
+            x = environ.var(name="LANG")
+            y = environ.var()
+
+        cfg = environ.to_config(C, environ={
+            "APP_X": "nope",
+            "LANG": "foo",
+            "APP_Y": "bar",
+        })
+
+        assert C("foo", "bar") == cfg

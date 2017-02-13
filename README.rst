@@ -23,19 +23,21 @@ environ_config: Configuration with env variables for Python.
   ...    class DB:
   ...        name = environ.var("default_db")
   ...        host = environ.var("default.host")
-  ...        port = environ.var(5432, convert=int)
+  ...        port = environ.var(5432, convert=int)  # Use attrs's converters and validators!
   ...        user = environ.var("default_user")
   ...        password = environ.vault_var()
   ...
   ...    env = environ.var()
+  ...    lang = environ.var(name="LANG")  # It's possible to overwrite the names of variables.
   ...    db = environ.group(DB)
   >>> cfg = environ.to_config(AppConfig, environ={
   ...     "APP_ENV": "dev",
   ...     "APP_DB_HOST": "localhost",
+  ...     "LANG": "C",
   ...     "SECRET_APP_DEV_DB_PASSWORD": "s3kr3t",  # Vault-via-envconsul-style var name.
   ... })  # Uses os.environ by default.
   >>> cfg
-  AppConfig(env='dev', db=AppConfig.DB(name='default_db', host='localhost', port=5432, user='default_user', password=<SECRET>))
+  AppConfig(env='dev', lang='C', db=AppConfig.DB(name='default_db', host='localhost', port=5432, user='default_user', password=<SECRET>))
   >>> cfg.db.password
   's3kr3t'
 

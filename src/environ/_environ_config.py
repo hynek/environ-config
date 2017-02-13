@@ -9,7 +9,14 @@ from .exceptions import MissingEnvValueError
 
 
 CNF_KEY = object()
-RAISE = object()
+
+
+@attr.s
+class Raise(object):
+    pass
+
+
+RAISE = Raise()
 
 
 class _SecretStr(str):
@@ -39,30 +46,31 @@ def config(maybe_cls=None, vault_prefix=None, prefix="APP"):
 
 @attr.s(slots=True, frozen=True)
 class _ConfigEntry(object):
+    name = attr.ib(default=None)
     default = attr.ib(default=RAISE)
     sub_cls = attr.ib(default=None)
     from_vault = attr.ib(default=False)
 
 
-def var(default=RAISE, convert=None):
+def var(default=RAISE, convert=None, name=None):
     return attr.ib(
         default=default,
-        metadata={CNF_KEY: _ConfigEntry(default, None, False)},
+        metadata={CNF_KEY: _ConfigEntry(name, default, None, False)},
         convert=convert,
     )
 
 
-def vault_var(default=RAISE):
+def vault_var(default=RAISE, name=None):
     return attr.ib(
         default=default,
-        metadata={CNF_KEY: _ConfigEntry(default, None, True)}
+        metadata={CNF_KEY: _ConfigEntry(name, default, None, True)}
     )
 
 
 def group(cls):
     return attr.ib(
         default=None,
-        metadata={CNF_KEY: _ConfigEntry(None, cls, True)}
+        metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
     )
 
 
@@ -77,7 +85,9 @@ def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None):
         name = a.name.upper()
         cm = a.metadata[CNF_KEY]
         if cm.sub_cls is None:
-            if cm.from_vault is False:
+            if cm.name is not None:
+                var = cm.name
+            elif cm.from_vault is False:
                 p = prefix + "_" if prefix else ""
                 var = p + name
             else:
@@ -88,7 +98,7 @@ def to_config(config_cls, environ=os.environ, prefix=None, vault_prefix=None):
             if val is RAISE:
                 raise MissingEnvValueError(var)
 
-            if cm.from_vault is True:
+            if cm.from_vault is True and val is not None:
                 val = _SecretStr(val)
 
             if name == "ENV" and "{env}" in vault_prefix:
