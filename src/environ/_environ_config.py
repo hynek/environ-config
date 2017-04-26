@@ -1,14 +1,17 @@
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
-import sys
 
 import attr
 
 from .exceptions import MissingEnvValueError
 
 
-CNF_KEY = object()
+log = logging.getLogger(__name__)
+
+
+CNF_KEY = "environ_config"
 
 
 @attr.s
@@ -19,22 +22,8 @@ class Raise(object):
 RAISE = Raise()
 
 
-class _SecretStr(str):
-    """
-    String that censors its __repr__ if called from an attrs repr.
-    """
-    def __repr__(self):
-        f = sys._getframe(2)
-
-        if f.f_code.co_name == "repr_":
-            return "<SECRET>"
-        else:
-            return str.__repr__(self)
-
-
-def config(maybe_cls=None, vault_prefix=None, prefix="APP"):
+def config(maybe_cls=None, prefix="APP"):
     def wrap(cls):
-        cls._vault_prefix = vault_prefix
         cls._prefix = prefix
         return attr.s(cls, slots=True, frozen=True)
 
@@ -49,21 +38,14 @@ class _ConfigEntry(object):
     name = attr.ib(default=None)
     default = attr.ib(default=RAISE)
     sub_cls = attr.ib(default=None)
-    from_vault = attr.ib(default=False)
+    callback = attr.ib(default=None)
 
 
 def var(default=RAISE, convert=None, name=None):
     return attr.ib(
         default=default,
-        metadata={CNF_KEY: _ConfigEntry(name, default, None, False)},
+        metadata={CNF_KEY: _ConfigEntry(name, default, None)},
         convert=convert,
-    )
-
-
-def vault_var(default=RAISE, name=None):
-    return attr.ib(
-        default=default,
-        metadata={CNF_KEY: _ConfigEntry(name, default, None, True)}
     )
 
 
@@ -74,54 +56,39 @@ def group(cls):
     )
 
 
-def to_config(config_cls, environ=os.environ, debug=False):
-    debug = debug or (environ.get("ENVIRON_CONFIG_DEBUG", "0") != "0")
-    if debug is True:
-        print(
-            "environ_config: variables found: %r." % (list(environ.keys()),),
-            file=sys.stderr
-        )
+def to_config(config_cls, environ=os.environ):
+    if config_cls._prefix:
+        app_prefix = (config_cls._prefix,)
+    else:
+        app_prefix = ()
 
-    prefix = config_cls._prefix or ""
-    vault_prefix = config_cls._vault_prefix or ""
+    def default_get(environ, metadata, prefix, name):
+        ce = metadata[CNF_KEY]
+        if ce.name is not None:
+            var = ce.name
+        else:
+            var = ("_".join(app_prefix + prefix + (name,))).upper()
 
-    return _to_config(config_cls, environ, debug, prefix, vault_prefix)
+        log.debug("looking for env var '%s'." % (var,))
+        val = environ.get(var, ce.default)
+        if val is RAISE:
+            raise MissingEnvValueError(var)
+        return val
+
+    return _to_config(config_cls, default_get, environ, ())
 
 
-def _to_config(config_cls, environ, debug, prefix, vault_prefix):
+def _to_config(config_cls, default_get, environ, prefix):
     vals = {}
     for a in attr.fields(config_cls):
-        name = a.name.upper()
-        cm = a.metadata[CNF_KEY]
-        if cm.sub_cls is None:
-            if cm.name is not None:
-                var = cm.name
-            elif cm.from_vault is False:
-                p = prefix + "_" if prefix else ""
-                var = p + name
-            else:
-                p = vault_prefix + "_" if vault_prefix else ""
-                var = "SECRET_" + p + name
-
-            if debug is True:
-                print(
-                    "environ_config: looking for '%s'." % (var,),
-                    file=sys.stderr
-                )
-            val = environ.get(var, cm.default)
-            if val is RAISE:
-                raise MissingEnvValueError(var)
-
-            if cm.from_vault is True and val is not None:
-                val = _SecretStr(val)
-
-            if name == "ENV" and "{env}" in vault_prefix:
-                vault_prefix = vault_prefix.replace("{env}", val.upper())
+        ce = a.metadata[CNF_KEY]
+        if ce.sub_cls is None:
+            get = ce.callback or default_get
+            val = get(environ, a.metadata, prefix, a.name)
         else:
             val = _to_config(
-                cm.sub_cls, environ, debug,
-                prefix + "_" + name if prefix else name,
-                vault_prefix + "_" + name if vault_prefix else name,
+                ce.sub_cls, default_get, environ,
+                prefix + ((a.name if prefix else a.name),)
             )
 
         vals[a.name] = val

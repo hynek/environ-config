@@ -1,14 +1,11 @@
 from __future__ import absolute_import, division, print_function
 
-import attr
 import pytest
 
 import environ
 
-from environ._environ_config import _SecretStr
 
-
-@environ.config(prefix="XYZ", vault_prefix="ABC")
+@environ.config(prefix="XYZ")
 class Nested(object):
     """
     A nested configuration example.
@@ -16,7 +13,6 @@ class Nested(object):
     @environ.config
     class Sub(object):
         y = environ.var()
-        z = environ.vault_var()
 
     x = environ.var()
     sub = environ.group(Sub)
@@ -51,57 +47,31 @@ class TestEnvironConfig(object):
 
         assert Flat(x="foo", y="bar") == cfg
 
-    @pytest.mark.parametrize("debug", [True, False])
-    def test_nested(self, debug, capsys):
+    def test_nested(self):
         """
-        Nested config is extracted, prefix and vault_prefix are propagated. If
-        debug is True, the variable names are printed out as we look for them.
+        Nested config is extracted, prefix and vault_prefix are propagated.
         """
         env = {
             "APP_X": "nope",
             "XYZ_X": "foo",
             "XYZ_SUB_Y": "bar",
-            "SECRET_ABC_SUB_Z": "qux",
         }
-        debug_err = """\
-environ_config: variables found: %r.
-environ_config: looking for 'XYZ_X'.
-environ_config: looking for 'XYZ_SUB_Y'.
-environ_config: looking for 'SECRET_ABC_SUB_Z'.
-""" % (list(env.keys()),)
+        cfg = environ.to_config(Nested, environ=env)
 
-        cfg = environ.to_config(Nested, environ=env, debug=debug)
+        assert Nested(x="foo", sub=Nested.Sub(y="bar")) == cfg
 
-        assert Nested(x="foo", sub=Nested.Sub(y="bar", z="qux")) == cfg
-
-        if debug:
-            assert ("", debug_err) == capsys.readouterr()
-        else:
-            assert ("", "") == capsys.readouterr()
-
-    @pytest.mark.parametrize("debug", [True, False])
-    def test_missing(self, debug, capsys):
+    def test_missing(self):
         """
         If a var is missing, a human-readable MissingEnvValueError is raised.
         """
-        debug_err = """\
-environ_config: variables found: ['y'].
-environ_config: looking for 'APP_X'.
-"""
-
         @environ.config
         class Mandatory(object):
             x = environ.var()
 
         with pytest.raises(environ.MissingEnvValueError) as e:
-            environ.to_config(Mandatory, environ={"y": "boring"}, debug=debug)
+            environ.to_config(Mandatory, environ={"y": "boring"})
 
         assert ("APP_X",) == e.value.args
-
-        if debug:
-            assert ("", debug_err) == capsys.readouterr()
-        else:
-            assert ("", "") == capsys.readouterr()
 
     def test_default(self):
         """
@@ -118,59 +88,20 @@ environ_config: looking for 'APP_X'.
 
         assert Defaults(x="foo", y="bar") == cfg
 
-    def test_vault_env_template(self):
-        """
-        {env} in vault_prefix gets recursively replaced by an actual
-        uppercased ENV.
-        """
-        @environ.config(vault_prefix="XYZ_{env}_ABC")
-        class WithEnv(object):
-            env = environ.var()
-            password = environ.vault_var()
-
-        cfg = environ.to_config(WithEnv, environ={
-            "APP_ENV": "foo",
-            "SECRET_XYZ_FOO_ABC_PASSWORD": "bar",
-        })
-
-        assert "bar" == cfg.password
-
-    def test_secret_str_no_repr(self):
-        """
-        Outside of reprs, _SecretStr behaves normally.
-        """
-        s = _SecretStr("abc")
-
-        assert "'abc'" == repr(s)
-
-    def test_secret_str_censors(self):
-        """
-        _SecretStr censors it's __repr__ if its called from another __repr__.
-        """
-        s = _SecretStr("abc")
-
-        @attr.s
-        class C(object):
-            s = attr.ib()
-
-        assert "C(s=<SECRET>)" == repr(C(s))
-
     @pytest.mark.parametrize("prefix", [None, ""])
     def test_no_prefix(self, prefix):
         """
         If prefix is None or "", don't add a leading _ when adding namespaces.
         """
-        @environ.config(prefix=prefix, vault_prefix=prefix)
+        @environ.config(prefix=prefix)
         class C(object):
             x = environ.var()
-            s = environ.vault_var()
 
         cfg = environ.to_config(C, environ={
             "X": "foo",
-            "SECRET_S": "bar",
         })
 
-        assert C("foo", "bar") == cfg
+        assert C("foo") == cfg
 
     def test_overwrite(self):
         """
@@ -189,37 +120,15 @@ environ_config: looking for 'APP_X'.
 
         assert C("foo", "bar") == cfg
 
-    def test_debug_env(self, capsys):
-        """
-        Setting "ENVIRON_CONFIG_DEBUG" has the same effect as passing True to
-        `debug`.
-        """
-        debug_err = """\
-environ_config: variables found: ['ENVIRON_CONFIG_DEBUG'].
-"""
-
-        @environ.config
-        class C(object):
-            pass
-
-        env = {
-            "ENVIRON_CONFIG_DEBUG": "1",
-        }
-
-        environ.to_config(C, environ=env, debug=False)
-
-        assert ("", debug_err,) == capsys.readouterr()
-
     def test_no_prefixes(self):
         """
         If no prefixes are wished, nothing is prepended.
         """
-        @environ.config(prefix=None, vault_prefix=None)
+        @environ.config(prefix=None)
         class C(object):
             @environ.config
             class Sub(object):
                 y = environ.var()
-                z = environ.vault_var()
 
             x = environ.var()
             y = environ.var()
@@ -229,7 +138,6 @@ environ_config: variables found: ['ENVIRON_CONFIG_DEBUG'].
             "X": "x",
             "Y": "y",
             "SUB_Y": "sub_y",
-            "SECRET_SUB_Z": "secret_sub_z",
         })
 
-        assert C("x", "y", C.Sub("sub_y", "secret_sub_z")) == cfg
+        assert C("x", "y", C.Sub("sub_y")) == cfg

@@ -17,7 +17,9 @@ environ_config: Configuration with env variables for Python.
 .. code-block:: pycon
 
   >>> import environ
-  >>> @environ.config(prefix="APP", vault_prefix="APP_{env}")
+  >>> # Extracts secrets from Vault-via-envconsul: 'secret/your-app':
+  >>> vault = environ.secrets.VaultEnvSecrets(vault_prefix="SECRET_YOUR_APP")
+  >>> @environ.config(prefix="APP")
   ... class AppConfig:
   ...    @environ.config
   ...    class DB:
@@ -25,16 +27,19 @@ environ_config: Configuration with env variables for Python.
   ...        host = environ.var("default.host")
   ...        port = environ.var(5432, convert=int)  # Use attrs's converters and validators!
   ...        user = environ.var("default_user")
-  ...        password = environ.vault_var()
+  ...        password = vault.secret()
   ...
   ...    env = environ.var()
   ...    lang = environ.var(name="LANG")  # It's possible to overwrite the names of variables.
   ...    db = environ.group(DB)
-  >>> cfg = environ.to_config(AppConfig, environ={
-  ...     "APP_ENV": "dev",
-  ...     "APP_DB_HOST": "localhost",
-  ...     "LANG": "C",
-  ...     "SECRET_APP_DEV_DB_PASSWORD": "s3kr3t",  # Vault-via-envconsul-style var name.
+  >>> cfg = environ.to_config(
+  ...     AppConfig,
+  ...     environ={
+  ...         "APP_ENV": "dev",
+  ...         "APP_DB_HOST": "localhost",
+  ...         "LANG": "C",
+  ...         # Vault-via-envconsul-style var name:
+  ...         "SECRET_YOUR_APP_DB_PASSWORD": "s3kr3t",
   ... })  # Uses os.environ by default.
   >>> cfg
   AppConfig(env='dev', lang='C', db=AppConfig.DB(name='default_db', host='localhost', port=5432, user='default_user', password=<SECRET>))
@@ -48,10 +53,13 @@ Features
 - Declarative & boilerplate-free.
 - Nested config from flat env variable names.
 - Default & mandatory values: enforce configuration structure without writing a line of code.
-- Helpful debug mode that will tell you which variables are present and what ``environ_config`` is looking for.
-  Just pass ``debug=True`` to ``environ.to_config()`` or set the environment variable ``ENVIRON_CONFIG_DEBUG`` to anything else than "0".
+- Helpful debug logging that will tell you which variables are present and what ``environ_config`` is looking for.
 - Built on top of `attrs <http://www.attrs.org/>`_ which gives you data validation and conversion for free.
-- Built-in `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
+- Plugable secrets extraction.
+  Ships with:
+
+  * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
+  * INI files, because secrets in env variables are `icky <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
 
 
 Project Information

@@ -1,5 +1,6 @@
-from ._environ_config import config, var, group, vault_var, to_config
+from ._environ_config import config, var, group, to_config
 from .exceptions import MissingEnvValueError
+from . import secrets
 
 
 __version__ = "17.0.0.dev0"
@@ -18,8 +19,8 @@ __copyright__ = "Copyright (c) 2017 {0}".format(__author__)
 __all__ = [
     "MissingEnvValueError",
     "config",
+    "group",
+    "secrets",
     "to_config",
     "var",
-    "vault_var",
-    "group",
 ]

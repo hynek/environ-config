@@ -11,3 +11,7 @@ class ConfigError(Exception):
 
 class MissingEnvValueError(ConfigError):
     pass
+
+
+class MissingSecretError(ConfigError):
+    pass
