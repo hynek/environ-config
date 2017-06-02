@@ -25,7 +25,7 @@ RAISE = Raise()
 def config(maybe_cls=None, prefix="APP"):
     def wrap(cls):
         cls._prefix = prefix
-        return attr.s(cls, slots=True, frozen=True)
+        return attr.s(cls, slots=True)
 
     if maybe_cls is None:
         return wrap
@@ -33,7 +33,7 @@ def config(maybe_cls=None, prefix="APP"):
         return wrap(maybe_cls)
 
 
-@attr.s(slots=True, frozen=True)
+@attr.s(slots=True)
 class _ConfigEntry(object):
     name = attr.ib(default=None)
     default = attr.ib(default=RAISE)
