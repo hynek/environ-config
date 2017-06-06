@@ -164,3 +164,23 @@ class TestVaultEnvSecrets(object):
 
         with pytest.raises(MissingSecretError):
             environ.to_config(C, {})
+
+    def test_prefix_callable(self):
+        """
+        vault_prefix can also be a callable that is called on each entry.
+        """
+        fake_environ = {"ABC_PW": "foo"}
+
+        def extract(env):
+            assert env == fake_environ
+            return "ABC"
+
+        vault = VaultEnvSecrets(vault_prefix=extract)
+
+        @environ.config
+        class C(object):
+            pw = vault.secret()
+
+        cfg = environ.to_config(C, fake_environ)
+
+        assert _SecretStr("foo") == cfg.pw

@@ -87,8 +87,12 @@ class VaultEnvSecrets(object):
         if ce.name is not None:
             var = ce.name
         else:
+            if callable(self.vault_prefix):
+                vp = self.vault_prefix(environ)
+            else:
+                vp = self.vault_prefix
             var = "_".join(
-                ((self.vault_prefix,) + prefix + (name,))
+                ((vp,) + prefix + (name,))
             ).upper()
 
         log.debug("looking for env var '%s'." % (var,))
