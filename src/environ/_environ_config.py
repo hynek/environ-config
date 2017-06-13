@@ -41,11 +41,12 @@ class _ConfigEntry(object):
     callback = attr.ib(default=None)
 
 
-def var(default=RAISE, convert=None, name=None):
+def var(default=RAISE, convert=None, name=None, validator=None):
     return attr.ib(
         default=default,
         metadata={CNF_KEY: _ConfigEntry(name, default, None)},
         convert=convert,
+        validator=validator,
     )
 
 
