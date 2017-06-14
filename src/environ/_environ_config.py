@@ -50,6 +50,27 @@ def var(default=RAISE, convert=None, name=None, validator=None):
     )
 
 
+def _env_to_bool(val):
+    """
+    Convert *val* to a bool if it's not a bool in the first place.
+    """
+    if isinstance(val, bool):
+        return val
+    val = val.strip().lower()
+    if val in ("1", "true", "yes"):
+        return True
+
+    return False
+
+
+def bool_var(default=RAISE, name=None):
+    return var(
+        default=default,
+        name=name,
+        convert=_env_to_bool,
+    )
+
+
 def group(cls):
     return attr.ib(
         default=None,

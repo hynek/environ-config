@@ -141,3 +141,27 @@ class TestEnvironConfig(object):
         })
 
         assert C("x", "y", C.Sub("sub_y")) == cfg
+
+    @pytest.mark.parametrize("val", [
+        "1", "trUe", "yEs  "
+    ])
+    def test_bool_var(self, val):
+        """
+        Truthy strings are converted to True, everything else to False.
+
+        Defaults can be passed as bools.
+        """
+        @environ.config
+        class C(object):
+            t = environ.bool_var()
+            f = environ.bool_var()
+            d = environ.bool_var(True)
+
+        cfg = environ.to_config(C, environ={
+            "APP_T": val,
+            "APP_F": "nope",
+        })
+
+        assert cfg.t is True
+        assert cfg.f is False
+        assert cfg.d is True

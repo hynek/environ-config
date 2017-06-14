@@ -1,4 +1,4 @@
-from ._environ_config import config, var, group, to_config
+from ._environ_config import config, var, group, to_config, bool_var
 from .exceptions import MissingEnvValueError
 from . import secrets
 
@@ -18,6 +18,7 @@ __copyright__ = "Copyright (c) 2017 {0}".format(__author__)
 
 __all__ = [
     "MissingEnvValueError",
+    "bool_var",
     "config",
     "group",
     "secrets",
