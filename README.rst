@@ -67,5 +67,5 @@ Features
 Project Information
 ===================
 
-``environ_config`` is released under the `MIT <http://choosealicense.com/licenses/mit/>`_ license.
+``environ_config`` is released under the `MIT <https://choosealicense.com/licenses/mit/>`_ license.
 It targets Python 2.7, 3.5 and newer, and PyPy.

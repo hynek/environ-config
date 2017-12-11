@@ -6,7 +6,7 @@ import pytest
 import environ
 
 from environ.exceptions import MissingSecretError
-from environ.secrets import _SecretStr, INISecrets, VaultEnvSecrets
+from environ.secrets import INISecrets, VaultEnvSecrets, _SecretStr
 
 
 class TestSecretStr:
@@ -118,6 +118,23 @@ class TestIniSecret(object):
         cfg = environ.to_config(C, {})
 
         assert _SecretStr("nested!") == cfg.db.password
+
+    def test_from_path_in_env_delayed(self, ini_file):
+        """
+        `from_path_in_env` prepares for loading but doesn't load until
+        `to_config` runs.
+        """
+        secret = INISecrets.from_path_in_env("APP_SECRETS_INI").secret
+
+        @environ.config
+        class Cfg(object):
+            password = secret()
+
+        cfg = environ.to_config(
+            Cfg, {"APP_SECRETS_INI": str(ini_file)}
+        )
+
+        assert "foobar" == cfg.password
 
 
 @pytest.fixture

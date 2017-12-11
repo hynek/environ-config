@@ -2,7 +2,7 @@ import codecs
 import os
 import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 ###############################################################################
@@ -28,6 +28,7 @@ CLASSIFIERS = [
 ]
 INSTALL_REQUIRES = ["attrs>=16.3.0"]
 EXTRAS_REQUIRE = {
+    "test": ["pytest", "coverage"]
 }
 
 ###############################################################################
@@ -102,4 +103,5 @@ if __name__ == "__main__":
         zip_safe=False,
         classifiers=CLASSIFIERS,
         install_requires=INSTALL_REQUIRES,
+        extras_require=EXTRAS_REQUIRE,
     )
