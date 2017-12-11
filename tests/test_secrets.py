@@ -25,10 +25,10 @@ class TestSecretStr:
         s = _SecretStr("abc")
 
         @attr.s
-        class C(object):
+        class Cfg(object):
             s = attr.ib()
 
-        assert "C(s=<SECRET>)" == repr(C(s))
+        assert "Cfg(s=<SECRET>)" == repr(Cfg(s))
 
 
 @pytest.fixture
@@ -57,34 +57,34 @@ class TestIniSecret(object):
         Missing values without a default raise an MissingSecretError.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             pw = ini.secret()
 
         with pytest.raises(MissingSecretError):
-            environ.to_config(C, {})
+            environ.to_config(Cfg, {})
 
     def test_default(self, ini):
         """
         Defaults are used iff the key is missing.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             password = ini.secret(default="not used")
             secret = ini.secret(default="used!")
 
-        cfg = environ.to_config(C, {})
+        cfg = environ.to_config(Cfg, {})
 
-        assert C("foobar", "used!") == cfg
+        assert Cfg("foobar", "used!") == cfg
 
     def test_name_overwrite(self, ini):
         """
         Passsing a specific key name is respected.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             pw = ini.secret(name="password")
 
-        cfg = environ.to_config(C, {})
+        cfg = environ.to_config(Cfg, {})
 
         assert _SecretStr("foobar") == cfg.pw
 
@@ -95,11 +95,11 @@ class TestIniSecret(object):
         ini.section = "yet_another_section"
 
         @environ.config
-        class C(object):
+        class Cfg(object):
             password = ini.secret(section="other_secrets")
             secret = ini.secret()
 
-        cfg = environ.to_config(C, {})
+        cfg = environ.to_config(Cfg, {})
 
         assert _SecretStr("barfoo") == cfg.password
 
@@ -108,14 +108,14 @@ class TestIniSecret(object):
         Prefix building works.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             @environ.config
             class DB(object):
                 password = ini.secret()
 
             db = environ.group(DB)
 
-        cfg = environ.to_config(C, {})
+        cfg = environ.to_config(Cfg, {})
 
         assert _SecretStr("nested!") == cfg.db.password
 
@@ -148,10 +148,10 @@ class TestVaultEnvSecrets(object):
         The returned strings are `_SecretStr`.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             x = vault.secret()
 
-        cfg = environ.to_config(C, {"SECRET_X": "foo"})
+        cfg = environ.to_config(Cfg, {"SECRET_X": "foo"})
 
         assert isinstance(cfg.x, _SecretStr)
         assert "foo" == cfg.x
@@ -161,10 +161,10 @@ class TestVaultEnvSecrets(object):
         The variable name can be overwritten.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             password = vault.secret(name="not_password")
 
-        cfg = environ.to_config(C, {
+        cfg = environ.to_config(Cfg, {
             "SECRET_PASSWORD": "wrong",
             "not_password": "correct",
         })
@@ -176,11 +176,11 @@ class TestVaultEnvSecrets(object):
         Missing values without a default raise an MissingSecretError.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             pw = vault.secret()
 
         with pytest.raises(MissingSecretError):
-            environ.to_config(C, {})
+            environ.to_config(Cfg, {})
 
     def test_prefix_callable(self):
         """
@@ -195,9 +195,9 @@ class TestVaultEnvSecrets(object):
         vault = VaultEnvSecrets(vault_prefix=extract)
 
         @environ.config
-        class C(object):
+        class Cfg(object):
             pw = vault.secret()
 
-        cfg = environ.to_config(C, fake_environ)
+        cfg = environ.to_config(Cfg, fake_environ)
 
         assert _SecretStr("foo") == cfg.pw

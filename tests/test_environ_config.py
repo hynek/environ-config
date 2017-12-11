@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
+import attr
 import pytest
 
 import environ
@@ -94,38 +95,38 @@ class TestEnvironConfig(object):
         If prefix is None or "", don't add a leading _ when adding namespaces.
         """
         @environ.config(prefix=prefix)
-        class C(object):
+        class Cfg(object):
             x = environ.var()
 
-        cfg = environ.to_config(C, environ={
+        cfg = environ.to_config(Cfg, environ={
             "X": "foo",
         })
 
-        assert C("foo") == cfg
+        assert Cfg("foo") == cfg
 
     def test_overwrite(self):
         """
         The env variable name can be overwritten.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             x = environ.var(name="LANG")
             y = environ.var()
 
-        cfg = environ.to_config(C, environ={
+        cfg = environ.to_config(Cfg, environ={
             "APP_X": "nope",
             "LANG": "foo",
             "APP_Y": "bar",
         })
 
-        assert C("foo", "bar") == cfg
+        assert Cfg("foo", "bar") == cfg
 
     def test_no_prefixes(self):
         """
         If no prefixes are wished, nothing is prepended.
         """
         @environ.config(prefix=None)
-        class C(object):
+        class Cfg(object):
             @environ.config
             class Sub(object):
                 y = environ.var()
@@ -134,13 +135,13 @@ class TestEnvironConfig(object):
             y = environ.var()
             sub = environ.group(Sub)
 
-        cfg = environ.to_config(C, environ={
+        cfg = environ.to_config(Cfg, environ={
             "X": "x",
             "Y": "y",
             "SUB_Y": "sub_y",
         })
 
-        assert C("x", "y", C.Sub("sub_y")) == cfg
+        assert Cfg("x", "y", Cfg.Sub("sub_y")) == cfg
 
     @pytest.mark.parametrize("val", [
         "1", "trUe", "yEs  "
@@ -152,12 +153,12 @@ class TestEnvironConfig(object):
         Defaults can be passed as bools.
         """
         @environ.config
-        class C(object):
+        class Cfg(object):
             t = environ.bool_var()
             f = environ.bool_var()
             d = environ.bool_var(True)
 
-        cfg = environ.to_config(C, environ={
+        cfg = environ.to_config(Cfg, environ={
             "APP_T": val,
             "APP_F": "nope",
         })
@@ -165,3 +166,19 @@ class TestEnvironConfig(object):
         assert cfg.t is True
         assert cfg.f is False
         assert cfg.d is True
+
+    def test_tolerates_attribs(self):
+        """
+        Classes are allowed to have plain attr.ibs for e.g.
+        __attrs_post_init__.
+        """
+        @environ.config
+        class Cfg(object):
+            e = environ.var()
+            x = attr.ib(default=42)
+
+        cfg = environ.to_config(Cfg, environ={
+            "APP_E": "e",
+        })
+
+        assert Cfg("e", 42) == cfg

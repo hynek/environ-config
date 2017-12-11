@@ -103,7 +103,10 @@ def to_config(config_cls, environ=os.environ):
 def _to_config(config_cls, default_get, environ, prefix):
     vals = {}
     for a in attr.fields(config_cls):
-        ce = a.metadata[CNF_KEY]
+        try:
+            ce = a.metadata[CNF_KEY]
+        except KeyError:
+            continue
         if ce.sub_cls is None:
             get = ce.callback or default_get
             val = get(environ, a.metadata, prefix, a.name)
