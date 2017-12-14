@@ -11,7 +11,7 @@ NAME = "environ_config"
 KEYWORDS = ["app", "config", "env", "cfg"]
 META_PATH = os.path.join("src", "environ", "__init__.py")
 CLASSIFIERS = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "License :: OSI Approved :: MIT License",
@@ -76,7 +76,7 @@ LONG = (
     read("README.rst") + "\n\n" +
     "Release Information\n" +
     "===================\n\n" +
-    re.search("(\d+.\d.\d \(.*?\)\n.*?)(\n\n\n----\n\n\n|Initial release.)",
+    re.search("(\d+.\d.\d \(.*?\)\n.*?)(\n\n\n----\n)",
               read("CHANGELOG.rst"), re.S).group(1) +
     "\n\n`Full changelog " +
     "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI) +
@@ -90,8 +90,7 @@ if __name__ == "__main__":
         description=find_meta("description"),
         license=find_meta("license"),
         url=URI,
-        # version=VERSION,
-        version="0",  # keep this while it's a private project.
+        version=VERSION,
         author=find_meta("author"),
         author_email=find_meta("email"),
         maintainer=find_meta("author"),

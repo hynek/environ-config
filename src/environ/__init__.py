@@ -3,7 +3,7 @@ from ._environ_config import bool_var, config, group, to_config, var
 from .exceptions import MissingEnvValueError
 
 
-__version__ = "17.0.0.dev0"
+__version__ = "17.1.0.dev0"
 
 __title__ = "environ_config"
 __description__ = "Boilerplate-free configuration with env variables."
