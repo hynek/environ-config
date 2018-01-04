@@ -25,7 +25,7 @@ environ_config: Configuration with env variables for Python.
   ...    class DB:
   ...        name = environ.var("default_db")
   ...        host = environ.var("default.host")
-  ...        port = environ.var(5432, convert=int)  # Use attrs's converters and validators!
+  ...        port = environ.var(5432, converter=int)  # Use attrs's converters and validators!
   ...        user = environ.var("default_user")
   ...        password = vault.secret()
   ...

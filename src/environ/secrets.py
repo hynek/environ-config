@@ -38,7 +38,7 @@ class INISecrets(object):
         """
         return cls(section, None, env_name, default)
 
-    def secret(self, default=RAISE, convert=None, name=None, section=None):
+    def secret(self, default=RAISE, converter=None, name=None, section=None):
         if section is None:
             section = self.section
 
@@ -48,7 +48,7 @@ class INISecrets(object):
                 CNF_KEY: _ConfigEntry(name, default, None, self._get),
                 CNF_INI_SECRET_KEY: _INIConfig(section),
             },
-            convert=convert,
+            converter=converter,
         )
 
     def _get(self, environ, metadata, prefix, name):
@@ -83,11 +83,11 @@ class VaultEnvSecrets(object):
     """
     vault_prefix = attr.ib()
 
-    def secret(self, default=RAISE, convert=None, name=None):
+    def secret(self, default=RAISE, converter=None, name=None):
         return attr.ib(
             default=default,
             metadata={CNF_KEY: _ConfigEntry(name, default, None, self._get)},
-            convert=convert,
+            converter=converter,
         )
 
     def _get(self, environ, metadata, prefix, name):
@@ -118,7 +118,7 @@ class _SecretStr(str):
     def __repr__(self):
         f = sys._getframe(2)
 
-        if f.f_code.co_name == "repr_":
+        if f.f_code.co_name == "__repr__":
             return "<SECRET>"
         else:
             return str.__repr__(self)

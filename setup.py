@@ -26,10 +26,11 @@ CLASSIFIERS = [
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-INSTALL_REQUIRES = ["attrs>=16.3.0"]
+INSTALL_REQUIRES = ["attrs>=17.4.0"]
 EXTRAS_REQUIRE = {
-    "test": ["pytest", "coverage"]
+    "tests": ["pytest", "coverage"]
 }
+EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"]
 
 ###############################################################################
 

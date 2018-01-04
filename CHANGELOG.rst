@@ -1,18 +1,17 @@
 Changelog
 =========
 
-Versions follow `CalVer <http://calver.org>`_ with a strict backwards compatibility policy.
-The third digit is only for regressions.
+Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
-17.2.0 (UNRELEASED)
+18.1.0 (UNRELEASED)
 -------------------
 
 
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*none*
+- ``convert`` → ``converter``
 
 
 Deprecations:
@@ -24,7 +23,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Fix for ``attrs`` 17.4.0.
 
 
 ----
@@ -34,6 +33,3 @@ Changes:
 -------------------
 
 Initial release.
-
-
-----

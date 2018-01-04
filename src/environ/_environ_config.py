@@ -41,11 +41,11 @@ class _ConfigEntry(object):
     callback = attr.ib(default=None)
 
 
-def var(default=RAISE, convert=None, name=None, validator=None):
+def var(default=RAISE, converter=None, name=None, validator=None):
     return attr.ib(
         default=default,
         metadata={CNF_KEY: _ConfigEntry(name, default, None)},
-        convert=convert,
+        converter=converter,
         validator=validator,
     )
 
@@ -67,7 +67,7 @@ def bool_var(default=RAISE, name=None):
     return var(
         default=default,
         name=name,
-        convert=_env_to_bool,
+        converter=_env_to_bool,
     )
 
 
