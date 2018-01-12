@@ -4,7 +4,7 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
-18.2.0 (UNRELEASED)
+18.2.0 (2018-01-12)
 -------------------
 
 Backward-incompatible changes:
