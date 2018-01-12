@@ -4,6 +4,23 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
+18.2.0 (UNRELEASED)
+-------------------
+
+Backward-incompatible changes:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Use ``RawConfigParser`` for ini-style secrets to avoid interpolation errors.
+
+
+Changes:
+^^^^^^^^
+
+*none*
+
+
+----
+
 18.1.0 (2018-01-04)
 -------------------
 
@@ -12,12 +29,6 @@ Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``convert`` → ``converter``
-
-
-Deprecations:
-^^^^^^^^^^^^^
-
-*none*
 
 
 Changes:

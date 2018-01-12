@@ -39,7 +39,7 @@ def ini_file(tmpdir):
 password = foobar
 db_password = nested!
 [other_secrets]
-password = barfoo
+password = bar%foo
 [yet_another_section]
 secret = qux
 """)
@@ -101,7 +101,7 @@ class TestIniSecret(object):
 
         cfg = environ.to_config(Cfg, {})
 
-        assert _SecretStr("barfoo") == cfg.password
+        assert _SecretStr("bar%foo") == cfg.password
 
     def test_nested(self, ini):
         """

@@ -11,9 +11,9 @@ from .exceptions import MissingSecretError
 
 
 try:
-    from configparser import ConfigParser, NoOptionError
+    from configparser import RawConfigParser, NoOptionError
 except ImportError:
-    from ConfigParser import ConfigParser, NoOptionError
+    from ConfigParser import RawConfigParser, NoOptionError
 
 
 log = logging.getLogger(__name__)
@@ -136,7 +136,7 @@ def _load_ini(path):
     """
     Load an INI file from *path*.
     """
-    cfg = ConfigParser()
+    cfg = RawConfigParser()
     with codecs.open(path, mode="r", encoding="utf-8") as f:
         try:
             cfg.read_file(f)
