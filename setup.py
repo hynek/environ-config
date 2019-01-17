@@ -27,9 +27,7 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 INSTALL_REQUIRES = ["attrs>=17.4.0"]
-EXTRAS_REQUIRE = {
-    "tests": ["pytest", "coverage"]
-}
+EXTRAS_REQUIRE = {"tests": ["pytest", "coverage"]}
 EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"]
 
 ###############################################################################
@@ -63,8 +61,7 @@ def find_meta(meta):
     Extract __*meta*__ from META_FILE.
     """
     meta_match = re.search(
-        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta),
-        META_FILE, re.M
+        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), META_FILE, re.M
     )
     if meta_match:
         return meta_match.group(1)
@@ -74,14 +71,16 @@ def find_meta(meta):
 VERSION = find_meta("version")
 URI = find_meta("uri")
 LONG = (
-    read("README.rst") + "\n\n" +
-    "Release Information\n" +
-    "===================\n\n" +
-    re.search(r"(\d+.\d.\d \(.*?\)\n.*?)(\n\n\n----\n)",
-              read("CHANGELOG.rst"), re.S).group(1) +
-    "\n\n`Full changelog " +
-    "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI) +
-    read("AUTHORS.rst")
+    read("README.rst")
+    + "\n\n"
+    + "Release Information\n"
+    + "===================\n\n"
+    + re.search(
+        r"(\d+.\d.\d \(.*?\)\n.*?)(\n\n\n----\n)", read("CHANGELOG.rst"), re.S
+    ).group(1)
+    + "\n\n`Full changelog "
+    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI)
+    + read("AUTHORS.rst")
 )
 
 

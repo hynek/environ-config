@@ -10,6 +10,10 @@ environ_config: Configuration with env variables for Python.
    :target: https://codecov.io/gh/hynek/environ_config
    :alt: Test Coverage
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/ambv/black
+   :alt: Code style: black
+
 .. begin
 
 ``environ_config`` allows you to configure your applications using environment variables – as recommended in `The Twelve-Factor App <https://12factor.net/config>`_ methodology – with elegant, boilerplate-free, and declarative code:

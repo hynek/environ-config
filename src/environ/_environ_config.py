@@ -64,17 +64,12 @@ def _env_to_bool(val):
 
 
 def bool_var(default=RAISE, name=None):
-    return var(
-        default=default,
-        name=name,
-        converter=_env_to_bool,
-    )
+    return var(default=default, name=name, converter=_env_to_bool)
 
 
 def group(cls):
     return attr.ib(
-        default=None,
-        metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
+        default=None, metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
     )
 
 
@@ -112,8 +107,10 @@ def _to_config(config_cls, default_get, environ, prefix):
             val = get(environ, a.metadata, prefix, a.name)
         else:
             val = _to_config(
-                ce.sub_cls, default_get, environ,
-                prefix + ((a.name if prefix else a.name),)
+                ce.sub_cls,
+                default_get,
+                environ,
+                prefix + ((a.name if prefix else a.name),),
             )
 
         vals[a.name] = val

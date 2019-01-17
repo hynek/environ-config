@@ -68,7 +68,7 @@ class INISecrets(object):
         else:
             var = "_".join((prefix + (name,)))
         try:
-            log.debug("looking for '%s' in section '%s'." % (var, section,))
+            log.debug("looking for '%s' in section '%s'." % (var, section))
             return _SecretStr(self._cfg.get(section, var))
         except NoOptionError:
             if ce.default is not RAISE:
@@ -81,6 +81,7 @@ class VaultEnvSecrets(object):
     """
     Almost identical to regular env vars except that it has its own prefix.
     """
+
     vault_prefix = attr.ib()
 
     def secret(self, default=RAISE, converter=None, name=None):
@@ -100,9 +101,7 @@ class VaultEnvSecrets(object):
                 vp = self.vault_prefix(environ)
             else:
                 vp = self.vault_prefix
-            var = "_".join(
-                ((vp,) + prefix + (name,))
-            ).upper()
+            var = "_".join(((vp,) + prefix + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
         val = environ.get(var, ce.default)
@@ -115,6 +114,7 @@ class _SecretStr(str):
     """
     String that censors its __repr__ if called from an attrs repr.
     """
+
     def __repr__(self):
         # The frame numbers varies across attrs versions. Use this convoluted
         # form to make the call lazy.

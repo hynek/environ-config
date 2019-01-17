@@ -8,8 +8,19 @@ language: python
 
 
 matrix:
+  fast_finish: true
+
   include:
+    # Lint
+    - python: "3.7"
+      stage: lint
+      env: TOXENV=lint
+    - python: "3.7"
+      env: TOXENV=manifest
+
+    # Test
     - python: "2.7"
+      stage: test
       env: TOXENV=py27
     - python: "3.5"
       env: TOXENV=py35
@@ -26,15 +37,12 @@ matrix:
       dist: trusty
       env: TOXENV=pypy3
 
-    # Meta
-    - python: "3.7"
-      env: TOXENV=flake8
-    - python: "3.7"
-      env: TOXENV=manifest
+    # Docs
     - python: "3.5"
+      stage: docs
       env: TOXENV=docs
     - python: "3.7"
-      env: TOXENV=readme
+      env: TOXENV=pypi-description
 
 
 install:

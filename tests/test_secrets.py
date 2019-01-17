@@ -34,7 +34,8 @@ class TestSecretStr:
 @pytest.fixture
 def ini_file(tmpdir):
     f = tmpdir.join("foo.ini")
-    f.write("""\
+    f.write(
+        """\
 [secrets]
 password = foobar
 db_password = nested!
@@ -42,7 +43,8 @@ db_password = nested!
 password = bar%foo
 [yet_another_section]
 secret = qux
-""")
+"""
+    )
     return f
 
 
@@ -56,6 +58,7 @@ class TestIniSecret(object):
         """
         Missing values without a default raise an MissingSecretError.
         """
+
         @environ.config
         class Cfg(object):
             pw = ini.secret()
@@ -67,6 +70,7 @@ class TestIniSecret(object):
         """
         Defaults are used iff the key is missing.
         """
+
         @environ.config
         class Cfg(object):
             password = ini.secret(default="not used")
@@ -80,6 +84,7 @@ class TestIniSecret(object):
         """
         Passsing a specific key name is respected.
         """
+
         @environ.config
         class Cfg(object):
             pw = ini.secret(name="password")
@@ -107,6 +112,7 @@ class TestIniSecret(object):
         """
         Prefix building works.
         """
+
         @environ.config
         class Cfg(object):
             @environ.config
@@ -130,9 +136,7 @@ class TestIniSecret(object):
         class Cfg(object):
             password = secret()
 
-        cfg = environ.to_config(
-            Cfg, {"APP_SECRETS_INI": str(ini_file)}
-        )
+        cfg = environ.to_config(Cfg, {"APP_SECRETS_INI": str(ini_file)})
 
         assert "foobar" == cfg.password
 
@@ -147,6 +151,7 @@ class TestVaultEnvSecrets(object):
         """
         The returned strings are `_SecretStr`.
         """
+
         @environ.config
         class Cfg(object):
             x = vault.secret()
@@ -160,14 +165,14 @@ class TestVaultEnvSecrets(object):
         """
         The variable name can be overwritten.
         """
+
         @environ.config
         class Cfg(object):
             password = vault.secret(name="not_password")
 
-        cfg = environ.to_config(Cfg, {
-            "SECRET_PASSWORD": "wrong",
-            "not_password": "correct",
-        })
+        cfg = environ.to_config(
+            Cfg, {"SECRET_PASSWORD": "wrong", "not_password": "correct"}
+        )
 
         assert "correct" == cfg.password
 
@@ -175,6 +180,7 @@ class TestVaultEnvSecrets(object):
         """
         Missing values without a default raise an MissingSecretError.
         """
+
         @environ.config
         class Cfg(object):
             pw = vault.secret()
