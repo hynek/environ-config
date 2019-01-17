@@ -20,8 +20,10 @@ matrix:
     - python: "3.7"
       env: TOXENV=py37-oldestAttrs
     - python: "pypy"
+      dist: trusty
       env: TOXENV=pypy
     - python: "pypy3"
+      dist: trusty
       env: TOXENV=pypy3
 
     # Meta
