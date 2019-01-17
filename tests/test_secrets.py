@@ -20,7 +20,7 @@ class TestSecretStr:
 
     def test_secret_str_censors(self):
         """
-        _SecretStr censors it's __repr__ if its called from another __repr__.
+        _SecretStr censors its __repr__ if it's called from another __repr__.
         """
         s = _SecretStr("abc")
 
