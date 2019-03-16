@@ -116,7 +116,8 @@ class _SecretStr(str):
     String that censors its __repr__ if called from an attrs repr.
     """
     def __repr__(self):
-        f = sys._getframe(2)
+        depth = 2 if attr.__version__.startswith('17') else 1
+        f = sys._getframe(depth)
 
         if f.f_code.co_name == "__repr__":
             return "<SECRET>"
