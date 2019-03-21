@@ -4,6 +4,32 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
+19.1.0 (UNRELEASED)
+-------------------
+
+
+Backward-incompatible changes:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Changed license from MIT to Apache License 2.
+
+
+Deprecations:
+^^^^^^^^^^^^^
+
+*none*
+
+
+Changes:
+^^^^^^^^
+
+*none*
+
+
+----
+
+
+
 18.2.0 (2018-01-12)
 -------------------
 

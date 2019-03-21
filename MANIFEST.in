@@ -1,4 +1,4 @@
-include *.rst *.txt LICENSE tox.ini .travis.yml docs/Makefile .coveragerc conftest.py *.yaml *.toml
+include *.rst *.txt LICENSE NOTICE tox.ini .travis.yml docs/Makefile .coveragerc conftest.py *.yaml *.toml
 recursive-include tests *.py
 recursive-include docs *.rst
 recursive-include docs *.py
