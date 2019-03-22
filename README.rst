@@ -67,6 +67,31 @@ Features
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
   * INI files, because secrets in env variables are `icky <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
 - Pass any dict into `environ.to_config(AppConfig, {"your": "config"})` instead of loading from the environment.
+- Built in dynamic help documentation generation via ``environ.generate_help``.
+
+.. code-block:: pycon
+
+  >>> import environ
+  >>> @environ.config(prefix="APP")
+  ... class AppConfig:
+  ...     @environ.config
+  ...     class SubConfig:
+  ...         sit = environ.var(help="Another example message.")
+  ...         amet = environ.var()
+  ...     lorem = environ.var('ipsum')
+  ...     dolor = environ.bool_var(True, help="An example message.")
+  ...     subconfig = environ.group(SubConfig)
+  ...
+  >>> print(environ.generate_help(AppConfig))
+  APP_LOREM (Optional)
+  APP_DOLOR (Optional): An example message.
+  APP_SUBCONFIG_SIT (Required): Another example message.
+  APP_SUBCONFIG_AMET (Required)
+  >>> print(environ.generate_help(AppConfig, display_defaults=True))
+  APP_LOREM (Optional, Default=ipsum)
+  APP_DOLOR (Optional, Default=True): An example message.
+  APP_SUBCONFIG_SIT (Required): Another example message.
+  APP_SUBCONFIG_AMET (Required)
 
 
 Project Information
