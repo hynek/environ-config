@@ -34,6 +34,32 @@ class Nested(object):
     sub = environ.group(Sub)
 
 
+@environ.config(prefix="FOO")
+class Parent(object):
+    not_a_var = attr.ib()  # For testing that only environ.var's are processed.
+    var1 = environ.var(help="var1, no default")
+    var2 = environ.var("bar", help="var2, has default")
+    var3 = environ.bool_var(help="var3, bool_var, no default")
+    var4 = environ.bool_var(True, help="var4, bool_var, has default")
+    var5 = environ.var("canine", name="DOG", help="var5, named, has default")
+    var6 = environ.var(name="CAT", help="var6, named, no default")
+
+    @environ.config
+    class Child(object):
+        var7 = environ.var(help="var7, no default")
+        var8 = environ.var("bar", help="var8, has default")
+        var9 = environ.bool_var(help="var9, bool_var, no default")
+        var10 = environ.bool_var(True, help="var10, bool_var, has default")
+        var11 = environ.var(
+            "canine", name="DOG2", help="var11, named, has default"
+        )
+        var12 = environ.var(name="CAT2", help="var12, named, no default")
+        var13 = environ.var("default")  # var with default, no help
+        var14 = environ.var()  # var without default, no help
+
+    child = environ.group(Child)
+
+
 class TestEnvironConfig(object):
     def test_empty(self):
         """
@@ -184,3 +210,50 @@ class TestEnvironConfig(object):
         cfg = environ.to_config(Cfg, environ={"APP_E": "e"})
 
         assert Cfg("e", 42) == cfg
+
+    def test_generate_help_str(self):
+        help_str = environ.generate_help(Parent)
+        assert (
+            help_str
+            == """FOO_VAR1 (Required): var1, no default
+FOO_VAR2 (Optional): var2, has default
+FOO_VAR3 (Required): var3, bool_var, no default
+FOO_VAR4 (Optional): var4, bool_var, has default
+DOG (Optional): var5, named, has default
+CAT (Required): var6, named, no default
+FOO_CHILD_VAR7 (Required): var7, no default
+FOO_CHILD_VAR8 (Optional): var8, has default
+FOO_CHILD_VAR9 (Required): var9, bool_var, no default
+FOO_CHILD_VAR10 (Optional): var10, bool_var, has default
+DOG2 (Optional): var11, named, has default
+CAT2 (Required): var12, named, no default
+FOO_CHILD_VAR13 (Optional)
+FOO_CHILD_VAR14 (Required)"""
+        )
+
+    def test_generate_help_str_with_defaults(self):
+        help_str = environ.generate_help(Parent, display_defaults=True)
+        assert (
+            help_str
+            == """FOO_VAR1 (Required): var1, no default
+FOO_VAR2 (Optional, Default=bar): var2, has default
+FOO_VAR3 (Required): var3, bool_var, no default
+FOO_VAR4 (Optional, Default=True): var4, bool_var, has default
+DOG (Optional, Default=canine): var5, named, has default
+CAT (Required): var6, named, no default
+FOO_CHILD_VAR7 (Required): var7, no default
+FOO_CHILD_VAR8 (Optional, Default=bar): var8, has default
+FOO_CHILD_VAR9 (Required): var9, bool_var, no default
+FOO_CHILD_VAR10 (Optional, Default=True): var10, bool_var, has default
+DOG2 (Optional, Default=canine): var11, named, has default
+CAT2 (Required): var12, named, no default
+FOO_CHILD_VAR13 (Optional, Default=default)
+FOO_CHILD_VAR14 (Required)"""
+        )
+
+    def test_custom_formatter(self):
+        def bad_formatter(help_dicts):
+            return "Not a good formatter"
+
+        help_str = environ.generate_help(Parent, formatter=bad_formatter)
+        assert help_str == "Not a good formatter"

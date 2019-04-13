@@ -42,7 +42,11 @@ Backward-incompatible changes:
 Changes:
 ^^^^^^^^
 
-*none*
+- Added ``environ.generate_help`` to the public interface. It is implemented by...
+
+  * ``environ._environ_config.generate_help``
+  * ``environ._environ_config._generate_help_dicts``
+  * ``environ._environ_config._format_help_dicts``
 
 
 ----

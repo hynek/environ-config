@@ -53,12 +53,13 @@ class _ConfigEntry(object):
     default = attr.ib(default=RAISE)
     sub_cls = attr.ib(default=None)
     callback = attr.ib(default=None)
+    help = attr.ib(default=None)
 
 
-def var(default=RAISE, converter=None, name=None, validator=None):
+def var(default=RAISE, converter=None, name=None, validator=None, help=None):
     return attr.ib(
         default=default,
-        metadata={CNF_KEY: _ConfigEntry(name, default, None)},
+        metadata={CNF_KEY: _ConfigEntry(name, default, None, None, help)},
         converter=converter,
         validator=validator,
     )
@@ -77,8 +78,8 @@ def _env_to_bool(val):
     return False
 
 
-def bool_var(default=RAISE, name=None):
-    return var(default=default, name=name, converter=_env_to_bool)
+def bool_var(default=RAISE, name=None, help=None):
+    return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
 def group(cls):
@@ -129,3 +130,86 @@ def _to_config(config_cls, default_get, environ, prefix):
 
         vals[a.name] = val
     return config_cls(**vals)
+
+
+def _format_help_dicts(help_dicts, display_defaults=False):
+    """
+    Format the output of _generate_help_dicts into a str
+    """
+    help_strs = []
+    for help_dict in help_dicts:
+        help_str = "%s (%s" % (
+            help_dict["var_name"],
+            "Required" if help_dict["required"] else "Optional",
+        )
+        if help_dict.get("default") and display_defaults:
+            help_str += ", Default=%s)" % help_dict["default"]
+        else:
+            help_str += ")"
+        if help_dict.get("help_str"):
+            help_str += ": %s" % help_dict["help_str"]
+        help_strs.append(help_str)
+
+    return "\n".join(help_strs)
+
+
+def _generate_help_dicts(config_cls, _prefix=None):
+    """
+    Generate dictionaries for use in building help strings.
+
+    Every dictionary includes the keys...
+
+    var_name: The env var that should be set to populate the value.
+    required: A bool, True if the var is required, False if it's optional.
+
+    Conditionally, the following are included...
+
+    default: Included if an optional variable has a default set
+    help_str: Included if the var uses the help kwarg to provide additional
+        context for the value.
+
+    Conditional key inclusion is meant to differentiate between exclusion
+    vs explicitly setting a value to None.
+    """
+    help_dicts = []
+    if _prefix is None:
+        _prefix = config_cls._prefix
+    for a in attr.fields(config_cls):
+        try:
+            ce = a.metadata[CNF_KEY]
+        except KeyError:
+            continue
+        if ce.sub_cls is None:  # Base case for "leaves".
+            if ce.name is None:
+                var_name = "_".join((_prefix, a.name)).upper()
+            else:
+                var_name = ce.name
+            req = ce.default == RAISE
+            help_dict = {"var_name": var_name, "required": req}
+            if not req:
+                help_dict["default"] = ce.default
+            if ce.help is not None:
+                help_dict["help_str"] = ce.help
+            help_dicts.append(help_dict)
+        else:  # Construct the new prefix and recurse.
+            help_dicts += _generate_help_dicts(
+                ce.sub_cls, _prefix="_".join((_prefix, a.name)).upper()
+            )
+    return help_dicts
+
+
+def generate_help(config_cls, **kwargs):
+    """
+    Autogenerate a help string for a config class.
+
+    If a callable is provided via the "formatter" kwarg it
+    will be provided with the help dictionaries as an argument
+    and any other kwargs provided to this function. That callable
+    should return the help text string.
+    """
+    try:
+        formatter = kwargs.pop("formatter")
+    except KeyError:
+        formatter = _format_help_dicts
+    help_dicts = _generate_help_dicts(config_cls)
+    return formatter(help_dicts, **kwargs)

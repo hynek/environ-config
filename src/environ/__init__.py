@@ -13,7 +13,14 @@
 # limitations under the License.
 
 from . import secrets
-from ._environ_config import bool_var, config, group, to_config, var
+from ._environ_config import (
+    bool_var,
+    config,
+    generate_help,
+    group,
+    to_config,
+    var,
+)
 from .exceptions import MissingEnvValueError
 
 
@@ -34,6 +41,7 @@ __all__ = [
     "MissingEnvValueError",
     "bool_var",
     "config",
+    "generate_help",
     "group",
     "secrets",
     "to_config",

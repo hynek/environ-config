@@ -52,14 +52,16 @@ class INISecrets(object):
         """
         return cls(section, None, env_name, default)
 
-    def secret(self, default=RAISE, converter=None, name=None, section=None):
+    def secret(
+        self, default=RAISE, converter=None, name=None, section=None, help=None
+    ):
         if section is None:
             section = self.section
 
         return attr.ib(
             default=default,
             metadata={
-                CNF_KEY: _ConfigEntry(name, default, None, self._get),
+                CNF_KEY: _ConfigEntry(name, default, None, self._get, help),
                 CNF_INI_SECRET_KEY: _INIConfig(section),
             },
             converter=converter,
@@ -98,10 +100,12 @@ class VaultEnvSecrets(object):
 
     vault_prefix = attr.ib()
 
-    def secret(self, default=RAISE, converter=None, name=None):
+    def secret(self, default=RAISE, converter=None, name=None, help=None):
         return attr.ib(
             default=default,
-            metadata={CNF_KEY: _ConfigEntry(name, default, None, self._get)},
+            metadata={
+                CNF_KEY: _ConfigEntry(name, default, None, self._get, help)
+            },
             converter=converter,
         )
 
