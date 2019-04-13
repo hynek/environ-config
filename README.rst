@@ -66,7 +66,7 @@ Features
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
   * INI files, because secrets in env variables are `icky <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
-- Pass any dict into `environ.to_config(AppConfig, {"your": "config"})` instead of loading from the environment.
+- Pass any dict into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
 - Built in dynamic help documentation generation via ``environ.generate_help``.
 
 .. code-block:: pycon
@@ -97,5 +97,5 @@ Features
 Project Information
 ===================
 
-``environ_config`` is released under the `MIT <https://choosealicense.com/licenses/mit/>`_ license.
+``environ_config`` is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
 It targets Python 2.7, 3.5 and newer, and PyPy.
