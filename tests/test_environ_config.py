@@ -212,6 +212,11 @@ class TestEnvironConfig(object):
         assert Cfg("e", 42) == cfg
 
     def test_generate_help_str(self):
+        """
+        A help string is generated for a config class.
+
+        Presence of defaults are indicated but they are not shown.
+        """
         help_str = environ.generate_help(Parent)
         assert (
             help_str
@@ -232,6 +237,11 @@ FOO_CHILD_VAR14 (Required)"""
         )
 
     def test_generate_help_str_with_defaults(self):
+        """
+        A help string is generated for a config class.
+
+        display_defaults=True makes the defaults be shown.
+        """
         help_str = environ.generate_help(Parent, display_defaults=True)
         assert (
             help_str
