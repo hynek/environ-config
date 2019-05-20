@@ -10,12 +10,16 @@ class AppConfig(object):
 
 
 def test_default():
+    """Class based `from_environ` without `environ` argument.
+    """
     cfg = AppConfig.from_environ()
     assert cfg.host == "127.0.0.1"
     assert cfg.port == 5000
 
 
 def test_env():
+    """Class based `from_environ`  with explicit `environ` argument.
+    """
     env = {"APP_HOST": "0.0.0.0"}
     cfg = AppConfig.from_environ(environ=env)
     assert cfg.host == "0.0.0.0"
