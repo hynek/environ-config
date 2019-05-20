@@ -24,6 +24,7 @@ Changes:
 ^^^^^^^^
 
 - Added ``environ.generate_help(AppConfig)`` to create a help string based on the configuration.
+- Added ``AppConfig.from_environ`` to instantiate config without importing ``environ`` module.
 
 
 ----

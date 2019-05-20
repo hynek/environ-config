@@ -52,6 +52,7 @@ environ_config: Configuration with env variables for Python.
   >>> cfg.db.password
   's3kr3t'
 
+``AppConfig.from_environ({...})`` is equivalent to the code above, depending on your taste.
 
 Features
 ========

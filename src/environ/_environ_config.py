@@ -38,7 +38,13 @@ RAISE = Raise()
 
 def config(maybe_cls=None, prefix="APP"):
     def wrap(cls):
+        def from_environ(cls, environ=os.environ):
+            import environ as environ_config
+
+            return environ_config.to_config(cls, environ)
+
         cls._prefix = prefix
+        cls.from_environ = classmethod(from_environ)
         return attr.s(cls, slots=True)
 
     if maybe_cls is None:
