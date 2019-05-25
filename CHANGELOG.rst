@@ -26,6 +26,7 @@ Changes:
 - Added ``environ.generate_help(AppConfig)`` to create a help string based on the configuration.
 - Added ``AppConfig.from_environ()`` to instantiate the config class without importing the ``environ`` module.
 - Added ``AppConfig.generate_help()`` to generate the help without a need to import the ``environ`` module.
+- Added ``environ.config(from_environ="fr_env", generate_help="gen_hlp")`` class methods can be renamed or prevented
 
 
 ----
