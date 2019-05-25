@@ -43,8 +43,14 @@ def config(maybe_cls=None, prefix="APP"):
 
             return environ_config.to_config(cls, environ)
 
+        def generate_help(cls, **kwargs):
+            import environ
+
+            return environ.generate_help(cls, **kwargs)
+
         cls._prefix = prefix
         cls.from_environ = classmethod(from_environ)
+        cls.generate_help = classmethod(generate_help)
         return attr.s(cls, slots=True)
 
     if maybe_cls is None:
