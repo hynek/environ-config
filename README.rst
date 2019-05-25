@@ -94,6 +94,7 @@ Features
   APP_SUBCONFIG_SIT (Required): Another example message.
   APP_SUBCONFIG_AMET (Required)
 
+``AppConfig.generate_help({...})`` is equivalent to the code above, depending on your taste.
 
 Project Information
 ===================
