@@ -63,6 +63,6 @@ def test_env():
     assert environ.to_config(AppConfig, environ=env) == AppConfig.from_environ(
         environ=env
     )
-    assert environ.to_config(ConfigRenamed, environ=env) == ConfigRenamed.from_env(
-        environ=env
-    )
+    assert environ.to_config(
+        ConfigRenamed, environ=env
+    ) == ConfigRenamed.from_env(environ=env)
