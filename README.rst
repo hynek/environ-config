@@ -6,8 +6,8 @@ environ-config: Configuration with env variables for Python.
    :target: https://travis-ci.org/hynek/environ-config
    :alt: CI status
 
-.. image:: https://codecov.io/gh/hynek/environ_config/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/hynek/environ_config
+.. image:: https://codecov.io/gh/hynek/environ-config/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/hynek/environ-config
    :alt: Test Coverage
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
