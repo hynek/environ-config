@@ -125,6 +125,21 @@ class TestEnvironConfig(object):
 
         assert Defaults(x="foo", y="bar") == cfg
 
+    def test_factory_default(self):
+        """
+        If the default value is an ``attr.Factory``,
+        it used to generate the default value.
+        """
+
+        @environ.config
+        class Defaults(object):
+            x = environ.var(attr.Factory(list))
+            y = environ.var(attr.Factory(list))
+
+        cfg = environ.to_config(Defaults, environ={"APP_Y": "bar"})
+
+        assert Defaults(x=[], y="bar") == cfg
+
     @pytest.mark.parametrize("prefix", [None, ""])
     def test_no_prefix(self, prefix):
         """

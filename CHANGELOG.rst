@@ -25,6 +25,8 @@ Changes:
 
 - Added ``environ.generate_help(AppConfig)`` to create a help string based on the configuration.
 - Added ``AppConfig.from_environ()`` to instantiate the config class without importing the ``environ`` module.
+- If ``environ.var`` is passed an ``attr.Factory``, the callable is used to generate the default value.
+
 
 
 ----
