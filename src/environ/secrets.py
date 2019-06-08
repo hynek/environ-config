@@ -18,16 +18,12 @@ import codecs
 import logging
 import sys
 
+from configparser import NoOptionError, RawConfigParser
+
 import attr
 
 from ._environ_config import CNF_KEY, RAISE, _ConfigEntry
 from .exceptions import MissingSecretError
-
-
-try:
-    from configparser import RawConfigParser, NoOptionError
-except ImportError:
-    from ConfigParser import RawConfigParser, NoOptionError
 
 
 log = logging.getLogger(__name__)
@@ -168,9 +164,6 @@ def _load_ini(path):
     """
     cfg = RawConfigParser()
     with codecs.open(path, mode="r", encoding="utf-8") as f:
-        try:
-            cfg.read_file(f)
-        except AttributeError:
-            cfg.readfp(f)
+        cfg.read_file(f)
 
     return cfg
