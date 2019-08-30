@@ -1,13 +1,13 @@
 ============================================================
-environ_config: Configuration with env variables for Python.
+environ-config: Configuration with env variables for Python.
 ============================================================
 
-.. image:: https://travis-ci.org/hynek/environ_config.svg?branch=master
-   :target: https://travis-ci.org/hynek/environ_config
+.. image:: https://travis-ci.org/hynek/environ-config.svg?branch=master
+   :target: https://travis-ci.org/hynek/environ-config
    :alt: CI status
 
-.. image:: https://codecov.io/gh/hynek/environ_config/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/hynek/environ_config
+.. image:: https://codecov.io/gh/hynek/environ-config/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/hynek/environ-config
    :alt: Test Coverage
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
@@ -16,7 +16,7 @@ environ_config: Configuration with env variables for Python.
 
 .. begin
 
-``environ_config`` allows you to configure your applications using environment variables – as recommended in `The Twelve-Factor App <https://12factor.net/config>`_ methodology – with elegant, boilerplate-free, and declarative code:
+``environ-config`` allows you to configure your applications using environment variables – as recommended in `The Twelve-Factor App <https://12factor.net/config>`_ methodology – with elegant, boilerplate-free, and declarative code:
 
 .. code-block:: pycon
 
@@ -62,9 +62,9 @@ Features
 - Declarative & boilerplate-free.
 - Nested config from flat env variable names.
 - Default & mandatory values: enforce configuration structure without writing a line of code.
-- Helpful debug logging that will tell you which variables are present and what ``environ_config`` is looking for.
-- Built on top of `attrs <http://www.attrs.org/>`_ which gives you data validation and conversion for free.
-- Plugable secrets extraction.
+- Helpful debug logging that will tell you which variables are present and what ``environ-config`` is looking for.
+- Built on top of `attrs <https://www.attrs.org/>`_ which gives you data validation and conversion for free.
+- Pluggable secrets extraction.
   Ships with:
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
@@ -103,5 +103,5 @@ Features
 Project Information
 ===================
 
-``environ_config`` is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
+``environ-config`` is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
 It targets Python 2.7, 3.5 and newer, and PyPy.

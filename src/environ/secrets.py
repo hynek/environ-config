@@ -18,16 +18,12 @@ import codecs
 import logging
 import sys
 
+from configparser import NoOptionError, RawConfigParser
+
 import attr
 
 from ._environ_config import CNF_KEY, RAISE, _ConfigEntry
 from .exceptions import MissingSecretError
-
-
-try:
-    from configparser import RawConfigParser, NoOptionError
-except ImportError:
-    from ConfigParser import RawConfigParser, NoOptionError
 
 
 log = logging.getLogger(__name__)
@@ -87,7 +83,9 @@ class INISecrets(object):
             log.debug("looking for '%s' in section '%s'." % (var, section))
             return _SecretStr(self._cfg.get(section, var))
         except NoOptionError:
-            if ce.default is not RAISE:
+            if isinstance(ce.default, attr.Factory):
+                return attr.NOTHING
+            elif ce.default is not RAISE:
                 return ce.default
             raise MissingSecretError(var)
 
@@ -122,7 +120,14 @@ class VaultEnvSecrets(object):
             var = "_".join(((vp,) + prefix + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(var, ce.default)
+        val = environ.get(
+            var,
+            (
+                attr.NOTHING
+                if isinstance(ce.default, attr.Factory)
+                else ce.default
+            ),
+        )
         if val is RAISE:
             raise MissingSecretError(var)
         return _SecretStr(val)
@@ -159,9 +164,6 @@ def _load_ini(path):
     """
     cfg = RawConfigParser()
     with codecs.open(path, mode="r", encoding="utf-8") as f:
-        try:
-            cfg.read_file(f)
-        except AttributeError:
-            cfg.readfp(f)
+        cfg.read_file(f)
 
     return cfg

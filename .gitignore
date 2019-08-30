@@ -1,8 +1,9 @@
+*.egg-info
+*.pyc
 .cache
-.tox
 .coverage
 .coverage.*
-*.pyc
-*.egg-info
+.tox
 dist
 htmlcov
+pip-wheel-metadata

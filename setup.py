@@ -21,11 +21,16 @@ from setuptools import find_packages, setup
 
 ###############################################################################
 
-NAME = "environ_config"
+NAME = "environ-config"
 KEYWORDS = ["app", "config", "env", "cfg"]
+PROJECT_URLS = {
+    "Bug Tracker": "https://github.com/hynek/environ-config/issues",
+    "Source Code": "https://github.com/hynek/environ-config",
+}
+
 META_PATH = os.path.join("src", "environ", "__init__.py")
 CLASSIFIERS = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "License :: OSI Approved :: Apache Software License",
@@ -41,7 +46,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-INSTALL_REQUIRES = ["attrs>=17.4.0"]
+INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
 EXTRAS_REQUIRE = {"tests": ["pytest", "coverage"]}
 EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"]
 
@@ -66,7 +71,9 @@ except NameError:
 try:
     META_PATH
 except NameError:
-    META_PATH = os.path.join(HERE, "src", NAME, "__init__.py")
+    META_PATH = os.path.join(
+        HERE, "src", NAME.replace("-", "_"), "__init__.py"
+    )
 finally:
     META_FILE = read(META_PATH)
 
@@ -105,6 +112,7 @@ if __name__ == "__main__":
         description=find_meta("description"),
         license=find_meta("license"),
         url=URI,
+        project_urls=PROJECT_URLS,
         version=VERSION,
         author=find_meta("author"),
         author_email=find_meta("email"),
@@ -112,6 +120,7 @@ if __name__ == "__main__":
         maintainer_email=find_meta("email"),
         keywords=KEYWORDS,
         long_description=LONG,
+        long_description_content_type="text/x-rst",
         packages=PACKAGES,
         package_dir={"": "src"},
         zip_safe=False,

@@ -94,6 +94,23 @@ class TestIniSecret(object):
 
         assert Cfg("foobar", "used!") == cfg
 
+    def test_default_factory(self, ini):
+        """
+        Defaults are used iff the key is missing.
+        """
+
+        def getpass():
+            return "thesecret"
+
+        @environ.config
+        class Cfg(object):
+            password = ini.secret(default=attr.Factory(getpass))
+            secret = ini.secret(default=attr.Factory(getpass))
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert Cfg("foobar", "thesecret") == cfg
+
     def test_name_overwrite(self, ini):
         """
         Passsing a specific key name is respected.

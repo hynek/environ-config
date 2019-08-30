@@ -121,7 +121,14 @@ def to_config(config_cls, environ=os.environ):
             var = ("_".join(app_prefix + prefix + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(var, ce.default)
+        val = environ.get(
+            var,
+            (
+                attr.NOTHING
+                if isinstance(ce.default, attr.Factory)
+                else ce.default
+            ),
+        )
         if val is RAISE:
             raise MissingEnvValueError(var)
         return val
