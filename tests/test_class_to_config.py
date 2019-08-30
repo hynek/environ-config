@@ -68,7 +68,7 @@ def test_env():
 
     assert environ.to_config(
         ConfigRenamed, environ=env
-    ) == ConfigRenamed.from_environ(environ=env)
+    ) == ConfigRenamed.from_env(environ=env)
 
 
 def test_factory_default():
