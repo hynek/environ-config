@@ -62,15 +62,15 @@ def test_env():
     assert cfg.host == "0.0.0.0"
     assert cfg.port == 5000
 
-    assert environ.to_config(
-        AppConfig, environ=env
-    ) == AppConfig.from_environ(environ=env)
-  
+    assert environ.to_config(AppConfig, environ=env) == AppConfig.from_environ(
+        environ=env
+    )
+
     assert environ.to_config(
         ConfigRenamed, environ=env
     ) == ConfigRenamed.from_environ(environ=env)
 
-    
+
 def test_factory_default():
     """
     Class based ``from_environ`` allows ``attr.Factory`` defaults.
