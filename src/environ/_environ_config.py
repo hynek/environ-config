@@ -54,9 +54,9 @@ def config(
             return environ.generate_help(cls, **kwargs)
 
         cls._prefix = prefix
-        if from_environ:
+        if from_environ is not None:
             setattr(cls, from_environ, classmethod(from_environ_fnc))
-        if generate_help:
+        if generate_help is not None:
             setattr(cls, generate_help, classmethod(generate_help_fnc))
         return attr.s(cls, slots=True)
 

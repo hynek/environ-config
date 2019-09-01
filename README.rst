@@ -54,7 +54,7 @@ environ-config: Configuration with env variables for Python.
 
 ``AppConfig.from_environ({...})`` is equivalent to the code above, depending on your taste.
 
-``@environ.config(prefix="APP", from_environ=...})`` allows to rename generated classmethod  (using string with alternative classmethod name) or to prevent it's creation (passing ``""`` or ``None``)
+``@environ.config(prefix="APP", from_environ=...})`` allows to rename generated classmethod (using string with alternative classmethod name) or to prevent it's creation by passing ``None``.
 
 Features
 ========
@@ -98,7 +98,7 @@ Features
 
 ``AppConfig.generate_help({...})`` is equivalent to the code above, depending on your taste.
 
-``@environ.config(prefix="APP", generate_help=...})`` allows to rename generated classmethod  (using string with alternative classmethod name) or to prevent it's creation (passing ``""`` or ``None``)
+``@environ.config(prefix="APP", generate_help=...})`` allows to rename generated classmethod (using string with alternative classmethod name) or to prevent it's creation  by passing ``None``.
 
 Project Information
 ===================
