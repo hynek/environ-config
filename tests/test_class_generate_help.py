@@ -33,10 +33,14 @@ def test_has_classmethod():
     """
     Class based `generate_help` classmethod exists
     """
-    assert hasattr(AppConfig, "generate_help")
-    assert hasattr(ConfigRenamed, "gen_help")
-    assert not hasattr(ConfigEmptyName, "generate_help")
-    assert not hasattr(ConfigNoneName, "generate_help")
+    sentinel = object()
+    # getattr returning default sentinel value means the att is missing
+    # some attributes are expected
+    assert getattr(AppConfig, "generate_help", sentinel) is not sentinel
+    assert getattr(ConfigRenamed, "gen_help", sentinel) is not sentinel
+    # another attributes shall be missing
+    assert getattr(ConfigEmptyName, "generate_help", sentinel) is sentinel
+    assert getattr(ConfigNoneName, "generate_help", sentinel) is sentinel
 
 
 def test_generated_helps_equals():
