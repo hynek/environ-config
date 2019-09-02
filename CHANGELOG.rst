@@ -4,7 +4,7 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
-19.1.0 (UNRELEASED)
+19.1.0 (2019-09-02)
 -------------------
 
 
