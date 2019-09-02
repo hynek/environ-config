@@ -36,15 +36,28 @@ class Raise(object):
 RAISE = Raise()
 
 
-def config(maybe_cls=None, prefix="APP"):
+def config(
+    maybe_cls=None,
+    prefix="APP",
+    from_environ="from_environ",
+    generate_help="generate_help",
+):
     def wrap(cls):
-        def from_environ(cls, environ=os.environ):
+        def from_environ_fnc(cls, environ=os.environ):
             import environ as environ_config
 
             return environ_config.to_config(cls, environ)
 
+        def generate_help_fnc(cls, **kwargs):
+            import environ
+
+            return environ.generate_help(cls, **kwargs)
+
         cls._prefix = prefix
-        cls.from_environ = classmethod(from_environ)
+        if from_environ is not None:
+            setattr(cls, from_environ, classmethod(from_environ_fnc))
+        if generate_help is not None:
+            setattr(cls, generate_help, classmethod(generate_help_fnc))
         return attr.s(cls, slots=True)
 
     if maybe_cls is None:
