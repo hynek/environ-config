@@ -32,9 +32,7 @@ Changes:
   `#10 <https://github.com/hynek/environ-config/issues/10>`_
 
 
-
 ----
-
 
 
 18.2.0 (2018-01-12)
