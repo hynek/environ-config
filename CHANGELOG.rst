@@ -23,7 +23,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Added ``AppConfig.from_environ()`` to instantiate the config class. This is alternative to ``environ.config()``.
+- Added ``AppConfig.from_environ()`` to instantiate the config class.
+  This is an alternative to ``environ.from_environ(AppConfig)``.
   `#5 <https://github.com/hynek/environ-config/issues/5>`_
 - Added ``environ.generate_help(AppConfig)`` and ``AppConfig.generate_help()`` to create a help string based on the configuration.
 - ``environ.config(from_environ="fr_env", generate_help="gen_hlp")`` allows passing alternative names for class methods ``"from_environ"`` and ``"generate_help"``, or prevent their creation by pasing ``None``.
