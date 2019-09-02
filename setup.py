@@ -98,7 +98,9 @@ LONG = (
     + "Release Information\n"
     + "===================\n\n"
     + re.search(
-        r"(\d+.\d.\d \(.*?\)\n.*?)(\n\n\n----\n)", read("CHANGELOG.rst"), re.S
+        r"(\d+.\d.\d \(.*?\)\r?\n.*?)\r?\n\r?\n\r?\n----\r?\n\r?\n\r?\n",
+        read("CHANGELOG.rst"),
+        re.S,
     ).group(1)
     + "\n\n`Full changelog "
     + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI)
