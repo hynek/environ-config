@@ -102,8 +102,11 @@ LONG = (
         read("CHANGELOG.rst"),
         re.S,
     ).group(1)
-    + "\n\n`Full changelog "
-    + "<{uri}en/stable/changelog.html>`_.\n\n".format(uri=URI)
+    + (
+        "\n\n`Full changelog <"
+        "https://github.com/hynek/environ-config/blob/master/CHANGELOG.rst"
+        ">`_.\n\n"
+    )
     + read("AUTHORS.rst")
 )
 
