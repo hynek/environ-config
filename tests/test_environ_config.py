@@ -16,6 +16,7 @@ from __future__ import absolute_import, division, print_function
 
 import attr
 import pytest
+
 from attr.exceptions import FrozenInstanceError
 
 import environ
@@ -285,14 +286,14 @@ FOO_CHILD_VAR14 (Required)"""
         assert help_str == "Not a good formatter"
 
     def test_frozen(self):
+        """Immutable config."""
+
         @environ.config(frozen=True)
         class Cfg(object):
             x = environ.var()
             y = environ.var()
 
-        cfg = environ.to_config(
-            Cfg, {"APP_X": "foo", "APP_Y": "bar"}
-        )
+        cfg = environ.to_config(Cfg, {"APP_X": "foo", "APP_Y": "bar"})
 
         with pytest.raises(FrozenInstanceError):
             cfg.x = "next_foo"
@@ -300,6 +301,8 @@ FOO_CHILD_VAR14 (Required)"""
         assert cfg.x == "foo"
 
     def test_frozen_child(self):
+        """Child group is immutable."""
+
         @environ.config
         class Cfg(object):
             @environ.config(frozen=True)
