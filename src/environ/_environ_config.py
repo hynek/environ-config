@@ -41,6 +41,7 @@ def config(
     prefix="APP",
     from_environ="from_environ",
     generate_help="generate_help",
+    frozen=False,
 ):
     def wrap(cls):
         def from_environ_fnc(cls, environ=os.environ):
@@ -58,7 +59,7 @@ def config(
             setattr(cls, from_environ, classmethod(from_environ_fnc))
         if generate_help is not None:
             setattr(cls, generate_help, classmethod(generate_help_fnc))
-        return attr.s(cls, slots=True)
+        return attr.s(cls, frozen=frozen, slots=True)
 
     if maybe_cls is None:
         return wrap

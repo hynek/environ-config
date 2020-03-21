@@ -72,6 +72,7 @@ Features
   * INI files, because secrets in env variables are `icky <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
 - Pass any dict into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
 - Built in dynamic help documentation generation via ``environ.generate_help``.
+- Support immutable config classes via ``@environ.config(frozen=True)``.
 
 .. code-block:: pycon
 
