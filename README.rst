@@ -2,9 +2,9 @@
 ``environ-config``: Configuration with env variables for Python.
 ================================================================
 
-.. image:: https://travis-ci.org/hynek/environ-config.svg?branch=master
-   :target: https://travis-ci.org/hynek/environ-config
-   :alt: CI status
+.. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=master
+   :target: https://github.com/hynek/environ-config/actions?workflow=CI
+   :alt: CI Status
 
 .. image:: https://codecov.io/gh/hynek/environ-config/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/hynek/environ-config
