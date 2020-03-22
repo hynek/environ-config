@@ -67,7 +67,7 @@ Features
   Ships with:
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
-  * INI files, because secrets in env variables are.
+  * INI files, because secrets in env variables are icky.
 - Pass any dictionary into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
 - Built in dynamic help documentation generation via ``environ.generate_help``.
 
