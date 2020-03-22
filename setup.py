@@ -48,7 +48,7 @@ CLASSIFIERS = [
 ]
 INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
 EXTRAS_REQUIRE = {
-    "tests": ["pytest", "coverage"],
+    "tests": ["pytest", "coverage[toml]"],
     "docs": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRAS_REQUIRE["dev"] = (
@@ -137,4 +137,5 @@ if __name__ == "__main__":
         classifiers=CLASSIFIERS,
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
+        options={"bdist_wheel": {"universal": "1"}},
     )

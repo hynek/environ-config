@@ -3,6 +3,29 @@ requires = ["setuptools>=40.6.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 
+[tool.coverage.run]
+parallel = true
+branch = true
+source = ["environ"]
+
+[tool.coverage.paths]
+source = ["src", ".tox/*/site-packages"]
+
+[tool.coverage.report]
+show_missing = true
+
 [tool.black]
 line-length = 79
-target-version = ["py27"]
+target-version = ["py27", "py35", "py36", "py37", "py38"]
+
+
+[tool.isort]
+atomic=true
+include_trailing_comma=true
+lines_after_imports=2
+lines_between_types=1
+multi_line_output=3
+not_skip="__init__.py"
+
+known_first_party="environ"
+known_third_party=["attr", "environ", "pytest", "setuptools"]
