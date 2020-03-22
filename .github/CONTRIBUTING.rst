@@ -8,8 +8,6 @@ This document is mainly to help you to get started by codifying tribal knowledge
 But don't be afraid to open half-finished PRs and ask questions if something is unclear!
 
 
-
-
 Workflow
 --------
 
