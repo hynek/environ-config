@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Exceptions raised by environ_config.
+Exceptions raised by *environ-config*.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -24,8 +24,12 @@ class ConfigError(Exception):
 
 
 class MissingEnvValueError(ConfigError):
-    pass
+    """
+    A mandatory environment variable can't be found.
+    """
 
 
 class MissingSecretError(ConfigError):
-    pass
+    """
+    A mandatory secret can't be found.
+    """

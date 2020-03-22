@@ -1,7 +1,7 @@
 How To Contribute
 =================
 
-First off, thank you for considering contributing to ``environ-config``!
+First off, thank you for considering contributing to *environ-config*!
 It's people like *you* who make it is such a great tool for everyone.
 
 This document is mainly to help you to get started by codifying tribal knowledge and expectations and make it more accessible to everyone.
@@ -108,13 +108,13 @@ We highly recommend to develop using the latest Python 3 release because you're 
 First create a `virtual environment <https://virtualenv.pypa.io/>`_.
 It’s out of scope for this document to list all the ways to manage virtual environments in Python but if you don’t have already a pet way, take some time to look at tools like `pew <https://github.com/berdario/pew>`_, `virtualfish <https://virtualfish.readthedocs.io/>`_, and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/>`_.
 
-Next get an up to date checkout of the ``environ-config`` repository:
+Next get an up to date checkout of the *environ-config* repository:
 
 .. code-block:: bash
 
     $ git checkout git@github.com:hynek/environ-config.git
 
-Change into the newly created directory and **after activating your virtual environment** install an editable version of ``environ-config`` along with its test and docs dependencies:
+Change into the newly created directory and **after activating your virtual environment** install an editable version of *environ-config* along with its test and docs dependencies:
 
 .. code-block:: bash
 
@@ -165,7 +165,7 @@ Please note that this project is released with a Contributor `Code of Conduct`_.
 By participating in this project you agree to abide by its terms.
 Please report any harm to `Hynek Schlawack`_ in any way you find appropriate.
 
-Thank you for considering contributing to ``environ-config``!
+Thank you for considering contributing to *environ-config*!
 
 
 .. _`Hynek Schlawack`: https://hynek.me/about/

@@ -47,8 +47,13 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
-EXTRAS_REQUIRE = {"tests": ["pytest", "coverage"]}
-EXTRAS_REQUIRE["dev"] = EXTRAS_REQUIRE["tests"]
+EXTRAS_REQUIRE = {
+    "tests": ["pytest", "coverage"],
+    "docs": ["sphinx", "sphinx_rtd_theme"],
+}
+EXTRAS_REQUIRE["dev"] = (
+    EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["docs"] + ["pre-commit"]
+)
 
 ###############################################################################
 

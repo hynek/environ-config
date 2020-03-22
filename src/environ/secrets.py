@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Handling of sensitive data.
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import codecs
@@ -31,6 +35,11 @@ log = logging.getLogger(__name__)
 
 @attr.s
 class INISecrets(object):
+    """
+    Load secrets from an `INI file <https://en.wikipedia.org/wiki/INI_file>`_
+    using `configparser.RawConfigParser`.
+    """
+
     section = attr.ib()
     _cfg = attr.ib(default=None)
     _env_name = attr.ib(default=None)
@@ -38,19 +47,42 @@ class INISecrets(object):
 
     @classmethod
     def from_path(cls, path, section="secrets"):
+        """
+        Look for secrets in *section* of *path*.
+
+        :param str path: A path to an INI file.
+        :param str section: The section in the INI file to read the secrets
+            from.
+        """
         return cls(section, _load_ini(path), None, None)
 
     @classmethod
     def from_path_in_env(cls, env_name, default=None, section="secrets"):
         """
-        Get and load path only when actually loading config.  Useful in tests
-        for setting up an environment.
+        Get the path from the environment variable *env_name* **at runtime**
+        and then load the secrets from it.
+
+        This allows you to overwrite the path to the secrets file in
+        development.
+
+        :param str env_name: Environment variable that is used to determine the
+            path of the secrets file.
+        :param str default: The default path to load from.
+        :param str section: The section in the INI file to read the secrets
+            from.
         """
         return cls(section, None, env_name, default)
 
     def secret(
         self, default=RAISE, converter=None, name=None, section=None, help=None
     ):
+        """
+        Declare a secret on an `environ.config`-decorated class.
+
+        :param str section: Overwrite the section where to look for the values.
+
+        Other parameters work just like in `environ.var`.
+        """
         if section is None:
             section = self.section
 
@@ -93,12 +125,17 @@ class INISecrets(object):
 @attr.s
 class VaultEnvSecrets(object):
     """
-    Almost identical to regular env vars except that it has its own prefix.
+    Loads secrets from environment variables that follow the naming style from
+    `envconsul <https://github.com/hashicorp/envconsul>`_.
     """
 
     vault_prefix = attr.ib()
 
     def secret(self, default=RAISE, converter=None, name=None, help=None):
+        """
+        Almost identical to `environ.var` except that it takes *envconsul*
+        naming into account.
+        """
         return attr.ib(
             default=default,
             metadata={

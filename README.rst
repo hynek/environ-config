@@ -1,6 +1,6 @@
-================================================================
-``environ-config``: Configuration with env variables for Python.
-================================================================
+==============================================================
+*environ-config*: Application Configuration With Env Variables
+==============================================================
 
 .. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=master
    :target: https://github.com/hynek/environ-config/actions?workflow=CI
@@ -14,9 +14,9 @@
    :target: https://github.com/ambv/black
    :alt: Code style: black
 
-.. begin
+.. -teaser-begin-
 
-``environ-config`` allows you to configure your applications using environment variables – as recommended in `The Twelve-Factor App <https://12factor.net/config>`_ methodology – with elegant, boilerplate-free, and declarative code:
+*environ-config* allows you to configure your applications using environment variables – as recommended in `The Twelve-Factor App <https://12factor.net/config>`_ methodology – with elegant, boilerplate-free, and declarative code:
 
 .. code-block:: pycon
 
@@ -54,51 +54,24 @@
 
 ``AppConfig.from_environ({...})`` is equivalent to the code above, depending on your taste.
 
-``@environ.config(from_environ="different_name_for_from_environ", generatef_help="different_name_for_generate_help")`` allows to rename generated classmethods or to prevent it's creation by passing ``None`` instead of a name.
-
 
 Features
 ========
 
 - Declarative & boilerplate-free.
-- Nested config from flat env variable names.
+- Nested configuration from flat environment variable names.
 - Default & mandatory values: enforce configuration structure without writing a line of code.
-- Helpful debug logging that will tell you which variables are present and what ``environ-config`` is looking for.
+- Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
 - Built on top of `attrs <https://www.attrs.org/>`_ which gives you data validation and conversion for free.
 - Pluggable secrets extraction.
   Ships with:
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
-  * INI files, because secrets in env variables are `icky <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
-- Pass any dict into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
+  * INI files, because secrets in env variables are.
+- Pass any dictionary into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
 - Built in dynamic help documentation generation via ``environ.generate_help``.
-- Your config can be immutable via ``@environ.config(frozen=True)``.
 
-.. code-block:: pycon
-
-  >>> import environ
-  >>> @environ.config(prefix="APP")
-  ... class AppConfig:
-  ...     @environ.config
-  ...     class SubConfig:
-  ...         sit = environ.var(help="Another example message.")
-  ...         amet = environ.var()
-  ...     lorem = environ.var('ipsum')
-  ...     dolor = environ.bool_var(True, help="An example message.")
-  ...     subconfig = environ.group(SubConfig)
-  ...
-  >>> print(environ.generate_help(AppConfig))
-  APP_LOREM (Optional)
-  APP_DOLOR (Optional): An example message.
-  APP_SUBCONFIG_SIT (Required): Another example message.
-  APP_SUBCONFIG_AMET (Required)
-  >>> print(environ.generate_help(AppConfig, display_defaults=True))
-  APP_LOREM (Optional, Default=ipsum)
-  APP_DOLOR (Optional, Default=True): An example message.
-  APP_SUBCONFIG_SIT (Required): Another example message.
-  APP_SUBCONFIG_AMET (Required)
-
-``AppConfig.generate_help({...})`` is equivalent to the code above, depending on your taste.
+.. -teaser-end-
 
 
 Project Information

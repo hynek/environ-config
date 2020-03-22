@@ -22,10 +22,8 @@ import attr
 from .exceptions import MissingEnvValueError
 
 
-log = logging.getLogger(__name__)
-
-
 CNF_KEY = "environ_config"
+log = logging.getLogger(CNF_KEY)
 
 
 @attr.s
@@ -43,16 +41,36 @@ def config(
     generate_help="generate_help",
     frozen=False,
 ):
+    """
+    Make a class a configuration class.
+
+    :param str prefix: The prefix that is used for the env variables.  If you
+        have an `var` attribute on the class and your leave the default
+        *prefix* of ``APP``, *environ-config* will look for an environment
+        variable called ``APP_VAR``.
+    :param str from_environ: If not `None`, attach a config loading method with
+        the name *from_environ* to the class.  See `to_config` for more
+        information.
+    :param str generate_help: If not `None`, attach a config loading method
+        with the name *generate_help* to the class.  See `generate_help` for
+        more information.
+    :param bool frozen: The configuration will be immutable after
+        instantiation, if `True`.
+
+    .. versionadded:: 19.1.0
+       *from_environ*
+    .. versionadded:: 19.1.0
+       *generate_help*
+    .. versionadded:: 20.1.0
+       *frozen*
+    """
+
     def wrap(cls):
         def from_environ_fnc(cls, environ=os.environ):
-            import environ as environ_config
-
-            return environ_config.to_config(cls, environ)
+            return __to_config(cls, environ)
 
         def generate_help_fnc(cls, **kwargs):
-            import environ
-
-            return environ.generate_help(cls, **kwargs)
+            return __generate_help(cls, **kwargs)
 
         cls._prefix = prefix
         if from_environ is not None:
@@ -77,6 +95,26 @@ class _ConfigEntry(object):
 
 
 def var(default=RAISE, converter=None, name=None, validator=None, help=None):
+    """
+    Declare a configuration attribute on the body of `config`-decorated class.
+
+    It will be attempted to be filled from an environment variable based on the
+    prefix and *name*.
+
+    :param default: Setting this to a value makes the config attribute
+        optional.
+    :param str name: Overwrite name detection with a string.  If not set, the
+        name of the attribute is used.
+    :param converter: A callable that is run with the found value and
+        its return value is used.  Please not that it is also run for default
+        values.
+    :param validator: A callable that is run with the final value.
+        See ``attrs``'s `chapter on validation
+        <https://www.attrs.org/en/stable/init.html#validators>`_ for details.
+        You can also use any validator that is `shipped with attrs
+        <https://www.attrs.org/en/stable/api.html#validators>`_.
+    :param str help: A help string that is used by `generate_help`.
+    """
     return attr.ib(
         default=default,
         metadata={CNF_KEY: _ConfigEntry(name, default, None, None, help)},
@@ -99,16 +137,59 @@ def _env_to_bool(val):
 
 
 def bool_var(default=RAISE, name=None, help=None):
+    """
+    Like `var`, but converts the value to a `bool`.
+
+    The following values are considered `True`:
+
+    - ``True`` (if you set a *default*)
+    - ``"1"``
+    - ``"true"``
+    - ``"yes"``
+
+    Every other value is interpreted as `False`.  Leading and trailing
+    whitespace is ignored.
+    """
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
 def group(cls):
+    """
+    A configuration attribute that is another configuration class.
+
+    This way you can nest your configuration hierarchically although the values
+    are coming from a flat source.
+
+    The group's name is used to build a namespace::
+
+       @environ.config
+       class Cfg:
+           @environ.config
+           class Sub:
+               x = environ.var()
+
+           sub = environ.group(Sub)
+
+    The value of ``x`` is looked up using ``APP_SUB_X``.
+
+    You can nest your configuration as deeply as you wish.
+    """
     return attr.ib(
         default=None, metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
     )
 
 
 def to_config(config_cls, environ=os.environ):
+    """
+    Load the configuration as declared by *config_cls* from *environ*.
+
+    :param config_cls: The configuration class to fill.
+    :param dict environ: Source of the configuration.  `os.environ` by default.
+
+    :returns: An instance of *config_cls*.
+
+    This is equivalent to calling ``config_cls.from_environ()``.
+    """
     if config_cls._prefix:
         app_prefix = (config_cls._prefix,)
     else:
@@ -225,18 +306,30 @@ def _generate_help_dicts(config_cls, _prefix=None):
     return help_dicts
 
 
-def generate_help(config_cls, **kwargs):
+def generate_help(config_cls, formatter=None, **kwargs):
     """
     Autogenerate a help string for a config class.
 
-    If a callable is provided via the "formatter" kwarg it
-    will be provided with the help dictionaries as an argument
-    and any other kwargs provided to this function. That callable
-    should return the help text string.
+    :param formatter: A callable that will be called with the help dictionaries
+       as an argument and the remaining *kwargs*.  It should return the help
+       string.
+    :param bool display_defaults: When using the default formatter, passing
+       `True` for *display_defaults* makes the default values part of the
+       output.
+
+    :returns: A help string that can be printed to the user.
+
+    This is equivalent to calling ``config_cls.generate_help()``.
+
+    .. versionadded:: 19.1.0
     """
-    try:
-        formatter = kwargs.pop("formatter")
-    except KeyError:
+    if formatter is None:
         formatter = _format_help_dicts
     help_dicts = _generate_help_dicts(config_cls)
+
     return formatter(help_dicts, **kwargs)
+
+
+# We need these aliases because of a name clash with a function argument.
+__generate_help = generate_help
+__to_config = to_config

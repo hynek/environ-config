@@ -7,3 +7,4 @@
 dist
 htmlcov
 pip-wheel-metadata
+docs/_build
