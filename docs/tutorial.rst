@@ -49,7 +49,7 @@ As you can see, since we used `environ.bool_var`, the ``"yes"`` string has been 
 
 
 Defaults
-++++++++
+--------
 
 Now let's assume you want to keep ``AppConfig.value`` on 42, but have an option to overwrite it when needed.
 Assign a default value for it and that will be used if the variable in question is not present:
@@ -85,7 +85,7 @@ But you can still overwrite it if needed:
 
 
 Nesting
-+++++++
+-------
 
 Sometimes it makes sense to give your configuration more structure than a flat class.
 For that *environ-config* comes with the concept of groups; implemented using `environ.group`:
@@ -114,7 +114,7 @@ For that *environ-config* comes with the concept of groups; implemented using `e
 
 
 Converters
-++++++++++
+----------
 
 *environ-config* also inherited ``attrs``'s converters.
 They are especially useful with integers or `enum` s:
@@ -140,7 +140,7 @@ As an added benefit, they also validate the values for you.
 
 
 Validation
-++++++++++
+----------
 
 You can take validation much further thanks to ``attrs``'s validation system:
 
@@ -166,7 +166,7 @@ Check out ``attrs``'s `documentation <https://www.attrs.org/en/stable/init.html#
 
 
 Secrets
-+++++++
+-------
 
 Secrets should be stored in specialized systems and `not passed as environment variables <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_ .
 The 12 Factor App manifesto is plain wrong here.
@@ -198,7 +198,7 @@ And in production it will just work without any further work.
 
 
 Debugging
-+++++++++
+---------
 
 *environ-config* comes with two tools to help you to debug your configuration.
 Firstly, you can tell it to generate a help string using `environ.generate_help`/``AppConfig.generate_help()``:
