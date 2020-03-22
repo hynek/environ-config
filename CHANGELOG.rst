@@ -4,6 +4,32 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
+20.1.0 (UNRELEASED)
+-------------------
+
+
+Backward-incompatible changes:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*none*
+
+
+Deprecations:
+^^^^^^^^^^^^^
+
+*none*
+
+
+Changes:
+^^^^^^^^
+
+- Configurations can be frozen now.
+  `#12 <https://github.com/hynek/environ-config/issues/12>`_
+
+
+----
+
+
 19.1.0 (2019-09-02)
 -------------------
 

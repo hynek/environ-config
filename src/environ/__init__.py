@@ -24,7 +24,7 @@ from ._environ_config import (
 from .exceptions import MissingEnvValueError
 
 
-__version__ = "19.2.0.dev0"
+__version__ = "20.1.0.dev0"
 
 __title__ = "environ_config"
 __description__ = "Boilerplate-free configuration with env variables."
@@ -34,7 +34,7 @@ __author__ = "Hynek Schlawack"
 __email__ = "hs@ox.cx"
 
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2017 {0}".format(__author__)
+__copyright__ = "Copyright (c) 2017 " + __author__
 
 
 __all__ = [
