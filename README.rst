@@ -65,15 +65,14 @@ Features
 - Declarative & boilerplate-free.
 - Nested configuration from flat environment variable names.
 - Default & mandatory values: enforce configuration structure without writing a line of code.
-- Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
 - Built on top of `attrs <https://www.attrs.org/>`_ which gives you data validation and conversion for free.
 - Pluggable secrets extraction.
   Ships with:
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
   * INI files, because secrets in env variables are icky.
-- Pass any dictionary into ``environ.to_config(AppConfig, {"your": "config"})`` instead of loading from the environment.
-- Built in dynamic help documentation generation via ``environ.generate_help``.
+- Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
+- Built-in dynamic help documentation generation.
 
 .. -teaser-end-
 
@@ -83,6 +82,6 @@ You can find the full documentation including a step-by-step tutorial on `Read t
 Project Information
 ===================
 
-``environ-config`` is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
+*environ-config* is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
 It targets Python 2.7, 3.5 and newer, and PyPy.
 Development takes place on `GitHub <https://github.com/hynek/environ-config>`_.
