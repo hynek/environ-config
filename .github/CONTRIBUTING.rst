@@ -174,7 +174,7 @@ Thank you for considering contributing to *environ-config*!
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
 .. _`Code of Conduct`: https://github.com/hynek/environ-config/blob/master/.github/CODE_OF_CONDUCT.rst
 .. _changelog: https://github.com/hynek/environ-config/blob/master/CHANGELOG.rst
-.. _`backward compatibility`: https://www.environ-config.org/en/latest/backward-compatibility.html
+.. _`backward compatibility`: https://environ-config.readthedocs.io/en/latest/backward-compatibility.html
 .. _tox: https://tox.readthedocs.io/
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
