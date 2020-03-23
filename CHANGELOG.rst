@@ -4,7 +4,7 @@ Changelog
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
 
 
-20.1.0 (UNRELEASED)
+20.1.0 (2020-03-23)
 -------------------
 
 
