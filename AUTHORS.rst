@@ -1,7 +1,7 @@
 Credits
 =======
 
-*environ-config* is written and maintained by `Hynek Schlawack <https://hynek.me/>`_ -- why not `buy him a coffee <https://ko-fi.com/the_hynek>`_ for all the years of maintenance?
+*environ-config* is written and maintained by `Hynek Schlawack <https://hynek.me/>`_ – why not `buy him a coffee <https://ko-fi.com/the_hynek>`_ for all the years of maintenance?
 
 The development is kindly supported by `Variomedia AG <https://www.variomedia.de/>`_.
 
