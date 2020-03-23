@@ -2,6 +2,10 @@
 *environ-config*: Application Configuration With Env Variables
 ==============================================================
 
+.. image:: https://readthedocs.org/projects/environ-config/badge/?version=stable
+   :target: https://environ-config.readthedocs.io/
+   :alt: Documentation Status
+
 .. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=master
    :target: https://github.com/hynek/environ-config/actions?workflow=CI
    :alt: CI Status
@@ -73,9 +77,12 @@ Features
 
 .. -teaser-end-
 
+You can find the full documentation including a step-by-step tutorial on `Read the Docs <https://environ-config.readthedocs.io/>`_.
+
 
 Project Information
 ===================
 
 ``environ-config`` is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
 It targets Python 2.7, 3.5 and newer, and PyPy.
+Development takes place on `GitHub <https://github.com/hynek/environ-config>`_.
