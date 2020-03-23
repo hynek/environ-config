@@ -23,7 +23,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Configurations can be frozen now.
+- Configurations can be immutable now.
   `#12 <https://github.com/hynek/environ-config/issues/12>`_
 
 
@@ -49,11 +49,11 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Added ``AppConfig.from_environ()`` to instantiate the config class.
+- Added ``AppConfig.from_environ()`` to instantiate the configuration class.
   This is an alternative to ``environ.from_environ(AppConfig)``.
   `#5 <https://github.com/hynek/environ-config/issues/5>`_
 - Added ``environ.generate_help(AppConfig)`` and ``AppConfig.generate_help()`` to create a help string based on the configuration.
-- ``environ.config(from_environ="fr_env", generate_help="gen_hlp")`` allows passing alternative names for class methods ``"from_environ"`` and ``"generate_help"``, or prevent their creation by pasing ``None``.
+- Allow passing customization of the ``"from_environ"`` and ``"generate_help"`` class methods.
   `#7 <https://github.com/hynek/environ-config/issues/7>`_
 - If ``environ.var`` is passed an ``attr.Factory``, the callable is used to generate the default value.
   `#10 <https://github.com/hynek/environ-config/issues/10>`_

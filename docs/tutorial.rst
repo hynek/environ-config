@@ -31,7 +31,9 @@ This is what we will do in this tutorial to make things more transparent.
 
 .. note::
 
-   The class and the configuration attributes can have any valid Python name.
+   The class and the configuration attributes can have *any* valid Python name.
+   The fact that all our configurations are called ``AppConfig`` is just *our* naming convention.
+
    If you want to use an invalid name for the environment variable, you can overwrite the attribute name using the *name* argument to `environ.to_config`.
 
 So in this case, *environ-config* will look for two environment variables: ``APP_VALUE`` and ``APP_FLAG``.
