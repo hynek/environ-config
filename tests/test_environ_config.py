@@ -260,6 +260,7 @@ FOO_CHILD_VAR14 (Required)"""
         display_defaults=True makes the defaults be shown.
         """
         help_str = environ.generate_help(Parent, display_defaults=True)
+
         assert (
             help_str
             == """FOO_VAR1 (Required): var1, no default
@@ -279,14 +280,21 @@ FOO_CHILD_VAR14 (Required)"""
         )
 
     def test_custom_formatter(self):
+        """
+        Custom formatters can be passed and are used.
+        """
+
         def bad_formatter(help_dicts):
             return "Not a good formatter"
 
         help_str = environ.generate_help(Parent, formatter=bad_formatter)
+
         assert help_str == "Not a good formatter"
 
     def test_frozen(self):
-        """Immutable config."""
+        """
+        Frozen configurations are immutable.
+        """
 
         @environ.config(frozen=True)
         class Cfg(object):
@@ -301,7 +309,9 @@ FOO_CHILD_VAR14 (Required)"""
         assert cfg.x == "foo"
 
     def test_frozen_child(self):
-        """Child group is immutable."""
+        """
+        Frozen child groups are immutable.
+        """
 
         @environ.config
         class Cfg(object):
@@ -318,6 +328,7 @@ FOO_CHILD_VAR14 (Required)"""
         )
 
         cfg.x = "next_foo"
+
         assert cfg.x == "next_foo"
 
         with pytest.raises(FrozenInstanceError):
