@@ -2,6 +2,31 @@ Changelog
 =========
 
 Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
+The third digit is only for regressions.
+
+
+20.2.0 (UNRELEASED)
+-------------------
+
+
+Backward-incompatible changes:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*none*
+
+Deprecations:
+^^^^^^^^^^^^^
+
+*none*
+
+
+Changes:
+^^^^^^^^
+
+*none*
+
+
+----
 
 
 20.1.0 (2020-03-23)
