@@ -261,6 +261,49 @@ def _format_help_dicts(help_dicts, display_defaults=False):
     return "\n".join(help_strs)
 
 
+def _generate_var_name(prefix, field_name):
+    """
+    Generate the environment variable name, given a prefix
+    and the configuration field name.
+
+    Examples:
+
+    >>> _generate_var_name("", "some_var")
+    "SOME_VAR"
+    >>> _generate_var_name("my_app", "some_var")
+    "MY_APP_SOME_VAR"
+
+    :param prefix: the prefix to be used, can be empty
+    :param field_name: the name of the field from which the variable is derived
+    """
+    return (
+        "_".join((prefix, field_name)).upper()
+        if prefix
+        else field_name.upper()
+    )
+
+
+def _generate_new_prefix(current_prefix, class_name):
+    """
+    Generate the new prefix to be used when handling nested configurations.
+
+    Examples:
+
+    >>> _generate_new_prefix("", "config_group_1")
+    "CONFIG_GROUP_1"
+    >>> _generate_new_prefix("my_app", "another_config_group")
+    "MY_APP_ANOTHER_CONFIG_GROUP"
+
+    :param prefix: the prefix to be used, can be empty
+    :param field_name: the name of the field from which the variable is derived
+    """
+    return (
+        "_".join((current_prefix, class_name)).upper()
+        if current_prefix
+        else class_name.upper()
+    )
+
+
 def _generate_help_dicts(config_cls, _prefix=None):
     """
     Generate dictionaries for use in building help strings.
@@ -289,7 +332,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
             continue
         if ce.sub_cls is None:  # Base case for "leaves".
             if ce.name is None:
-                var_name = "_".join((_prefix, a.name)).upper()
+                var_name = _generate_var_name(_prefix, a.name)
             else:
                 var_name = ce.name
             req = ce.default == RAISE
@@ -301,7 +344,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
             help_dicts.append(help_dict)
         else:  # Construct the new prefix and recurse.
             help_dicts += _generate_help_dicts(
-                ce.sub_cls, _prefix="_".join((_prefix, a.name)).upper()
+                ce.sub_cls, _prefix=_generate_new_prefix(_prefix, a.name)
             )
     return help_dicts
 

@@ -23,7 +23,9 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Fixed environment variables' names when prefix is empty.
+  `#14 <https://github.com/hynek/environ-config/pull/14>`_
+
 
 
 ----

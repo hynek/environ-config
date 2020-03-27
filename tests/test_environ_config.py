@@ -62,6 +62,13 @@ class Parent(object):
     child = environ.group(Child)
 
 
+@environ.config(prefix="")
+class NoPrefix(object):
+    a_var = environ.var(help="a_var, no default")
+    another_var = environ.var("bar", help="another_var, has default")
+    _start_with_underscore = environ.var(help="this starts with an underscore")
+
+
 class TestEnvironConfig(object):
     def test_empty(self):
         """
@@ -277,6 +284,19 @@ DOG2 (Optional, Default=canine): var11, named, has default
 CAT2 (Required): var12, named, no default
 FOO_CHILD_VAR13 (Optional, Default=default)
 FOO_CHILD_VAR14 (Required)"""
+        )
+
+    def test_generate_help_str_when_prefix_is_empty(self):
+        """
+        Environment variables' names don't start with an underscore
+        """
+        help_str = environ.generate_help(NoPrefix)
+
+        assert (
+            help_str
+            == """A_VAR (Required): a_var, no default
+ANOTHER_VAR (Optional): another_var, has default
+_START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         )
 
     def test_custom_formatter(self):
