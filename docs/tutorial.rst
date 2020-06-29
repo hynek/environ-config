@@ -230,5 +230,8 @@ Firstly, you can tell it to generate a help string using `environ.generate_help`
   APP_SUBCONFIG_SIT (Required): Another example message.
   APP_SUBCONFIG_AMET (Required)
 
-The other option is to activate debug-level logging for the ``environ_config`` logger by setting its level to ``logging.WARNING``.
-*environ-config* will tell you what its looking for in real time.
+The other option is to activate debug-level logging for the ``environ_config`` logger by setting its level to ``logging.DEBUG``.
+*environ-config* will tell you what its looking for in real time::
+
+   import logging
+   logging.getLogger("environ_config").setLevel("DEBUG")
