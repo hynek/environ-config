@@ -153,7 +153,7 @@ def bool_var(default=RAISE, name=None, help=None):
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
-def group(cls):
+def group(cls, optional=False):
     """
     A configuration attribute that is another configuration class.
 
@@ -173,10 +173,97 @@ def group(cls):
     The value of ``x`` is looked up using ``APP_SUB_X``.
 
     You can nest your configuration as deeply as you wish.
+
+    The *optional* keyword argument can be used to mark a *group* referencing
+    a "child" *config* object so that if all variables defined in the child
+    (including sub-groups) are not present in the environment being parsed, the
+    attribute corresponding to the *optional* *group* will be set to `None`.
+
+    :param bool optional: Mark this group as *optional*. Defaults to `False`.
+
+    :returns: An attribute which will be used as a nested *group* of variables.
+
+    .. versionadded:: 21.1.0
+       *optional*
     """
+    default = None if optional else RAISE
     return attr.ib(
-        default=None, metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
+        default=default,
+        metadata={CNF_KEY: _ConfigEntry(None, default, cls, True)},
     )
+
+
+def _default_getter(environ, metadata, prefix, name):
+    """
+    This default lookup implementation simply gets values from *environ*.
+    """
+    ce = metadata[CNF_KEY]
+    if ce.name is not None:
+        var = ce.name
+    else:
+        var = "_".join(prefix + (name,)).upper()
+    log.debug("looking for env var '%s'.", var)
+    try:
+        return environ[var]
+    except KeyError:
+        raise MissingEnvValueError(var)
+
+
+def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
+    """
+    Traverse *config_cls* to construct an instance with values from *environ*.
+
+    This function walks through a potential tree of config definition classes
+    and uses the specified (via attributes set through class construction) or
+    default implementation of config variable lookup to collect values from the
+    provided *environ* object. The collected configuration values (including
+    sub-config objects, e.g. for groups) are used to instantiate the
+    well-structured *config_cls* with those values being accessible via the new
+    object's attributes.
+    """
+    # We keep track of values we actually got from the getter vs those we set
+    # from the `ConfigEntry` default value
+    got = {}
+    defaulted = {}
+    missing_vars = set()
+
+    for attr_obj in attr.fields(config_cls):
+        try:
+            ce = attr_obj.metadata[CNF_KEY]
+        except KeyError:
+            continue
+        name = attr_obj.name
+
+        if ce.sub_cls is not None:
+            got[name] = _to_config_recurse(
+                ce.sub_cls, environ, prefixes + (name,), default=ce.default
+            )
+        else:
+            getter = ce.callback or _default_getter
+            try:
+                got[name] = getter(environ, attr_obj.metadata, prefixes, name)
+            except MissingEnvValueError as exc:
+                if isinstance(ce.default, Raise):
+                    missing_vars |= set(exc.args)
+                else:
+                    defaulted[name] = (
+                        attr.NOTHING
+                        if isinstance(ce.default, attr.Factory)
+                        else ce.default
+                    )
+
+    if missing_vars:
+        # If we were told to raise OR if we got *any* values for our attrs, we
+        # will raise a `MissingEnvValueError` with all the missing variables
+        if isinstance(default, Raise) or got:
+            raise MissingEnvValueError(*missing_vars)
+        # otherwise we will simply use the default passed into this call
+        else:
+            # Should be no need to handle `Factory`s here
+            return default
+    # Merge the defaulted and actually collected values into the config type
+    defaulted.update(got)
+    return config_cls(**defaulted)
 
 
 def to_config(config_cls, environ=os.environ):
@@ -190,54 +277,8 @@ def to_config(config_cls, environ=os.environ):
 
     This is equivalent to calling ``config_cls.from_environ()``.
     """
-    if config_cls._prefix:
-        app_prefix = (config_cls._prefix,)
-    else:
-        app_prefix = ()
-
-    def default_get(environ, metadata, prefix, name):
-        ce = metadata[CNF_KEY]
-        if ce.name is not None:
-            var = ce.name
-        else:
-            var = ("_".join(app_prefix + prefix + (name,))).upper()
-
-        log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(
-            var,
-            (
-                attr.NOTHING
-                if isinstance(ce.default, attr.Factory)
-                else ce.default
-            ),
-        )
-        if val is RAISE:
-            raise MissingEnvValueError(var)
-        return val
-
-    return _to_config(config_cls, default_get, environ, ())
-
-
-def _to_config(config_cls, default_get, environ, prefix):
-    vals = {}
-    for a in attr.fields(config_cls):
-        try:
-            ce = a.metadata[CNF_KEY]
-        except KeyError:
-            continue
-        if ce.sub_cls is None:
-            get = ce.callback or default_get
-            val = get(environ, a.metadata, prefix, a.name)
-        else:
-            val = _to_config(
-                ce.sub_cls,
-                default_get,
-                environ,
-                prefix + ((a.name if prefix else a.name),),
-            )
-
-        vals[a.name] = val
-    return config_cls(**vals)
+    app_prefix = (config_cls._prefix,) if config_cls._prefix else tuple()
+    return _to_config_recurse(config_cls, environ, app_prefix)
 
 
 def _format_help_dicts(help_dicts, display_defaults=False):

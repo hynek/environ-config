@@ -110,7 +110,7 @@ class INISecrets(object):
         if ce.name is not None:
             var = ce.name
         else:
-            var = "_".join((prefix + (name,)))
+            var = "_".join((prefix[1:] + (name,)))
         try:
             log.debug("looking for '%s' in section '%s'." % (var, section))
             return _SecretStr(self._cfg.get(section, var))
@@ -154,7 +154,7 @@ class VaultEnvSecrets(object):
                 vp = self.vault_prefix(environ)
             else:
                 vp = self.vault_prefix
-            var = "_".join(((vp,) + prefix + (name,))).upper()
+            var = "_".join(((vp,) + prefix[1:] + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
         val = environ.get(
