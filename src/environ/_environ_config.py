@@ -335,7 +335,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
                 var_name = _generate_var_name(_prefix, a.name)
             else:
                 var_name = ce.name
-            req = ce.default == RAISE
+            req = isinstance(ce.default, Raise)
             help_dict = {"var_name": var_name, "required": req}
             if not req:
                 help_dict["default"] = ce.default

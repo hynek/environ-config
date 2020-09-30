@@ -26,7 +26,7 @@ from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from ._environ_config import CNF_KEY, RAISE, _ConfigEntry
+from ._environ_config import CNF_KEY, RAISE, Raise, _ConfigEntry
 from .exceptions import MissingSecretError
 
 
@@ -117,7 +117,7 @@ class INISecrets(object):
         except NoOptionError:
             if isinstance(ce.default, attr.Factory):
                 return attr.NOTHING
-            elif ce.default is not RAISE:
+            elif not isinstance(ce.default, Raise):
                 return ce.default
             raise MissingSecretError(var)
 
@@ -165,7 +165,7 @@ class VaultEnvSecrets(object):
                 else ce.default
             ),
         )
-        if val is RAISE:
+        if isinstance(val, Raise):
             raise MissingSecretError(var)
         return _SecretStr(val)
 
