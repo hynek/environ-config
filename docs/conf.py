@@ -78,7 +78,7 @@ todo_include_todos = False
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 
 
 # Theme options are theme-specific and customize the look and feel of a theme

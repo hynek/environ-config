@@ -42,6 +42,8 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -49,7 +51,7 @@ CLASSIFIERS = [
 INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "coverage[toml]"],
-    "docs": ["sphinx", "sphinx_rtd_theme"],
+    "docs": ["sphinx", "furo"],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["docs"] + ["pre-commit"]
