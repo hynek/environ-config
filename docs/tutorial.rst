@@ -114,6 +114,62 @@ For that *environ-config* comes with the concept of groups; implemented using `e
 
    Some libraries like `SQLAlchemy <https://www.sqlalchemy.org>`_ or the `Redis <https://redis-py.readthedocs.io/>`_ package allow you to pass URL strings directly into them.
 
+`environ.group` objects may also be marked as ``optional`` to handle situations where the configuration variables described in that group are not present in the environment but the application is capable of continuing without that data.
+This might be used, as an example, for configuring application components which are entirely optional, have multi-variable configuration and must be fully configured via the environment if configured at all.
+
+.. doctest::
+
+   >>> @environ.config
+   ... class AppConfig:
+   ...     @environ.config
+   ...     class ComponentConfiguration:
+   ...         value = environ.var()
+   ...         flag = environ.bool_var()
+   ...
+   ...     component = environ.group(ComponentConfiguration, optional=True)
+   >>> AppConfig.from_environ(environ={})
+   AppConfig(component=None)
+   >>> AppConfig.from_environ(environ={
+   ...     "APP_COMPONENT_VALUE": "foo",
+   ...     "APP_COMPONENT_FLAG": "yes",
+   ... })
+   AppConfig(component=AppConfig.ComponentConfiguration(value='foo', flag=True))
+
+An `environ.group` which is ``optional`` will be set to `None` in an instantiated `environ.config` if *none* of its children are present in the environment being loaded from.
+If *any* of the children are defined, then the `group` will be instantiated as normal which means that *all* of its required children must be defined.
+This ensures that the `group` is either absent or fully defined.
+
+.. doctest::
+
+   >>> @environ.config
+   ... class AppConfig:
+   ...     @environ.config
+   ...     class ComponentConfiguration:
+   ...         required_1 = environ.var()
+   ...         required_2 = environ.var()
+   ...         optional = environ.var(default=42)
+   ...
+   ...     component = environ.group(ComponentConfiguration, optional=True)
+   >>> AppConfig.from_environ(environ={})
+   AppConfig(component=None)
+   >>> AppConfig.from_environ(environ={
+   ...     "APP_COMPONENT_REQUIRED_1": "foo",
+   ...     "APP_COMPONENT_REQUIRED_2": "bar",
+   ... })
+   AppConfig(component=AppConfig.ComponentConfiguration(required_1='foo', required_2='bar', optional=42))
+   >>> AppConfig.from_environ(environ={
+   ...     "APP_COMPONENT_REQUIRED_1": "foo",
+   ... })
+   Traceback (most recent call last):
+      ...
+   environ.exceptions.MissingEnvValueError: APP_COMPONENT_REQUIRED_2
+   >>> AppConfig.from_environ(environ={
+   ...     "APP_COMPONENT_OPTIONAL": "baz",
+   ... })
+   Traceback (most recent call last):
+      ...
+   environ.exceptions.MissingEnvValueError: ('APP_COMPONENT_REQUIRED_1', 'APP_COMPONENT_REQUIRED_2')
+
 
 Converters
 ----------
