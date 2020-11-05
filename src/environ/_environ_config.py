@@ -26,6 +26,29 @@ CNF_KEY = "environ_config"
 log = logging.getLogger(CNF_KEY)
 
 
+# We define a sentinel for when prefixes are not set and special handling for
+# what value to use at the app level when that is the case
+class Sentinel(object):
+    def __init__(self, bool_=True):
+        self._bool = bool(bool_)
+
+    def __bool__(self):
+        return self._bool
+
+    __nonzero__ = __bool__  # For Python 2 compatibility
+
+
+PREFIX_NOT_SET = Sentinel(False)
+DEFAULT_PREFIX = "APP"
+
+
+def _get_prefix(obj):
+    """
+    Get the prefix of an environ object or the default value if it is not set.
+    """
+    return obj._prefix if obj._prefix is not PREFIX_NOT_SET else DEFAULT_PREFIX
+
+
 @attr.s
 class Raise(object):
     pass
@@ -36,7 +59,7 @@ RAISE = Raise()
 
 def config(
     maybe_cls=None,
-    prefix="APP",
+    prefix=PREFIX_NOT_SET,
     from_environ="from_environ",
     generate_help="generate_help",
     frozen=False,
@@ -45,9 +68,10 @@ def config(
     Make a class a configuration class.
 
     :param str prefix: The prefix that is used for the env variables.  If you
-        have an `var` attribute on the class and your leave the default
-        *prefix* of ``APP``, *environ-config* will look for an environment
-        variable called ``APP_VAR``.
+        have an `var` attribute on the class and you leave the default argument
+        value of *PREFIX_NOT_SET*, the *DEFAULT_PREFIX* value of ``APP`` will
+        be used and *environ-config* will look for an environment variable
+        called ``APP_VAR``.
     :param str from_environ: If not `None`, attach a config loading method with
         the name *from_environ* to the class.  See `to_config` for more
         information.
@@ -63,6 +87,8 @@ def config(
        *generate_help*
     .. versionadded:: 20.1.0
        *frozen*
+    .. versionchanged:: 21.1.0
+       *prefix* now defaults to *PREFIX_NOT_SET* instead of ``APP``.
     """
 
     def wrap(cls):
@@ -235,8 +261,9 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
         name = attr_obj.name
 
         if ce.sub_cls is not None:
+            prefix = ce.sub_cls._prefix or name
             got[name] = _to_config_recurse(
-                ce.sub_cls, environ, prefixes + (name,), default=ce.default
+                ce.sub_cls, environ, prefixes + (prefix,), default=ce.default
             )
         else:
             getter = ce.callback or _default_getter
@@ -277,7 +304,9 @@ def to_config(config_cls, environ=os.environ):
 
     This is equivalent to calling ``config_cls.from_environ()``.
     """
-    app_prefix = (config_cls._prefix,) if config_cls._prefix else tuple()
+    # The canonical app prefix might be falsey in which case we'll still set
+    # the default prefix for this top level config object
+    app_prefix = tuple(p for p in (_get_prefix(config_cls),) if p)
     return _to_config_recurse(config_cls, environ, app_prefix)
 
 
@@ -345,7 +374,7 @@ def _generate_new_prefix(current_prefix, class_name):
     )
 
 
-def _generate_help_dicts(config_cls, _prefix=None):
+def _generate_help_dicts(config_cls, _prefix=PREFIX_NOT_SET):
     """
     Generate dictionaries for use in building help strings.
 
@@ -364,8 +393,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
     vs explicitly setting a value to None.
     """
     help_dicts = []
-    if _prefix is None:
-        _prefix = config_cls._prefix
+    _prefix = _prefix if _prefix is not PREFIX_NOT_SET else config_cls._prefix
     for a in attr.fields(config_cls):
         try:
             ce = a.metadata[CNF_KEY]
