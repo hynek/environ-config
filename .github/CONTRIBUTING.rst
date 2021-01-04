@@ -182,4 +182,4 @@ Thank you for considering contributing to *environ-config*!
 .. _CI: https://github.com/hynek/environ-config/actions?query=workflow%3ACI
 .. _black: https://github.com/psf/black
 .. _pre-commit: https://pre-commit.com/
-.. _isort: https://github.com/timothycrosley/isort
+.. _isort: https://github.com/PyCQA/isort
