@@ -16,11 +16,14 @@ from __future__ import absolute_import, division, print_function
 
 import logging
 import os
+import sys
 
 import attr
 
 from .exceptions import MissingEnvValueError
 
+
+PY2 = sys.version_info[0] == 2
 
 CNF_KEY = "environ_config"
 log = logging.getLogger(CNF_KEY)
@@ -35,7 +38,8 @@ class Sentinel(object):
     def __bool__(self):
         return self._bool
 
-    __nonzero__ = __bool__  # For Python 2 compatibility
+    if PY2:
+        __nonzero__ = __bool__
 
 
 PREFIX_NOT_SET = Sentinel(False)
