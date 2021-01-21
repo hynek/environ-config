@@ -5,7 +5,7 @@ Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility g
 The third digit is only for regressions.
 
 
-20.2.0 (UNRELEASED)
+21.1.0 (UNRELEASED)
 -------------------
 
 
@@ -25,7 +25,8 @@ Changes:
 
 - Fixed environment variables' names when prefix is empty.
   `#14 <https://github.com/hynek/environ-config/pull/14>`_
-
+- Added the ``optional`` keyword argument to ``environ.group()``
+  `#17 <https://github.com/hynek/environ-config/pull/17>`_
 
 
 ----
