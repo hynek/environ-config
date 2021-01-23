@@ -33,6 +33,17 @@ from .exceptions import MissingSecretError
 log = logging.getLogger(__name__)
 
 
+def _get_default_secret(var, default):
+    """
+    Get default or raise MissingSecretError.
+    """
+    if isinstance(default, attr.Factory):
+        return attr.NOTHING
+    elif isinstance(default, Raise):
+        raise MissingSecretError(var)
+    return default
+
+
 @attr.s
 class INISecrets(object):
     """
@@ -113,13 +124,10 @@ class INISecrets(object):
             var = "_".join((prefix[1:] + (name,)))
         try:
             log.debug("looking for '%s' in section '%s'." % (var, section))
-            return _SecretStr(self._cfg.get(section, var))
+            val = self._cfg.get(section, var)
+            return _SecretStr(val)
         except NoOptionError:
-            if isinstance(ce.default, attr.Factory):
-                return attr.NOTHING
-            elif not isinstance(ce.default, Raise):
-                return ce.default
-            raise MissingSecretError(var)
+            return _get_default_secret(var, ce.default)
 
 
 @attr.s
@@ -157,17 +165,11 @@ class VaultEnvSecrets(object):
             var = "_".join(((vp,) + prefix[1:] + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(
-            var,
-            (
-                attr.NOTHING
-                if isinstance(ce.default, attr.Factory)
-                else ce.default
-            ),
-        )
-        if isinstance(val, Raise):
-            raise MissingSecretError(var)
-        return _SecretStr(val)
+        try:
+            val = environ[var]
+            return _SecretStr(val)
+        except KeyError:
+            return _get_default_secret(var, ce.default)
 
 
 class _SecretStr(str):
