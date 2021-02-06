@@ -44,6 +44,10 @@ def _get_default_secret(var, default):
     return default
 
 
+def _open_file(path):
+    return codecs.open(path, mode="r", encoding="utf-8")
+
+
 @attr.s
 class INISecrets(object):
     """
@@ -202,7 +206,7 @@ def _load_ini(path):
     Load an INI file from *path*.
     """
     cfg = RawConfigParser()
-    with codecs.open(path, mode="r", encoding="utf-8") as f:
+    with _open_file(path) as f:
         cfg.read_file(f)
 
     return cfg
