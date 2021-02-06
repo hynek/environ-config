@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 
 import codecs
 import logging
+import os
 import sys
 
 from configparser import NoOptionError, RawConfigParser
@@ -132,6 +133,75 @@ class INISecrets(object):
             return _SecretStr(val)
         except NoOptionError:
             return _get_default_secret(var, ce.default)
+
+
+@attr.s
+class DirectorySecrets(object):
+    """
+    Load secrets from a directory containing secrets in separate files.
+    Suitable for reading Docker or Kubernetes secrets
+    from the filesystem inside a container.
+    """
+
+    secrets_dir = attr.ib()
+    _env_name = attr.ib(default=None)
+
+    @classmethod
+    def from_docker(cls):
+        """
+        Read from Docker secrets default directory in a container.
+        """
+        return cls("/run/secrets/")
+
+    @classmethod
+    def from_path(cls, path):
+        """
+        Look for secrets in *path* directory.
+
+        :param str path: A path to directory containing secrets as files.
+        """
+        return cls(path)
+
+    @classmethod
+    def from_path_in_env(cls, env_name, default):
+        """
+        Get the path from the environment variable *env_name* and
+        then load the secrets from that directory at runtime.
+
+        This allows you to overwrite the path to the secrets directory
+        in development.
+
+        :param str env_name: Environment variable that is used to determine the
+            path of the secrets directory.
+        :param str default: The default path to load from.
+        """
+        return cls(default, env_name)
+
+    def secret(self, default=RAISE, converter=None, name=None, help=None):
+        return attr.ib(
+            default=default,
+            metadata={
+                CNF_KEY: _ConfigEntry(name, default, None, self._get, help)
+            },
+            converter=converter,
+        )
+
+    def _get(self, environ, metadata, prefix, name):
+        ce = metadata[CNF_KEY]
+        # conventions for file naming might be different
+        # than for environment variables, so we don't call .upper()
+        filename = ce.name or "_".join(prefix[1:] + (name,))
+
+        secrets_dir = environ.get(self._env_name, self.secrets_dir)
+        secret_path = os.path.join(secrets_dir, filename)
+        log.debug("looking for secret in file '%s'." % (secret_path,))
+
+        try:
+            with _open_file(secret_path) as f:
+                val = f.read()
+            return _SecretStr(val)
+        except OSError:
+            return _get_default_secret(filename, ce.default)
 
 
 @attr.s
