@@ -147,6 +147,8 @@ class DirectorySecrets(object):
     Load secrets from a directory containing secrets in separate files.
     Suitable for reading Docker or Kubernetes secrets
     from the filesystem inside a container.
+
+    .. versionadded:: 21.1.0
     """
 
     secrets_dir = attr.ib()
