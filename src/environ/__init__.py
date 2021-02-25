@@ -24,7 +24,7 @@ from ._environ_config import (
 from .exceptions import MissingEnvValueError
 
 
-__version__ = "20.2.0.dev0"
+__version__ = "21.1.0.dev0"
 
 __title__ = "environ_config"
 __description__ = "Boilerplate-free configuration with env variables."

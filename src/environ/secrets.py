@@ -26,7 +26,7 @@ from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from ._environ_config import CNF_KEY, RAISE, _ConfigEntry
+from ._environ_config import CNF_KEY, RAISE, Raise, _ConfigEntry
 from .exceptions import MissingSecretError
 
 
@@ -110,14 +110,14 @@ class INISecrets(object):
         if ce.name is not None:
             var = ce.name
         else:
-            var = "_".join((prefix + (name,)))
+            var = "_".join((prefix[1:] + (name,)))
         try:
             log.debug("looking for '%s' in section '%s'." % (var, section))
             return _SecretStr(self._cfg.get(section, var))
         except NoOptionError:
             if isinstance(ce.default, attr.Factory):
                 return attr.NOTHING
-            elif ce.default is not RAISE:
+            elif not isinstance(ce.default, Raise):
                 return ce.default
             raise MissingSecretError(var)
 
@@ -154,7 +154,7 @@ class VaultEnvSecrets(object):
                 vp = self.vault_prefix(environ)
             else:
                 vp = self.vault_prefix
-            var = "_".join(((vp,) + prefix + (name,))).upper()
+            var = "_".join(((vp,) + prefix[1:] + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
         val = environ.get(
@@ -165,7 +165,7 @@ class VaultEnvSecrets(object):
                 else ce.default
             ),
         )
-        if val is RAISE:
+        if isinstance(val, Raise):
             raise MissingSecretError(var)
         return _SecretStr(val)
 

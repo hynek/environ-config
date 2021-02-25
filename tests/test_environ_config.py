@@ -355,3 +355,136 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
             cfg.sub.z = "next_baz"
 
         assert cfg.sub.z == "baz"
+
+    def test_required_group_required_child_missing(self):
+        """
+        Groups are required if any of their child elements are.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithRequiredChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild = environ.var()
+
+            child = environ.group(Child)
+
+        cfg = environ.to_config(
+            WithRequiredChild, {"PARENT_CHILD_GRANDCHILD": "FOO"}
+        )
+        assert cfg.child.grandchild == "FOO"
+        with pytest.raises(environ.MissingEnvValueError) as e:
+            environ.to_config(WithRequiredChild, dict())
+        assert ("PARENT_CHILD_GRANDCHILD",) == e.value.args
+
+    def test_required_group_optional_child_missing(self):
+        """
+        Required groups are fully structured if the only child is optional.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithRequiredChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild = environ.var("FOO")
+
+            child = environ.group(Child)
+
+        cfg = environ.to_config(WithRequiredChild, dict())
+        assert cfg.child.grandchild == "FOO"
+
+    def test_optional_group_required_child_missing(self):
+        """
+        Optional groups are set to `None` if a required child is missing.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithOptionalChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild = environ.var()
+
+            child = environ.group(Child, optional=True)
+
+        cfg = environ.to_config(WithOptionalChild, dict())
+        assert cfg.child is None
+
+    def test_optional_group_optional_child_missing(self):
+        """
+        Optional groups with an optional child is fully structured.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithOptionalChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild = environ.var("FOO")
+
+            child = environ.group(Child, optional=True)
+
+        cfg = environ.to_config(WithOptionalChild, dict())
+        assert cfg.child.grandchild == "FOO"
+
+    def test_optional_group_mixed_children_all_missing(self):
+        """
+        Optional groups are set to `None` if all mixed children are missing.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithOptionalChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild_a = environ.var()
+                grandchild_b = environ.var("FOO")
+
+            child = environ.group(Child, optional=True)
+
+        cfg = environ.to_config(WithOptionalChild, dict())
+        assert cfg.child is None
+
+    def test_optional_group_mixed_children_optional_present(self):
+        """
+        Optional groups are required if any optional child is present.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithOptionalChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                grandchild_a = environ.var()
+                grandchild_b = environ.var("FOO")
+
+            child = environ.group(Child, optional=True)
+
+        with pytest.raises(environ.MissingEnvValueError) as e:
+            environ.to_config(
+                WithOptionalChild, {"PARENT_CHILD_GRANDCHILD_B": "BAR"}
+            )
+        assert ("PARENT_CHILD_GRANDCHILD_A",) == e.value.args
+
+    def test_nested_optional_group(self):
+        """
+        Optional groups which default to `None` count as required values.
+        """
+
+        @environ.config(prefix="PARENT")
+        class WithOptionalGrandChild(object):
+            @environ.config(prefix="CHILD")
+            class Child(object):
+                @environ.config(prefix="GRANDCHILD")
+                class GrandChild(object):
+                    foo = environ.var()
+
+                grandchild = environ.group(GrandChild, optional=True)
+
+            child = environ.group(Child)
+
+        # By providing nothing, we expect the grandchild to default to `None`
+        # which will fulfill the requirement that it have a value in the child
+        cfg = environ.to_config(WithOptionalGrandChild, dict())
+        assert cfg.child.grandchild is None
+        # We also ensure that a properly set value is stored as expected
+        cfg = environ.to_config(
+            WithOptionalGrandChild, {"PARENT_CHILD_GRANDCHILD_FOO": "BAR"}
+        )
+        assert cfg.child.grandchild.foo == "BAR"

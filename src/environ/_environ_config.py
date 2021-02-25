@@ -16,14 +16,41 @@ from __future__ import absolute_import, division, print_function
 
 import logging
 import os
+import sys
 
 import attr
 
 from .exceptions import MissingEnvValueError
 
 
+PY2 = sys.version_info[0] == 2
+
 CNF_KEY = "environ_config"
 log = logging.getLogger(CNF_KEY)
+
+
+# We define a sentinel for when prefixes are not set and special handling for
+# what value to use at the app level when that is the case
+class Sentinel(object):
+    def __init__(self, bool_=True):
+        self._bool = bool(bool_)
+
+    def __bool__(self):
+        return self._bool
+
+    if PY2:
+        __nonzero__ = __bool__
+
+
+PREFIX_NOT_SET = Sentinel(False)
+DEFAULT_PREFIX = "APP"
+
+
+def _get_prefix(obj):
+    """
+    Get the prefix of an environ object or the default value if it is not set.
+    """
+    return obj._prefix if obj._prefix is not PREFIX_NOT_SET else DEFAULT_PREFIX
 
 
 @attr.s
@@ -36,7 +63,7 @@ RAISE = Raise()
 
 def config(
     maybe_cls=None,
-    prefix="APP",
+    prefix=PREFIX_NOT_SET,
     from_environ="from_environ",
     generate_help="generate_help",
     frozen=False,
@@ -45,9 +72,10 @@ def config(
     Make a class a configuration class.
 
     :param str prefix: The prefix that is used for the env variables.  If you
-        have an `var` attribute on the class and your leave the default
-        *prefix* of ``APP``, *environ-config* will look for an environment
-        variable called ``APP_VAR``.
+        have an `var` attribute on the class and you leave the default argument
+        value of *PREFIX_NOT_SET*, the *DEFAULT_PREFIX* value of ``APP`` will
+        be used and *environ-config* will look for an environment variable
+        called ``APP_VAR``.
     :param str from_environ: If not `None`, attach a config loading method with
         the name *from_environ* to the class.  See `to_config` for more
         information.
@@ -63,6 +91,8 @@ def config(
        *generate_help*
     .. versionadded:: 20.1.0
        *frozen*
+    .. versionchanged:: 21.1.0
+       *prefix* now defaults to *PREFIX_NOT_SET* instead of ``APP``.
     """
 
     def wrap(cls):
@@ -153,7 +183,7 @@ def bool_var(default=RAISE, name=None, help=None):
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
-def group(cls):
+def group(cls, optional=False):
     """
     A configuration attribute that is another configuration class.
 
@@ -173,10 +203,98 @@ def group(cls):
     The value of ``x`` is looked up using ``APP_SUB_X``.
 
     You can nest your configuration as deeply as you wish.
+
+    The *optional* keyword argument can be used to mark a *group* referencing
+    a "child" *config* object so that if all variables defined in the child
+    (including sub-groups) are not present in the environment being parsed, the
+    attribute corresponding to the *optional* *group* will be set to `None`.
+
+    :param bool optional: Mark this group as *optional*. Defaults to `False`.
+
+    :returns: An attribute which will be used as a nested *group* of variables.
+
+    .. versionadded:: 21.1.0
+       *optional*
     """
+    default = None if optional else RAISE
     return attr.ib(
-        default=None, metadata={CNF_KEY: _ConfigEntry(None, None, cls, True)}
+        default=default,
+        metadata={CNF_KEY: _ConfigEntry(None, default, cls, True)},
     )
+
+
+def _default_getter(environ, metadata, prefix, name):
+    """
+    This default lookup implementation simply gets values from *environ*.
+    """
+    ce = metadata[CNF_KEY]
+    if ce.name is not None:
+        var = ce.name
+    else:
+        var = "_".join(prefix + (name,)).upper()
+    log.debug("looking for env var '%s'.", var)
+    try:
+        return environ[var]
+    except KeyError:
+        raise MissingEnvValueError(var)
+
+
+def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
+    """
+    Traverse *config_cls* to construct an instance with values from *environ*.
+
+    This function walks through a potential tree of config definition classes
+    and uses the specified (via attributes set through class construction) or
+    default implementation of config variable lookup to collect values from the
+    provided *environ* object. The collected configuration values (including
+    sub-config objects, e.g. for groups) are used to instantiate the
+    well-structured *config_cls* with those values being accessible via the new
+    object's attributes.
+    """
+    # We keep track of values we actually got from the getter vs those we set
+    # from the `ConfigEntry` default value
+    got = {}
+    defaulted = {}
+    missing_vars = set()
+
+    for attr_obj in attr.fields(config_cls):
+        try:
+            ce = attr_obj.metadata[CNF_KEY]
+        except KeyError:
+            continue
+        name = attr_obj.name
+
+        if ce.sub_cls is not None:
+            prefix = ce.sub_cls._prefix or name
+            got[name] = _to_config_recurse(
+                ce.sub_cls, environ, prefixes + (prefix,), default=ce.default
+            )
+        else:
+            getter = ce.callback or _default_getter
+            try:
+                got[name] = getter(environ, attr_obj.metadata, prefixes, name)
+            except MissingEnvValueError as exc:
+                if isinstance(ce.default, Raise):
+                    missing_vars |= set(exc.args)
+                else:
+                    defaulted[name] = (
+                        attr.NOTHING
+                        if isinstance(ce.default, attr.Factory)
+                        else ce.default
+                    )
+
+    if missing_vars:
+        # If we were told to raise OR if we got *any* values for our attrs, we
+        # will raise a `MissingEnvValueError` with all the missing variables
+        if isinstance(default, Raise) or got:
+            raise MissingEnvValueError(*missing_vars)
+        # otherwise we will simply use the default passed into this call
+        else:
+            # Should be no need to handle `Factory`s here
+            return default
+    # Merge the defaulted and actually collected values into the config type
+    defaulted.update(got)
+    return config_cls(**defaulted)
 
 
 def to_config(config_cls, environ=os.environ):
@@ -190,54 +308,10 @@ def to_config(config_cls, environ=os.environ):
 
     This is equivalent to calling ``config_cls.from_environ()``.
     """
-    if config_cls._prefix:
-        app_prefix = (config_cls._prefix,)
-    else:
-        app_prefix = ()
-
-    def default_get(environ, metadata, prefix, name):
-        ce = metadata[CNF_KEY]
-        if ce.name is not None:
-            var = ce.name
-        else:
-            var = ("_".join(app_prefix + prefix + (name,))).upper()
-
-        log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(
-            var,
-            (
-                attr.NOTHING
-                if isinstance(ce.default, attr.Factory)
-                else ce.default
-            ),
-        )
-        if val is RAISE:
-            raise MissingEnvValueError(var)
-        return val
-
-    return _to_config(config_cls, default_get, environ, ())
-
-
-def _to_config(config_cls, default_get, environ, prefix):
-    vals = {}
-    for a in attr.fields(config_cls):
-        try:
-            ce = a.metadata[CNF_KEY]
-        except KeyError:
-            continue
-        if ce.sub_cls is None:
-            get = ce.callback or default_get
-            val = get(environ, a.metadata, prefix, a.name)
-        else:
-            val = _to_config(
-                ce.sub_cls,
-                default_get,
-                environ,
-                prefix + ((a.name if prefix else a.name),),
-            )
-
-        vals[a.name] = val
-    return config_cls(**vals)
+    # The canonical app prefix might be falsey in which case we'll still set
+    # the default prefix for this top level config object
+    app_prefix = tuple(p for p in (_get_prefix(config_cls),) if p)
+    return _to_config_recurse(config_cls, environ, app_prefix)
 
 
 def _format_help_dicts(help_dicts, display_defaults=False):
@@ -304,7 +378,7 @@ def _generate_new_prefix(current_prefix, class_name):
     )
 
 
-def _generate_help_dicts(config_cls, _prefix=None):
+def _generate_help_dicts(config_cls, _prefix=PREFIX_NOT_SET):
     """
     Generate dictionaries for use in building help strings.
 
@@ -323,8 +397,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
     vs explicitly setting a value to None.
     """
     help_dicts = []
-    if _prefix is None:
-        _prefix = config_cls._prefix
+    _prefix = _prefix if _prefix is not PREFIX_NOT_SET else config_cls._prefix
     for a in attr.fields(config_cls):
         try:
             ce = a.metadata[CNF_KEY]
@@ -335,7 +408,7 @@ def _generate_help_dicts(config_cls, _prefix=None):
                 var_name = _generate_var_name(_prefix, a.name)
             else:
                 var_name = ce.name
-            req = ce.default == RAISE
+            req = isinstance(ce.default, Raise)
             help_dict = {"var_name": var_name, "required": req}
             if not req:
                 help_dict["default"] = ce.default
