@@ -33,7 +33,7 @@ __uri__ = "https://github.com/hynek/environ_config"
 __author__ = "Hynek Schlawack"
 __email__ = "hs@ox.cx"
 
-__license__ = "MIT"
+__license__ = "Apache-2.0"
 __copyright__ = "Copyright (c) 2017 " + __author__
 
 
