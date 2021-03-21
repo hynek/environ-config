@@ -27,11 +27,17 @@ from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from ._environ_config import CNF_KEY, RAISE, Raise, _ConfigEntry
+from ._environ_config import CNF_KEY, PY2, RAISE, Raise, _ConfigEntry
 from .exceptions import MissingSecretError
 
 
 log = logging.getLogger(__name__)
+
+
+if PY2:
+    FileOpenError = IOError
+else:
+    FileOpenError = OSError
 
 
 def _get_default_secret(var, default):
@@ -200,7 +206,7 @@ class DirectorySecrets(object):
             with _open_file(secret_path) as f:
                 val = f.read()
             return _SecretStr(val)
-        except OSError:
+        except FileOpenError:
             return _get_default_secret(filename, ce.default)
 
 
