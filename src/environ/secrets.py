@@ -155,13 +155,6 @@ class DirectorySecrets(object):
     _env_name = attr.ib(default=None)
 
     @classmethod
-    def from_docker(cls):
-        """
-        Read from Docker secrets default directory in a container.
-        """
-        return cls("/run/secrets/")
-
-    @classmethod
     def from_path(cls, path):
         """
         Look for secrets in *path* directory.

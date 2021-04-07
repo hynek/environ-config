@@ -333,7 +333,3 @@ class TestDirectorySecrets(object):
 
         cfg = environ.to_config(Cfg, {})
         assert "Test default value" == cfg.doesnt_exist
-
-    def test_from_docker(self):
-        dir = DirectorySecrets.from_docker()
-        assert "/run/secrets/" == dir.secrets_dir
