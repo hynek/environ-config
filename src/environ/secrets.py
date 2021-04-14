@@ -20,17 +20,39 @@ from __future__ import absolute_import, division, print_function
 
 import codecs
 import logging
+import os
 import sys
 
 from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from ._environ_config import CNF_KEY, RAISE, Raise, _ConfigEntry
+from ._environ_config import CNF_KEY, PY2, RAISE, Raise, _ConfigEntry
 from .exceptions import MissingSecretError
 
 
 log = logging.getLogger(__name__)
+
+
+if PY2:
+    FileOpenError = IOError
+else:
+    FileOpenError = OSError
+
+
+def _get_default_secret(var, default):
+    """
+    Get default or raise MissingSecretError.
+    """
+    if isinstance(default, attr.Factory):
+        return attr.NOTHING
+    elif isinstance(default, Raise):
+        raise MissingSecretError(var)
+    return default
+
+
+def _open_file(path):
+    return codecs.open(path, mode="r", encoding="utf-8")
 
 
 @attr.s
@@ -113,13 +135,74 @@ class INISecrets(object):
             var = "_".join((prefix[1:] + (name,)))
         try:
             log.debug("looking for '%s' in section '%s'." % (var, section))
-            return _SecretStr(self._cfg.get(section, var))
+            val = self._cfg.get(section, var)
+            return _SecretStr(val)
         except NoOptionError:
-            if isinstance(ce.default, attr.Factory):
-                return attr.NOTHING
-            elif not isinstance(ce.default, Raise):
-                return ce.default
-            raise MissingSecretError(var)
+            return _get_default_secret(var, ce.default)
+
+
+@attr.s
+class DirectorySecrets(object):
+    """
+    Load secrets from a directory containing secrets in separate files.
+    Suitable for reading Docker or Kubernetes secrets
+    from the filesystem inside a container.
+
+    .. versionadded:: 21.1.0
+    """
+
+    secrets_dir = attr.ib()
+    _env_name = attr.ib(default=None)
+
+    @classmethod
+    def from_path(cls, path):
+        """
+        Look for secrets in *path* directory.
+
+        :param str path: A path to directory containing secrets as files.
+        """
+        return cls(path)
+
+    @classmethod
+    def from_path_in_env(cls, env_name, default):
+        """
+        Get the path from the environment variable *env_name* and
+        then load the secrets from that directory at runtime.
+
+        This allows you to overwrite the path to the secrets directory
+        in development.
+
+        :param str env_name: Environment variable that is used to determine the
+            path of the secrets directory.
+        :param str default: The default path to load from.
+        """
+        return cls(default, env_name)
+
+    def secret(self, default=RAISE, converter=None, name=None, help=None):
+        return attr.ib(
+            default=default,
+            metadata={
+                CNF_KEY: _ConfigEntry(name, default, None, self._get, help)
+            },
+            converter=converter,
+        )
+
+    def _get(self, environ, metadata, prefix, name):
+        ce = metadata[CNF_KEY]
+        # conventions for file naming might be different
+        # than for environment variables, so we don't call .upper()
+        filename = ce.name or "_".join(prefix[1:] + (name,))
+
+        secrets_dir = environ.get(self._env_name, self.secrets_dir)
+        secret_path = os.path.join(secrets_dir, filename)
+        log.debug("looking for secret in file '%s'." % (secret_path,))
+
+        try:
+            with _open_file(secret_path) as f:
+                val = f.read()
+            return _SecretStr(val)
+        except FileOpenError:
+            return _get_default_secret(filename, ce.default)
 
 
 @attr.s
@@ -157,17 +240,11 @@ class VaultEnvSecrets(object):
             var = "_".join(((vp,) + prefix[1:] + (name,))).upper()
 
         log.debug("looking for env var '%s'." % (var,))
-        val = environ.get(
-            var,
-            (
-                attr.NOTHING
-                if isinstance(ce.default, attr.Factory)
-                else ce.default
-            ),
-        )
-        if isinstance(val, Raise):
-            raise MissingSecretError(var)
-        return _SecretStr(val)
+        try:
+            val = environ[var]
+            return _SecretStr(val)
+        except KeyError:
+            return _get_default_secret(var, ce.default)
 
 
 class _SecretStr(str):
@@ -200,7 +277,7 @@ def _load_ini(path):
     Load an INI file from *path*.
     """
     cfg = RawConfigParser()
-    with codecs.open(path, mode="r", encoding="utf-8") as f:
+    with _open_file(path) as f:
         cfg.read_file(f)
 
     return cfg

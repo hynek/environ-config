@@ -27,6 +27,9 @@ Changes:
   `#14 <https://github.com/hynek/environ-config/pull/14>`_
 - Added the ``optional`` keyword argument to ``environ.group()``
   `#17 <https://github.com/hynek/environ-config/pull/17>`_
+- Added ``DirectorySecrets`` secret reader, which can read secrets from a directory of files.
+  Useful for Docker or Kubernetes mounted secrets inside a container.
+  `#19 <https://github.com/hynek/environ-config/pull/19>`_
 
 
 ----

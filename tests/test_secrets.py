@@ -20,7 +20,12 @@ import pytest
 import environ
 
 from environ.exceptions import MissingSecretError
-from environ.secrets import INISecrets, VaultEnvSecrets, _SecretStr
+from environ.secrets import (
+    DirectorySecrets,
+    INISecrets,
+    VaultEnvSecrets,
+    _SecretStr,
+)
 
 
 class TestSecretStr:
@@ -238,3 +243,93 @@ class TestVaultEnvSecrets(object):
         cfg = environ.to_config(Cfg, fake_environ)
 
         assert _SecretStr("foo") == cfg.pw
+
+
+@pytest.fixture
+def secrets_dir(tmpdir):
+    def make_secrets_file(name, content):
+        secret_file = tmpdir.join(name)
+        secret_file.write(content)
+
+    make_secrets_file("empty", "")
+    make_secrets_file("apples", "apples\n")
+    make_secrets_file("oranges", "oranges")
+    return str(tmpdir)
+
+
+class TestDirectorySecrets(object):
+    def test_secret_content(self, secrets_dir):
+        """
+        Reading secrets with different content.
+        """
+        dir = DirectorySecrets.from_path(secrets_dir)
+
+        @environ.config
+        class Cfg(object):
+            empty = dir.secret()
+            apples = dir.secret()
+            oranges = dir.secret()
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert _SecretStr("") == cfg.empty
+        assert _SecretStr("apples\n") == cfg.apples
+        assert _SecretStr("oranges") == cfg.oranges
+
+    def test_secret_different_name(self, secrets_dir):
+        """
+        Attribute names can be different than filenames,
+        the name argument can be used to select the filename.
+        """
+        dir = DirectorySecrets.from_path(secrets_dir)
+
+        @environ.config
+        class Cfg(object):
+            nothing = dir.secret(name="empty")
+            has_newline = dir.secret(name="apples")
+            no_newline = dir.secret(name="oranges")
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert _SecretStr("") == cfg.nothing
+        assert _SecretStr("apples\n") == cfg.has_newline
+        assert _SecretStr("oranges") == cfg.no_newline
+
+    def test_secret_from_env(self, secrets_dir):
+        """
+        A directory can be specified in an environment variable.
+        """
+        dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", "/tmp")
+
+        @environ.config
+        class Cfg(object):
+            apples = dir.secret()
+
+        cfg = environ.to_config(Cfg, {"SECRETS_DIR": secrets_dir})
+        assert _SecretStr("apples\n") == cfg.apples
+
+    def test_missing_default_value(self, tmpdir):
+        """
+        Missing secrets should raise Exceptions when loading the config.
+        """
+        dir = DirectorySecrets.from_path(str(tmpdir))
+
+        @environ.config
+        class Cfg(object):
+            doesnt_exist = dir.secret()
+
+        with pytest.raises(MissingSecretError):
+            environ.to_config(Cfg, {})
+
+    def test_default_value_specified(self, tmpdir):
+        """
+        Default values work for DirectorySecrets too.
+        """
+        dir = DirectorySecrets.from_path(str(tmpdir))
+
+        @environ.config
+        class Cfg(object):
+            doesnt_exist = dir.secret(default="Test default value")
+
+        cfg = environ.to_config(Cfg, {})
+        assert "Test default value" == cfg.doesnt_exist
