@@ -172,8 +172,8 @@ Thank you for considering contributing to *environ-config*!
 .. _`PEP 8`: https://www.python.org/dev/peps/pep-0008/
 .. _`PEP 257`: https://www.python.org/dev/peps/pep-0257/
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
-.. _`Code of Conduct`: https://github.com/hynek/environ-config/blob/master/.github/CODE_OF_CONDUCT.rst
-.. _changelog: https://github.com/hynek/environ-config/blob/master/CHANGELOG.rst
+.. _`Code of Conduct`: https://github.com/hynek/environ-config/blob/main/.github/CODE_OF_CONDUCT.rst
+.. _changelog: https://github.com/hynek/environ-config/blob/main/CHANGELOG.rst
 .. _`backward compatibility`: https://environ-config.readthedocs.io/en/latest/backward-compatibility.html
 .. _tox: https://tox.readthedocs.io/
 .. _pyenv: https://github.com/pyenv/pyenv

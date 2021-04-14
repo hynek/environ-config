@@ -6,11 +6,11 @@
    :target: https://environ-config.readthedocs.io/
    :alt: Documentation Status
 
-.. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=master
+.. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=main
    :target: https://github.com/hynek/environ-config/actions?workflow=CI
    :alt: CI Status
 
-.. image:: https://codecov.io/gh/hynek/environ-config/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/hynek/environ-config/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/hynek/environ-config
    :alt: Test Coverage
 

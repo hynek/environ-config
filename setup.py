@@ -111,7 +111,7 @@ LONG = (
     ).group(1)
     + (
         "\n\n`Full changelog <"
-        "https://github.com/hynek/environ-config/blob/master/CHANGELOG.rst"
+        "https://github.com/hynek/environ-config/blob/main/CHANGELOG.rst"
         ">`_.\n\n"
     )
     + read("AUTHORS.rst")
