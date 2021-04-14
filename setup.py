@@ -24,8 +24,11 @@ from setuptools import find_packages, setup
 NAME = "environ-config"
 KEYWORDS = ["app", "config", "env", "cfg"]
 PROJECT_URLS = {
+    "Changelog": "https://environ-config.rtfd.io/en/stable/changelog.html",
     "Bug Tracker": "https://github.com/hynek/environ-config/issues",
     "Source Code": "https://github.com/hynek/environ-config",
+    "Funding": "https://github.com/sponsors/hynek",
+    "Ko-fi": "https://ko-fi.com/the_hynek",
 }
 
 META_PATH = os.path.join("src", "environ", "__init__.py")
