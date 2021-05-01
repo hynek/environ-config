@@ -53,11 +53,15 @@ CLASSIFIERS = [
 ]
 INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
 EXTRAS_REQUIRE = {
-    "tests": ["pytest", "coverage[toml]"],
+    "tests": ["pytest", "coverage[toml]", "moto"],
     "docs": ["sphinx", "furo"],
+    "aws": ["boto3"],
 }
 EXTRAS_REQUIRE["dev"] = (
-    EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["docs"] + ["pre-commit"]
+    EXTRAS_REQUIRE["aws"]
+    + EXTRAS_REQUIRE["tests"]
+    + EXTRAS_REQUIRE["docs"]
+    + ["pre-commit"]
 )
 
 ###############################################################################

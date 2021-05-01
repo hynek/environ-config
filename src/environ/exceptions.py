@@ -33,3 +33,9 @@ class MissingSecretError(ConfigError):
     """
     A mandatory secret can't be found.
     """
+
+
+class MissingSecretImplementationError(Exception):
+    """
+    A secret implementation could not be loaded
+    """
