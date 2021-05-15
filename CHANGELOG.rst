@@ -24,7 +24,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Added AWS SecretsManager support.
+- Added `AWS SecretsManager <https://aws.amazon.com/secrets-manager/>`_ support.
 
 
 ----

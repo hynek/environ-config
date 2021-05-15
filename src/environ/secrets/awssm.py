@@ -40,12 +40,12 @@ def convert_secret(key):
 
 @attr.s
 class SecretsManagerSecrets(object):
-    """Load secrets from the AWS secretsmanager.
+    """
+    Load secrets from the AWS secretsmanager.
 
     The secret name should be stored in the environment variable
 
     .. versionadded:: 21.4.0
-       *optional*
     """
 
     client = attr.ib(
@@ -59,7 +59,8 @@ class SecretsManagerSecrets(object):
         name=None,
         help=None,
     ):
-        """Declare a secrets manager secret on an `environ.config`-decorated class.
+        """
+        Declare a secrets manager secret on an `environ.config`-decorated class
 
         All parameters work just like in `environ.var`.
         """

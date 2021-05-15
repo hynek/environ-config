@@ -26,8 +26,8 @@ from environ.exceptions import MissingSecretError
 from environ.secrets import SecretsManagerSecrets, _SecretStr
 
 
-@pytest.fixture(autouse=True, scope="session")
-def shut_boto_up():
+@pytest.fixture(name="shut_boto_up", autouse=True, scope="session")
+def _shut_boto_up():
     import logging
 
     for name in logging.Logger.manager.loggerDict.keys():
@@ -35,19 +35,19 @@ def shut_boto_up():
             logging.getLogger(name).setLevel(logging.WARNING)
 
 
-@pytest.fixture(autouse=True)
-def secretsmanager():
+@pytest.fixture(name="secretsmanager", autouse=True)
+def _secretsmanager():
     with mock_secretsmanager():
         yield boto3.client("secretsmanager", region_name="us-east-2")
 
 
-@pytest.fixture
-def secret():
+@pytest.fixture(name="secret")
+def _secret():
     return str(uuid.uuid4())
 
 
-@pytest.fixture
-def sm(secretsmanager, secret):
+@pytest.fixture(name="sm")
+def _sm(secretsmanager, secret):
     secretsmanager.create_secret(Name=secret)
     secretsmanager.put_secret_value(SecretId=secret, SecretString="foobar")
     return SecretsManagerSecrets(client=secretsmanager)
