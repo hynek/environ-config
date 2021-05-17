@@ -25,6 +25,7 @@ Changes:
 ^^^^^^^^
 
 - Added `AWS SecretsManager <https://aws.amazon.com/secrets-manager/>`_ support.
+  `#23 <https://github.com/hynek/environ-config/pull/23>`_
 
 
 ----
