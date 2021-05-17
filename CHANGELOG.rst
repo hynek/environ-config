@@ -5,7 +5,7 @@ Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility g
 The third digit is only for regressions.
 
 
-21.2.0 (UNRELEASED)
+21.2.0 (2021-05-17)
 -------------------
 
 
