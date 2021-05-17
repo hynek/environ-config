@@ -29,6 +29,8 @@ Secrets
 .. autoclass:: DirectorySecrets
    :members: from_path, from_path_in_env, secret
 
+.. autoclass:: SecretsManagerSecrets
+   :members: secret
 
 Exceptions
 ----------

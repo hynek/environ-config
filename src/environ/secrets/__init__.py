@@ -18,7 +18,6 @@ Handling of sensitive data.
 
 from __future__ import absolute_import, division, print_function
 
-import codecs
 import logging
 import os
 import sys
@@ -27,8 +26,21 @@ from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from ._environ_config import CNF_KEY, PY2, RAISE, Raise, _ConfigEntry
-from .exceptions import MissingSecretError
+from environ._environ_config import CNF_KEY, PY2, RAISE, _ConfigEntry
+from environ.exceptions import MissingSecretImplementationError
+
+from ._utils import _get_default_secret, _open_file
+
+
+try:
+    from environ.secrets.awssm import SecretsManagerSecrets
+except ImportError:  # pragma: nocover
+
+    class SecretsManagerSecrets:
+        def secret(self, *args, **kwargs):
+            raise MissingSecretImplementationError(
+                "AWS secrets manager requires boto3"
+            )
 
 
 log = logging.getLogger(__name__)
@@ -38,21 +50,6 @@ if PY2:
     FileOpenError = IOError
 else:
     FileOpenError = OSError
-
-
-def _get_default_secret(var, default):
-    """
-    Get default or raise MissingSecretError.
-    """
-    if isinstance(default, attr.Factory):
-        return attr.NOTHING
-    elif isinstance(default, Raise):
-        raise MissingSecretError(var)
-    return default
-
-
-def _open_file(path):
-    return codecs.open(path, mode="r", encoding="utf-8")
 
 
 @attr.s
