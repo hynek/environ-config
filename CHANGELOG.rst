@@ -18,7 +18,7 @@ Backward-incompatible changes:
 Deprecations:
 ^^^^^^^^^^^^^
 
-*none*
+- This is the last release supporting Python versions older than 3.7.
 
 
 Changes:
