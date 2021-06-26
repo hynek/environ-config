@@ -15,7 +15,6 @@
 """
 Handling of sensitive data stored in AWS SecretsManager
 """
-import functools
 import logging
 
 import attr
@@ -38,7 +37,13 @@ def convert_secret(key):
     return converter
 
 
-@attr.s
+def _build_secretsmanager_client():
+    client = boto3.client("secretsmanager")
+    log.debug("Created a secretsmanager client %s", client)
+    return client
+
+
+@attr.s(init=False)
 class SecretsManagerSecrets(object):
     """
     Load secrets from the AWS secretsmanager.
@@ -48,9 +53,14 @@ class SecretsManagerSecrets(object):
     .. versionadded:: 21.4.0
     """
 
-    client = attr.ib(
-        default=attr.Factory(functools.partial(boto3.client, "secretsmanager"))
-    )
+    def __init__(self, client=None):
+        self._client = client
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = _build_secretsmanager_client()
+        return self._client
 
     def secret(
         self,
