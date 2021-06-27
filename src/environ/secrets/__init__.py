@@ -26,7 +26,7 @@ from configparser import NoOptionError, RawConfigParser
 
 import attr
 
-from environ._environ_config import CNF_KEY, PY2, RAISE, _ConfigEntry
+from environ._environ_config import CNF_KEY, RAISE, _ConfigEntry
 from environ.exceptions import MissingSecretImplementationError
 
 from ._utils import _get_default_secret, _open_file
@@ -46,10 +46,7 @@ except ImportError:  # pragma: nocover
 log = logging.getLogger(__name__)
 
 
-if PY2:
-    FileOpenError = IOError
-else:
-    FileOpenError = OSError
+FileOpenError = OSError
 
 
 @attr.s

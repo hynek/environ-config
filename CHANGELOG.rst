@@ -12,7 +12,7 @@ The third digit is only for regressions.
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*none*
+- Python 2.7 support dropped
 
 
 Deprecations:
@@ -24,7 +24,8 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-*none*
+- Lazily init the AWS SecretsManager client to make unit testing easier.
+  `#25 <https://github.com/hynek/environ-config/pull/25>`_
 
 
 ----
