@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import uuid
+
+from unittest.mock import patch
 
 import attr
 import boto3
@@ -35,7 +38,27 @@ def _shut_boto_up():
             logging.getLogger(name).setLevel(logging.WARNING)
 
 
-@pytest.fixture(name="secretsmanager", autouse=True)
+@pytest.fixture(name="force_region", autouse=True, scope="session")
+def _force_region():
+    with patch.dict(os.environ, {"AWS_DEFAULT_REGION": "us-east-1"}):
+        yield
+
+
+@pytest.fixture(name="mock_aws_credentials")
+def _mock_aws_credentials(force_region):
+    with patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "testing",
+            "AWS_SECRET_ACCESS_KEY": "testing",
+            "AWS_SECURITY_TOKEN": "testing",
+            "AWS_SESSION_TOKEN": "testing",
+        },
+    ):
+        yield
+
+
+@pytest.fixture(name="secretsmanager")
 def _secretsmanager():
     with mock_secretsmanager():
         yield boto3.client("secretsmanager", region_name="us-east-2")
@@ -65,6 +88,48 @@ class TestAWSSMSecret(object):
 
         with pytest.raises(MissingSecretError):
             environ.to_config(Cfg, {})
+
+    def test_no_default_resolves_secret(self, sm, secretsmanager):
+        """
+        Verify that, when no default is provided, resolution should not happen
+        until the configuration is needed.
+        """
+
+        @environ.config
+        class Cfg(object):
+            pw = sm.secret()
+
+        secretsmanager.create_secret(Name="SecretName")
+        secretsmanager.put_secret_value(
+            SecretId="SecretName", SecretString="no-default"
+        )
+        assert (
+            environ.to_config(Cfg, {"APP_PW": "SecretName"}).pw == "no-default"
+        )
+
+    def test_secret_works_with_default_client_overridden(
+        self, mock_aws_credentials
+    ):
+        """
+        Assert that the SM type can function without a custom client override
+        when testing
+        """
+        sm = SecretsManagerSecrets()
+
+        @environ.config
+        class Cfg(object):
+            pw = sm.secret()
+
+        with mock_secretsmanager():
+            # we need to make sure we're using the same region. It doesn't
+            # matter which -- moto _and_ boto will try figure it out from the
+            # environment -- but it has to be the same.
+            sm.client.create_secret(Name="SecretName")
+            sm.client.put_secret_value(
+                SecretId="SecretName", SecretString="no-default"
+            )
+            conf = environ.to_config(Cfg, {"APP_PW": "SecretName"})
+            assert conf.pw == "no-default"
 
     def test_default(self, sm, secret):
         """
