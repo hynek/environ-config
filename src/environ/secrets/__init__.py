@@ -16,7 +16,6 @@
 Handling of sensitive data.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import logging
 import os
@@ -50,7 +49,7 @@ FileOpenError = OSError
 
 
 @attr.s
-class INISecrets(object):
+class INISecrets:
     """
     Load secrets from an `INI file <https://en.wikipedia.org/wiki/INI_file>`_
     using `configparser.RawConfigParser`.
@@ -126,7 +125,7 @@ class INISecrets(object):
         if ce.name is not None:
             var = ce.name
         else:
-            var = "_".join((prefix[1:] + (name,)))
+            var = "_".join(prefix[1:] + (name,))
         try:
             log.debug("looking for '%s' in section '%s'." % (var, section))
             val = self._cfg.get(section, var)
@@ -136,7 +135,7 @@ class INISecrets(object):
 
 
 @attr.s
-class DirectorySecrets(object):
+class DirectorySecrets:
     """
     Load secrets from a directory containing secrets in separate files.
     Suitable for reading Docker or Kubernetes secrets
@@ -200,7 +199,7 @@ class DirectorySecrets(object):
 
 
 @attr.s
-class VaultEnvSecrets(object):
+class VaultEnvSecrets:
     """
     Loads secrets from environment variables that follow the naming style from
     `envconsul <https://github.com/hashicorp/envconsul>`_.
@@ -231,7 +230,7 @@ class VaultEnvSecrets(object):
                 vp = self.vault_prefix(environ)
             else:
                 vp = self.vault_prefix
-            var = "_".join(((vp,) + prefix[1:] + (name,))).upper()
+            var = "_".join((vp,) + prefix[1:] + (name,)).upper()
 
         log.debug("looking for env var '%s'." % (var,))
         try:
@@ -262,7 +261,7 @@ CNF_INI_SECRET_KEY = CNF_KEY + "_ini_secret"
 
 
 @attr.s
-class _INIConfig(object):
+class _INIConfig:
     section = attr.ib()
 
 

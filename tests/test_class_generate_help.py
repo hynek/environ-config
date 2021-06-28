@@ -1,30 +1,28 @@
-from __future__ import absolute_import, division, print_function
-
 import pytest
 
 import environ
 
 
 @environ.config(prefix="APP")
-class AppConfig(object):
+class AppConfig:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
 
 @environ.config(prefix="APP", generate_help="gen_help")
-class ConfigRenamed(object):
+class ConfigRenamed:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
 
 @environ.config(prefix="APP", generate_help="")
-class ConfigEmptyName(object):
+class ConfigEmptyName:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
 
 @environ.config(prefix="APP", generate_help=None)
-class ConfigNoneName(object):
+class ConfigNoneName:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 

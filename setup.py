@@ -39,11 +39,7 @@ CLASSIFIERS = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -52,7 +48,8 @@ CLASSIFIERS = [
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-INSTALL_REQUIRES = ["attrs>=17.4.0", "configparser; python_version<'3.0'"]
+PYTHON_REQUIRES = ">=3.7"
+INSTALL_REQUIRES = ["attrs>=17.4.0"]
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "coverage[toml]", "moto"],
     "docs": ["sphinx", "furo"],
@@ -98,11 +95,11 @@ def find_meta(meta):
     Extract __*meta*__ from META_FILE.
     """
     meta_match = re.search(
-        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), META_FILE, re.M
+        fr"^__{meta}__ = ['\"]([^'\"]*)['\"]", META_FILE, re.M
     )
     if meta_match:
         return meta_match.group(1)
-    raise RuntimeError("Unable to find __{meta}__ string.".format(meta=meta))
+    raise RuntimeError(f"Unable to find __{meta}__ string.")
 
 
 VERSION = find_meta("version")
@@ -145,6 +142,7 @@ if __name__ == "__main__":
         package_dir={"": "src"},
         zip_safe=False,
         classifiers=CLASSIFIERS,
+        python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
         options={"bdist_wheel": {"universal": "1"}},

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
 
 import logging
 import os
@@ -28,7 +27,7 @@ log = logging.getLogger(CNF_KEY)
 
 # We define a sentinel for when prefixes are not set and special handling for
 # what value to use at the app level when that is the case
-class Sentinel(object):
+class Sentinel:
     def __init__(self, bool_=True):
         self._bool = bool(bool_)
 
@@ -48,7 +47,7 @@ def _get_prefix(obj):
 
 
 @attr.s
-class Raise(object):
+class Raise:
     pass
 
 
@@ -110,7 +109,7 @@ def config(
 
 
 @attr.s(slots=True)
-class _ConfigEntry(object):
+class _ConfigEntry:
     name = attr.ib(default=None)
     default = attr.ib(default=RAISE)
     sub_cls = attr.ib(default=None)
@@ -314,7 +313,7 @@ def _format_help_dicts(help_dicts, display_defaults=False):
     """
     help_strs = []
     for help_dict in help_dicts:
-        help_str = "%s (%s" % (
+        help_str = "{} ({}".format(
             help_dict["var_name"],
             "Required" if help_dict["required"] else "Optional",
         )

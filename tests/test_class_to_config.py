@@ -1,30 +1,28 @@
-from __future__ import absolute_import, division, print_function
-
 import attr
 
 import environ
 
 
 @environ.config(prefix="APP")
-class AppConfig(object):
+class AppConfig:
     host = environ.var("127.0.0.1")
     port = environ.var(5000, converter=int)
 
 
 @environ.config(prefix="APP", from_environ="from_env")
-class ConfigRenamed(object):
+class ConfigRenamed:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
 
 @environ.config(prefix="APP", from_environ="")
-class ConfigEmptyName(object):
+class ConfigEmptyName:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
 
 @environ.config(prefix="APP", from_environ=None)
-class ConfigNoneName(object):
+class ConfigNoneName:
     host = environ.var("127.0.0.1", help="host help")
     port = environ.var(5000, converter=int, help="port help")
 
@@ -77,7 +75,7 @@ def test_factory_default():
     """
 
     @environ.config()
-    class FactoryConfig(object):
+    class FactoryConfig:
         x = environ.var(attr.Factory(list))
         y = environ.var("bar")
 

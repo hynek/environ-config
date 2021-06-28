@@ -83,5 +83,5 @@ Project Information
 ===================
 
 *environ-config* is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
-It targets Python 2.7, 3.5 and newer, and PyPy.
+It targets Python 3.7 and newer, and PyPy.
 Development takes place on `GitHub <https://github.com/hynek/environ-config>`_.

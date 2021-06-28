@@ -76,14 +76,14 @@ def _sm(secretsmanager, secret):
     return SecretsManagerSecrets(client=secretsmanager)
 
 
-class TestAWSSMSecret(object):
+class TestAWSSMSecret:
     def test_missing_default_raises(self, sm):
         """
         Missing values without a default raise an MissingSecretError.
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = sm.secret()
 
         with pytest.raises(MissingSecretError):
@@ -96,7 +96,7 @@ class TestAWSSMSecret(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = sm.secret()
 
         secretsmanager.create_secret(Name="SecretName")
@@ -117,7 +117,7 @@ class TestAWSSMSecret(object):
         sm = SecretsManagerSecrets()
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = sm.secret()
 
         with mock_secretsmanager():
@@ -137,7 +137,7 @@ class TestAWSSMSecret(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = sm.secret(default="not used")
             secret = sm.secret(default="used!")
 
@@ -154,7 +154,7 @@ class TestAWSSMSecret(object):
             return "a default"
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = sm.secret(default=attr.Factory(getpass))
             secret = sm.secret(default=attr.Factory(getpass))
 
@@ -169,7 +169,7 @@ class TestAWSSMSecret(object):
         sm.client.put_secret_value(SecretId=secret, SecretString="foobar")
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = sm.secret(name="password")
 
         cfg = environ.to_config(Cfg, {"password": secret})
@@ -183,9 +183,9 @@ class TestAWSSMSecret(object):
         sm.client.put_secret_value(SecretId=secret, SecretString="nested!")
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             @environ.config
-            class DB(object):
+            class DB:
                 password = sm.secret()
 
             db = environ.group(DB)

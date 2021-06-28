@@ -44,7 +44,7 @@ def _build_secretsmanager_client():
 
 
 @attr.s(init=False)
-class SecretsManagerSecrets(object):
+class SecretsManagerSecrets:
     """
     Load secrets from the AWS secretsmanager.
 

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
 
 import attr
 import pytest
@@ -23,13 +22,13 @@ import environ
 
 
 @environ.config(prefix="XYZ")
-class Nested(object):
+class Nested:
     """
     A nested configuration example.
     """
 
     @environ.config
-    class Sub(object):
+    class Sub:
         y = environ.var()
 
     x = environ.var()
@@ -37,7 +36,7 @@ class Nested(object):
 
 
 @environ.config(prefix="FOO")
-class Parent(object):
+class Parent:
     not_a_var = attr.ib()  # For testing that only environ.var's are processed.
     var1 = environ.var(help="var1, no default")
     var2 = environ.var("bar", help="var2, has default")
@@ -47,7 +46,7 @@ class Parent(object):
     var6 = environ.var(name="CAT", help="var6, named, no default")
 
     @environ.config
-    class Child(object):
+    class Child:
         var7 = environ.var(help="var7, no default")
         var8 = environ.var("bar", help="var8, has default")
         var9 = environ.bool_var(help="var9, bool_var, no default")
@@ -63,20 +62,20 @@ class Parent(object):
 
 
 @environ.config(prefix="")
-class NoPrefix(object):
+class NoPrefix:
     a_var = environ.var(help="a_var, no default")
     another_var = environ.var("bar", help="another_var, has default")
     _start_with_underscore = environ.var(help="this starts with an underscore")
 
 
-class TestEnvironConfig(object):
+class TestEnvironConfig:
     def test_empty(self):
         """
         Empty config is accepted.
         """
 
         @environ.config
-        class Empty(object):
+        class Empty:
             pass
 
         cfg = environ.to_config(Empty)
@@ -89,7 +88,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config(prefix="APP")
-        class Flat(object):
+        class Flat:
             x = environ.var()
             y = environ.var()
 
@@ -112,7 +111,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Mandatory(object):
+        class Mandatory:
             x = environ.var()
 
         with pytest.raises(environ.MissingEnvValueError) as e:
@@ -126,7 +125,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Defaults(object):
+        class Defaults:
             x = environ.var("foo")
             y = environ.var("qux")
 
@@ -141,7 +140,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Defaults(object):
+        class Defaults:
             x = environ.var(attr.Factory(list))
             y = environ.var(attr.Factory(list))
 
@@ -156,7 +155,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config(prefix=prefix)
-        class Cfg(object):
+        class Cfg:
             x = environ.var()
 
         cfg = environ.to_config(Cfg, environ={"X": "foo"})
@@ -169,7 +168,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             x = environ.var(name="LANG")
             y = environ.var()
 
@@ -185,9 +184,9 @@ class TestEnvironConfig(object):
         """
 
         @environ.config(prefix=None)
-        class Cfg(object):
+        class Cfg:
             @environ.config
-            class Sub(object):
+            class Sub:
                 y = environ.var()
 
             x = environ.var()
@@ -209,7 +208,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             t = environ.bool_var()
             f = environ.bool_var()
             d = environ.bool_var(True)
@@ -227,7 +226,7 @@ class TestEnvironConfig(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             e = environ.var()
             x = attr.ib(default=42)
 
@@ -317,7 +316,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(frozen=True)
-        class Cfg(object):
+        class Cfg:
             x = environ.var()
             y = environ.var()
 
@@ -334,9 +333,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             @environ.config(frozen=True)
-            class Sub(object):
+            class Sub:
                 z = environ.var()
 
             x = environ.var()
@@ -362,9 +361,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithRequiredChild(object):
+        class WithRequiredChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild = environ.var()
 
             child = environ.group(Child)
@@ -383,9 +382,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithRequiredChild(object):
+        class WithRequiredChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild = environ.var("FOO")
 
             child = environ.group(Child)
@@ -399,9 +398,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithOptionalChild(object):
+        class WithOptionalChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild = environ.var()
 
             child = environ.group(Child, optional=True)
@@ -415,9 +414,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithOptionalChild(object):
+        class WithOptionalChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild = environ.var("FOO")
 
             child = environ.group(Child, optional=True)
@@ -431,9 +430,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithOptionalChild(object):
+        class WithOptionalChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild_a = environ.var()
                 grandchild_b = environ.var("FOO")
 
@@ -448,9 +447,9 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithOptionalChild(object):
+        class WithOptionalChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 grandchild_a = environ.var()
                 grandchild_b = environ.var("FOO")
 
@@ -468,11 +467,11 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         """
 
         @environ.config(prefix="PARENT")
-        class WithOptionalGrandChild(object):
+        class WithOptionalGrandChild:
             @environ.config(prefix="CHILD")
-            class Child(object):
+            class Child:
                 @environ.config(prefix="GRANDCHILD")
-                class GrandChild(object):
+                class GrandChild:
                     foo = environ.var()
 
                 grandchild = environ.group(GrandChild, optional=True)

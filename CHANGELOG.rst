@@ -12,7 +12,8 @@ The third digit is only for regressions.
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Python 2.7 support dropped
+- Python 2.7, 3.5, and 3.6 support has been dropped.
+  *environ-config* now requires Python 3.7 or later.
 
 
 Deprecations:

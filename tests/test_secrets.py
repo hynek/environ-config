@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
 
 import attr
 import pytest
@@ -44,7 +43,7 @@ class TestSecretStr:
         s = _SecretStr("abc")
 
         @attr.s
-        class Cfg(object):
+        class Cfg:
             s = attr.ib()
 
         assert "Cfg(s=<SECRET>)" == repr(Cfg(s))
@@ -72,14 +71,14 @@ def ini(ini_file):
     return INISecrets.from_path(str(ini_file))
 
 
-class TestIniSecret(object):
+class TestIniSecret:
     def test_missing_default_raises(self, ini):
         """
         Missing values without a default raise an MissingSecretError.
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = ini.secret()
 
         with pytest.raises(MissingSecretError):
@@ -91,7 +90,7 @@ class TestIniSecret(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = ini.secret(default="not used")
             secret = ini.secret(default="used!")
 
@@ -108,7 +107,7 @@ class TestIniSecret(object):
             return "thesecret"
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = ini.secret(default=attr.Factory(getpass))
             secret = ini.secret(default=attr.Factory(getpass))
 
@@ -122,7 +121,7 @@ class TestIniSecret(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = ini.secret(name="password")
 
         cfg = environ.to_config(Cfg, {})
@@ -136,7 +135,7 @@ class TestIniSecret(object):
         ini.section = "yet_another_section"
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = ini.secret(section="other_secrets")
             secret = ini.secret()
 
@@ -150,9 +149,9 @@ class TestIniSecret(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             @environ.config
-            class DB(object):
+            class DB:
                 password = ini.secret()
 
             db = environ.group(DB)
@@ -169,7 +168,7 @@ class TestIniSecret(object):
         secret = INISecrets.from_path_in_env("APP_SECRETS_INI").secret
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = secret()
 
         cfg = environ.to_config(Cfg, {"APP_SECRETS_INI": str(ini_file)})
@@ -182,14 +181,14 @@ def vault():
     return VaultEnvSecrets(vault_prefix="SECRET")
 
 
-class TestVaultEnvSecrets(object):
+class TestVaultEnvSecrets:
     def test_returns_secret_str(self, vault):
         """
         The returned strings are `_SecretStr`.
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             x = vault.secret()
 
         cfg = environ.to_config(Cfg, {"SECRET_X": "foo"})
@@ -203,7 +202,7 @@ class TestVaultEnvSecrets(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             password = vault.secret(name="not_password")
 
         cfg = environ.to_config(
@@ -218,7 +217,7 @@ class TestVaultEnvSecrets(object):
         """
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = vault.secret()
 
         with pytest.raises(MissingSecretError):
@@ -237,7 +236,7 @@ class TestVaultEnvSecrets(object):
         vault = VaultEnvSecrets(vault_prefix=extract)
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             pw = vault.secret()
 
         cfg = environ.to_config(Cfg, fake_environ)
@@ -257,7 +256,7 @@ def secrets_dir(tmpdir):
     return str(tmpdir)
 
 
-class TestDirectorySecrets(object):
+class TestDirectorySecrets:
     def test_secret_content(self, secrets_dir):
         """
         Reading secrets with different content.
@@ -265,7 +264,7 @@ class TestDirectorySecrets(object):
         dir = DirectorySecrets.from_path(secrets_dir)
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             empty = dir.secret()
             apples = dir.secret()
             oranges = dir.secret()
@@ -284,7 +283,7 @@ class TestDirectorySecrets(object):
         dir = DirectorySecrets.from_path(secrets_dir)
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             nothing = dir.secret(name="empty")
             has_newline = dir.secret(name="apples")
             no_newline = dir.secret(name="oranges")
@@ -302,7 +301,7 @@ class TestDirectorySecrets(object):
         dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", "/tmp")
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             apples = dir.secret()
 
         cfg = environ.to_config(Cfg, {"SECRETS_DIR": secrets_dir})
@@ -315,7 +314,7 @@ class TestDirectorySecrets(object):
         dir = DirectorySecrets.from_path(str(tmpdir))
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             doesnt_exist = dir.secret()
 
         with pytest.raises(MissingSecretError):
@@ -328,7 +327,7 @@ class TestDirectorySecrets(object):
         dir = DirectorySecrets.from_path(str(tmpdir))
 
         @environ.config
-        class Cfg(object):
+        class Cfg:
             doesnt_exist = dir.secret(default="Test default value")
 
         cfg = environ.to_config(Cfg, {})
