@@ -113,7 +113,7 @@ class INISecrets:
     def _get(self, environ, metadata, prefix, name):
         # Delayed loading.
         if self._cfg is None and self._env_name is not None:
-            log.debug("looking for env var '%s'." % (self._env_name,))
+            log.debug("looking for env var '%s'.", self._env_name)
             self._cfg = _load_ini(
                 environ.get(self._env_name, self._env_default)
             )
@@ -127,7 +127,7 @@ class INISecrets:
         else:
             var = "_".join(prefix[1:] + (name,))
         try:
-            log.debug("looking for '%s' in section '%s'." % (var, section))
+            log.debug("looking for '%s' in section '%s'.", var, section)
             val = self._cfg.get(section, var)
             return _SecretStr(val)
         except NoOptionError:
@@ -188,7 +188,7 @@ class DirectorySecrets:
 
         secrets_dir = environ.get(self._env_name, self.secrets_dir)
         secret_path = os.path.join(secrets_dir, filename)
-        log.debug("looking for secret in file '%s'." % (secret_path,))
+        log.debug("looking for secret in file '%s'.", secret_path)
 
         try:
             with _open_file(secret_path) as f:
@@ -232,7 +232,7 @@ class VaultEnvSecrets:
                 vp = self.vault_prefix
             var = "_".join((vp,) + prefix[1:] + (name,)).upper()
 
-        log.debug("looking for env var '%s'." % (var,))
+        log.debug("looking for env var '%s'.", var)
         try:
             val = environ[var]
             return _SecretStr(val)
