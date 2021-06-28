@@ -2,21 +2,21 @@
 *environ-config*: Application Configuration With Env Variables
 ==============================================================
 
-.. image:: https://readthedocs.org/projects/environ-config/badge/?version=stable
+.. image:: https://img.shields.io/badge/Docs-Read%20The%20Docs-black
    :target: https://environ-config.readthedocs.io/
-   :alt: Documentation Status
+   :alt: Documentation
 
-.. image:: https://github.com/hynek/environ-config/workflows/CI/badge.svg?branch=main
-   :target: https://github.com/hynek/environ-config/actions?workflow=CI
-   :alt: CI Status
+.. image:: https://img.shields.io/badge/license-Apache--2.0-C06524
+   :target: https://github.com/hynek/environ-config/blob/main/LICENSE
+   :alt: License: Apache 2.0
 
-.. image:: https://codecov.io/gh/hynek/environ-config/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/hynek/environ-config
-   :alt: Test Coverage
+.. image:: https://img.shields.io/pypi/v/environ-config
+   :target: https://pypi.org/project/environ-config/
+   :alt: PyPI version
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/ambv/black
-   :alt: Code style: black
+.. image:: https://static.pepy.tech/personalized-badge/environ-config?period=month&units=international_system&left_color=grey&right_color=blue&left_text=Downloads%20/%20Month
+   :target: https://pepy.tech/project/environ-config
+   :alt: Downloads / Month
 
 .. -teaser-begin-
 
