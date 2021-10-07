@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
+import json
 import logging
 import os
 
@@ -59,6 +58,7 @@ def config(
     prefix=PREFIX_NOT_SET,
     from_environ="from_environ",
     generate_help="generate_help",
+    generate_json="generate_json",
     frozen=False,
 ):
     """
@@ -95,11 +95,16 @@ def config(
         def generate_help_fnc(cls, **kwargs):
             return __generate_help(cls, **kwargs)
 
+        def generate_json_fnc(cls):
+            return __generate_json(cls)
+
         cls._prefix = prefix
         if from_environ is not None:
             setattr(cls, from_environ, classmethod(from_environ_fnc))
         if generate_help is not None:
             setattr(cls, generate_help, classmethod(generate_help_fnc))
+        if generate_json is not None:
+            setattr(cls, generate_json, classmethod(generate_json_fnc))
         return attr.s(cls, frozen=frozen, slots=True)
 
     if maybe_cls is None:
@@ -439,6 +444,23 @@ def generate_help(config_cls, formatter=None, **kwargs):
     return formatter(help_dicts, **kwargs)
 
 
+def generate_json(config_cls):
+    """
+    Autogenerate a json string to help collect all configuration variables.
+
+    :returns: A pretty-formatted json string that can be printed to the user.
+
+    This is equivalent to calling ``config_cls.generate_json()``.
+    """
+    lines = config_cls.generate_help().splitlines()
+    out = {}
+    for line in sorted(lines):
+        key, status = line.split(maxsplit=1)
+        out[key] = status
+    return json.dumps(out, indent=4)
+
+
 # We need these aliases because of a name clash with a function argument.
 __generate_help = generate_help
+__generate_json = generate_json
 __to_config = to_config
