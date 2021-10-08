@@ -8,6 +8,10 @@ The third digit is only for regressions.
 21.3.0 (UNRELEASED)
 -------------------
 
+- Added `generate_json` function to autogenerate a JSON string you
+  can use to ensure all variables are supplied.
+  `#27 <https://github.com/hynek/environ-config/pull/27>`_
+
 
 Backward-incompatible changes:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -9,6 +9,7 @@ API Reference
 .. autofunction:: group
 .. autofunction:: to_config(config_cls, environ=os.environ)
 .. autofunction:: generate_help
+.. autofunction:: generate_json
 
 
 Secrets

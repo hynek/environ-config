@@ -448,9 +448,32 @@ def generate_json(config_cls):
     """
     Autogenerate a json string to help collect all configuration variables.
 
+    The JSON keys will be the environmental variables needed in the
+    environment. The values will be the help strings of each variable and an
+    indicator whether the variable is required or optional.
+
+    This is a great way to provide development or testing configuration
+    through piping the output to a file, filling it out, and proving
+    the resulting dictionary to the `from_environ` function.
+
+    >>> import environ
+    >>> @environ.config
+    ... class AppConfig:
+    ...     host = environ.var("127.0.0.1", help="database host address")
+    ...     port = environ.var(5000, converter=int, help="port number")
+    ...     user = environ.var(help="database user name")
+    >>> environ.generate_json(AppConfig)
+    '{
+        "APP_HOST": "(Optional): database host address",
+        "APP_PORT": "(Optional): port number",
+        "APP_USER": "(Required): database user name",
+    }'
+
     :returns: A pretty-formatted json string that can be printed to the user.
 
     This is equivalent to calling ``config_cls.generate_json()``.
+
+    .. versionadded:: 21.3.0
     """
     lines = config_cls.generate_help().splitlines()
     out = {}
