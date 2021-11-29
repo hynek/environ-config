@@ -1,20 +1,20 @@
 ---
 repos:
   - repo: https://github.com/psf/black
-    rev: 21.6b0
+    rev: 21.11b1
     hooks:
       - id: black
         language_version: python3.8
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.9.1
+    rev: 5.10.1
     hooks:
       - id: isort
         additional_dependencies: [toml]
         language_version: python3.8
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 3.9.2
+    rev: 4.0.1
     hooks:
     - id: flake8
       language_version: python3.8
