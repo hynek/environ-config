@@ -33,7 +33,7 @@ from ._utils import _get_default_secret, _open_file
 
 try:
     from environ.secrets.awssm import SecretsManagerSecrets
-except ImportError:  # pragma: nocover
+except ImportError:  # pragma: no cover
 
     class SecretsManagerSecrets:
         def secret(self, *args, **kwargs):
