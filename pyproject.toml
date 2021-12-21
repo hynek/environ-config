@@ -14,9 +14,10 @@ source = ["src", ".tox/*/site-packages"]
 [tool.coverage.report]
 show_missing = true
 
+
 [tool.black]
 line-length = 79
-target-version = ["py35", "py36", "py37", "py38", "py39"]
+target-version = ["py37"]
 
 
 [tool.isort]
