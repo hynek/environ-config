@@ -1,25 +1,29 @@
 Changelog
 =========
 
-Versions follow `CalVer <http://calver.org>`_ with *no* backward-compatibility guarantees whatsoever.
-The third digit is only for regressions.
+All notable changes to this project will be documented in this file.
 
+This project adheres to `Calendar Versioning <https://calver.org/>`_ with a strict backwards-compatibility policy.
 
-21.3.0 (UNRELEASED)
+The **first number** of the version is the year.
+The **second number** is incremented with each release, starting at 1 for each year.
+The **third number** is when we need to start branches for older releases (only for emergencies).
+
+----
+
+You shouldn't ever be afraid to upgrade *environ-config* if you're using its public APIs and pay attention to ``DeprecationWarning``\ s.
+Whenever there is a need to break compatibility, it is announced here in the changelog and raises a ``DeprecationWarning`` for a year (if possible) before it's finally really broken.
+
+.. changelog
+
+XX.Y.Z (UNRELEASED)
 -------------------
-
-
-Backward-incompatible changes:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- Python 2.7, 3.5, and 3.6 support has been dropped.
-  *environ-config* now requires Python 3.7 or later.
-
 
 Deprecations:
 ^^^^^^^^^^^^^
 
-*none*
+- Python 2.7, 3.5, and 3.6 support has been dropped.
+  *environ-config* now requires Python 3.7 or later.
 
 
 Changes:
@@ -34,13 +38,6 @@ Changes:
 
 21.2.0 (2021-05-17)
 -------------------
-
-
-Backward-incompatible changes:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*none*
-
 
 Deprecations:
 ^^^^^^^^^^^^^
