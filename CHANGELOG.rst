@@ -16,6 +16,30 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 .. changelog
 
+XX.Y.Z (UNRELEASED)
+-------------------
+
+Backwards-incompatible changes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*none*
+
+
+Deprecations
+^^^^^^^^^^^^
+
+*none*
+
+
+Changes
+^^^^^^^
+
+*none*
+
+
+----
+
+
 22.1.0 (2022-04-02)
 -------------------
 
