@@ -16,7 +16,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 .. changelog
 
-XX.Y.Z (UNRELEASED)
+22.1.0 (2022-04-02)
 -------------------
 
 Deprecations:
