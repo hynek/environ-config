@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-markers"
+addopts = ["-ra", "--strict-markers", "--strict-config"]
 xfail_strict = true
 testpaths = "tests"
 filterwarnings = [
@@ -22,6 +22,7 @@ source = ["src", ".tox/*/site-packages"]
 
 [tool.coverage.report]
 show_missing = true
+skip_covered = true
 
 
 [tool.black]

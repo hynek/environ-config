@@ -1,11 +1,13 @@
 *.egg-info
 *.pyc
+.DS_Store
 .cache
 .coverage
 .coverage.*
+.direnv
 .tox
+.vscode
 build
 dist
 docs/_build
 htmlcov
-pip-wheel-metadata
