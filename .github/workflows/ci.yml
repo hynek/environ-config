@@ -82,17 +82,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
         with:
-          python-version: ${{env.PYTHON_LATEST}}
+          egress-policy: block
+          allowed-endpoints: >
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
 
-      - run: python -m pip install build twine check-wheel-contents
-      - run: python -m build --sdist --wheel .
-      - run: ls -l dist
-      - run: check-wheel-contents dist/*.whl
-      - name: Check long_description
-        run: python -m twine check dist/*
+      - uses: actions/checkout@v3
+      - uses: hynek/build-and-inspect-python-package@v1
 
 
   install-dev:
@@ -110,3 +110,25 @@ jobs:
           python-version: ${{env.PYTHON_LATEST}}
       - run: python -m pip install -e .[dev]
       - run: python -c 'import environ; print(environ.__version__)'
+        #
+  # Ensure everything required is passing for branch protection.
+  required-checks-pass:
+    if: always()
+
+    needs:
+      - coverage
+      - install-dev
+      - package
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: block
+
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
