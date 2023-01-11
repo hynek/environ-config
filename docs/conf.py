@@ -1,10 +1,18 @@
-import environ
+from importlib import metadata
 
 
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "notfound.extension",
+    "myst_parser",
+]
+
+myst_enable_extensions = [
+    "colon_fence",
+    "smartquotes",
+    "deflist",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -12,8 +20,7 @@ templates_path = []
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
 master_doc = "index"
@@ -26,10 +33,14 @@ copyright = "2017, " + author
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-# The short X.Y version.
-version = environ.__version__
+
 # The full version, including alpha/beta/rc tags.
-release = version
+release = metadata.version("environ-config")
+# The short X.Y version.
+version = release.rsplit(".", 1)[0]
+
+if "dev" in release:
+    release = version = "UNRELEASED"
 
 
 linkcheck_ignore = [

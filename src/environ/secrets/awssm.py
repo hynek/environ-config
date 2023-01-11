@@ -50,6 +50,12 @@ class SecretsManagerSecrets:
 
     The secret name should be stored in the environment variable
 
+    .. warning::
+
+       Requires `boto3 <https://pypi.org/project/boto3/>`_! Please install
+       *environ-config* with the ``aws`` extra: ``python -m pip install
+       environ-config[aws]``
+
     .. versionadded:: 21.4.0
     """
 

@@ -39,7 +39,13 @@ dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 [project.optional-dependencies]
 tests = ["pytest", "coverage[toml]", "moto"]
 aws = ["boto3"]
-docs = ["environ-config[aws]", "sphinx", "furo"]
+docs = [
+    "environ-config[aws]",
+    "furo",
+    "myst-parser",
+    "sphinx-notfound-page",
+    "sphinx",
+]
 dev = ["environ-config[tests,docs]"]
 
 [project.urls]
@@ -85,24 +91,27 @@ target-version = ["py37"]
 profile = "attrs"
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
-content-type = "text/x-rst"
+content-type = "text/markdown"
 
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
-path = "README.rst"
-
-[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
-text = '''
-
-
-Release Information
-==================='''
-
-[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
-path = "CHANGELOG.rst"
-start-after = "-------------------"
-end-before = "----"
+path = "README.md"
 
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
 text = '''
-`Full changelog <https://github.com/hynek/environ-config/blob/main/CHANGELOG.rst>`_.
+
+
+## Release Information
+
 '''
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "CHANGELOG.md"
+start-after = "<!-- changelog follows -->"
+pattern = "\n\n(###.+?\n)## "
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+text = """
+ ---
+
+ [Full changelog](https://www.structlog.org/en/stable/changelog.html)
+ """
