@@ -53,7 +53,7 @@ PYTHON_REQUIRES = ">=3.7"
 INSTALL_REQUIRES = ["attrs>=17.4.0"]
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "coverage[toml]", "moto"],
-    "docs": ["sphinx", "furo"],
+    "docs": ["environ-config[aws]", "sphinx", "furo"],
     "aws": ["boto3"],
 }
 EXTRAS_REQUIRE["dev"] = (
