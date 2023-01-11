@@ -24,19 +24,6 @@ from ._environ_config import (
 from .exceptions import MissingEnvValueError
 
 
-__version__ = "22.2.0.dev0"
-
-__title__ = "environ_config"
-__description__ = "Boilerplate-free configuration with env variables."
-__uri__ = "https://github.com/hynek/environ_config"
-
-__author__ = "Hynek Schlawack"
-__email__ = "hs@ox.cx"
-
-__license__ = "Apache-2.0"
-__copyright__ = "Copyright (c) 2017 " + __author__
-
-
 __all__ = [
     "MissingEnvValueError",
     "bool_var",
@@ -47,3 +34,39 @@ __all__ = [
     "to_config",
     "var",
 ]
+
+
+def __getattr__(name: str) -> str:
+    dunder_to_metadata = {
+        "__version__": "version",
+        "__description__": "summary",
+        "__uri__": "",
+        "__email__": "",
+    }
+    if name not in dunder_to_metadata.keys():
+        raise AttributeError(f"module {__name__} has no attribute {name}")
+
+    import sys
+    import warnings
+
+    if sys.version_info < (3, 8):
+        from importlib_metadata import metadata
+    else:
+        from importlib.metadata import metadata
+
+    warnings.warn(
+        f"Accessing environ_config.{name} is deprecated and will be "
+        "removed in a future release. Use importlib.metadata directly "
+        "to query for environ_config's packaging metadata.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
+    meta = metadata("environ-config")
+
+    if name == "__uri__":
+        return meta["Project-URL"].split(" ", 1)[-1]
+    elif name == "__email__":
+        return meta["Author-email"].split("<", 1)[1].rstrip(">")
+
+    return meta[dunder_to_metadata[name]]
