@@ -28,7 +28,6 @@ Project Information
 
    license
    contributing
-   backward-compatibility
    changelog
 
 

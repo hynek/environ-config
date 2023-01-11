@@ -19,7 +19,7 @@ Workflow
 - Make sure your changes pass our CI_.
   You won't get any feedback until it's green unless you ask for it.
 - Once you've addressed review feedback, make sure to bump the pull request with a short note, so we know you're done.
-- Don’t break `backward compatibility`_.
+- Don’t break backwards-compatibility.
 
 
 Code
@@ -174,7 +174,6 @@ Thank you for considering contributing to *environ-config*!
 .. _`good test docstrings`: https://jml.io/pages/test-docstrings.html
 .. _`Code of Conduct`: https://github.com/hynek/environ-config/blob/main/.github/CODE_OF_CONDUCT.rst
 .. _changelog: https://github.com/hynek/environ-config/blob/main/CHANGELOG.rst
-.. _`backward compatibility`: https://environ-config.readthedocs.io/en/latest/backward-compatibility.html
 .. _tox: https://tox.readthedocs.io/
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
