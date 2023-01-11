@@ -17,7 +17,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/22.1.0...HEAD)
 
-### Backwards-incompatible changes
+### Backwards-incompatible Changes
 
 *none*
 
@@ -58,7 +58,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [21.1.0](https://github.com/hynek/environ-config/compare/20.1.0...21.1.0) - 2021-04-14
 
-### Backward-incompatible changes:
+### Backwards-incompatible Changes
 
 *none*
 
@@ -79,7 +79,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [20.1.0](https://github.com/hynek/environ-config/compare/19.1.0...20.1.0) - 2020-03-23
 
-### Backward-incompatible changes:
+### Backwards-incompatible Changes
 
 *none*
 
@@ -95,7 +95,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [19.1.0](https://github.com/hynek/environ-config/compare/18.2.0...19.1.0) - 2019-09-02
 
-### Backward-incompatible changes:
+### Backwards-incompatible Changes
 
 - Changed license from MIT to Apache License 2.
 
@@ -117,7 +117,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [18.2.0](https://github.com/hynek/environ-config/compare/18.1.0...18.2.0) - 2018-01-12
 
-### Backward-incompatible changes:
+### Backwards-incompatible Changes
 
 - Use `RawConfigParser` for ini-style secrets to avoid interpolation errors.
 
@@ -128,7 +128,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [18.1.0](https://github.com/hynek/environ-config/compare/...18.1.0) - 2018-01-04
 
-### Backward-incompatible changes:
+### Backwards-incompatible Changes
 
 - `convert` → `converter`
 
