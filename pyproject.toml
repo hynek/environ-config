@@ -91,4 +91,7 @@ content-type = "text/x-rst"
 path = "README.rst"
 
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+text = "\n\n"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
 path = "AUTHORS.rst"
