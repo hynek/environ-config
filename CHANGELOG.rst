@@ -34,7 +34,8 @@ Deprecations
 Changes
 ^^^^^^^
 
-*none*
+- ``enrivon.secrets.DirectorySecrets.from_path()`` now works when loading from ``os.environ``.
+  `#45 <https://github.com/hynek/environ-config/issues/45>`_
 
 
 ----
@@ -53,7 +54,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Lazily init the AWS SecretsManager client to make unit testing easier.
+- Lazily init the *AWS Secrets Manager* client to make unit testing easier.
   `#25 <https://github.com/hynek/environ-config/pull/25>`_
 
 
@@ -72,7 +73,7 @@ Deprecations:
 Changes:
 ^^^^^^^^
 
-- Added `AWS SecretsManager <https://aws.amazon.com/secrets-manager/>`_ support.
+- Added `AWS Secrets Manager <https://aws.amazon.com/secrets-manager/>`_ support.
   `#23 <https://github.com/hynek/environ-config/pull/23>`_
 
 
