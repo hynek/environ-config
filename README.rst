@@ -70,6 +70,7 @@ Features
   Ships with:
 
   * `HashiCorp Vault <https://www.vaultproject.io>`_ support via `envconsul <https://github.com/hashicorp/envconsul>`_.
+  * `AWS Secrets Manager <https://aws.amazon.com/secrets-manager/>`_
   * INI files, because secrets in env variables are icky.
 - Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
 - Built-in dynamic help documentation generation.

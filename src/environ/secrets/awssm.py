@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Handling of sensitive data stored in AWS SecretsManager
+Handling of sensitive data stored in AWS Secrets Manager
 """
 import logging
 
@@ -46,7 +46,7 @@ def _build_secretsmanager_client():
 @attr.s(init=False)
 class SecretsManagerSecrets:
     """
-    Load secrets from the AWS secretsmanager.
+    Load secrets from the *AWS Secrets Manager*.
 
     The secret name should be stored in the environment variable
 
