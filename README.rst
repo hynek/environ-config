@@ -83,6 +83,10 @@ You can find the full documentation including a step-by-step tutorial on `Read t
 Project Information
 ===================
 
-*environ-config* is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
+*environ-config* is written and maintained by `Hynek Schlawack <https://hynek.me/>`_ and is released under the `Apache License 2.0 <https://choosealicense.com/licenses/apache-2.0/>`_ license.
 It targets Python 3.7 and newer, and PyPy.
 Development takes place on `GitHub <https://github.com/hynek/environ-config>`_.
+
+The development is kindly supported by `Variomedia AG <https://www.variomedia.de/>`_.
+
+*environ-config* wouldn't be possible without the `attrs project <https://www.attrs.org>`_.

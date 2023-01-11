@@ -34,7 +34,7 @@ Deprecations
 Changes
 ^^^^^^^
 
-- ``enrivon.secrets.DirectorySecrets.from_path()`` now works when loading from ``os.environ``.
+- ``environ.secrets.DirectorySecrets.from_path()`` now works when loading from ``os.environ``.
   `#45 <https://github.com/hynek/environ-config/issues/45>`_
 
 

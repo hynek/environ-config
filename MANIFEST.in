@@ -1,7 +1,0 @@
-include *.rst *.txt *.yml LICENSE NOTICE tox.ini docs/Makefile .coveragerc conftest.py *.yaml *.toml
-recursive-include tests *.py
-recursive-include docs *.rst
-recursive-include docs *.py
-recursive-include docs *.bat
-graft .github
-prune docs/_build
