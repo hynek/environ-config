@@ -55,13 +55,13 @@ AppConfig(env='dev', lang='C', db=AppConfig.DB(name='default_db', host='localhos
 
 - Default & mandatory values: enforce configuration structure without writing a line of code.
 
-- Built on top of [attrs](https://www.attrs.org/) which gives you data validation and conversion for free.
+- Built on top of [*attrs*](https://www.attrs.org/) which gives you data validation and conversion for free.
 
 - Pluggable secrets extraction.
   Ships with:
 
-  - [HashiCorp Vault](https://www.vaultproject.io) support via [envconsul](https://github.com/hashicorp/envconsul).
-  - [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/)
+  - [HashiCorp Vault](https://www.vaultproject.io) support via [*envconsul*](https://github.com/hashicorp/envconsul).
+  - [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) (needs [*boto3*](https://pypi.org/project/boto3/))
   - INI files, because secrets in env variables are icky.
 
 - Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
