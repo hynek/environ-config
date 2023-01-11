@@ -186,7 +186,12 @@ class DirectorySecrets:
         # than for environment variables, so we don't call .upper()
         filename = ce.name or "_".join(prefix[1:] + (name,))
 
-        secrets_dir = environ.get(self._env_name, self.secrets_dir)
+        # Looking up None in os.environ is an error.
+        if self._env_name:
+            secrets_dir = environ.get(self._env_name, self.secrets_dir)
+        else:
+            secrets_dir = self.secrets_dir
+
         secret_path = os.path.join(secrets_dir, filename)
         log.debug("looking for secret in file '%s'.", secret_path)
 

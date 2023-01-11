@@ -253,6 +253,7 @@ def secrets_dir(tmpdir):
     make_secrets_file("empty", "")
     make_secrets_file("apples", "apples\n")
     make_secrets_file("oranges", "oranges")
+
     return str(tmpdir)
 
 
