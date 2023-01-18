@@ -39,7 +39,7 @@ def tests(session: nox.Session) -> None:
 
 @nox.session(python="3.7", tags=["tests"])
 def tests_oldestAttrs(session: nox.Session) -> None:
-    # Keep basepython in sync with gh-actions and .readthedocs.yaml.
+    # Keeps attrs pin in sync with pyproject.toml/dependencies.
     session.install(".[tests]", "attrs==17.4.0")
 
     _cov(session)
@@ -53,7 +53,7 @@ def coverage_report(session: nox.Session) -> None:
     session.run("coverage", "report")
 
 
-# Keep python in sync with gh-actions and .readthedocs.yaml.
+# Keep python in sync with ci.yml/docs and .readthedocs.yaml.
 @nox.session(python="3.10")
 def docs(session: nox.Session) -> None:
     session.install(".[docs]")
