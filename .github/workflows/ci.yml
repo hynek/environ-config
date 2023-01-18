@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   tests:
-    name: nox on ${{ matrix.python-version }}
+    name: Tests on ${{ matrix.python-version }}
     runs-on: ubuntu-latest
 
     strategy:
