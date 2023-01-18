@@ -4,7 +4,7 @@
 .coverage
 .coverage.*
 .direnv
-.tox
+.nox
 .vscode
 build
 dist

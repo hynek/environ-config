@@ -14,6 +14,7 @@ dynamic = ["readme", "version"]
 name = "environ-config"
 description = "Boilerplate-free configuration with env variables."
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
+# Keep in sync with noxfile.py/tests_oldestAttrs & ci.yml/docs
 requires-python = ">=3.7"
 license = "Apache-2.0"
 keywords = ["app", "config", "env", "cfg"]
@@ -75,7 +76,7 @@ branch = true
 source = ["environ"]
 
 [tool.coverage.paths]
-source = ["src", ".tox/py*/**/site-packages"]
+source = ["src", ".nox/tests*/**/site-packages"]
 
 [tool.coverage.report]
 show_missing = true
