@@ -31,7 +31,7 @@ Please report any harm to [Hynek Schlawack] in any way you find appropriate.
 
 ## Local Development Environment
 
-You can (and should) run our test suite using [Tox].
+You can (and should) run our test suite using [Nox].
 However, you’ll probably want a more traditional environment as well.
 We highly recommend to develop using the latest Python release because we try to take advantage of modern features whenever possible.
 
@@ -81,7 +81,7 @@ To avoid committing code that violates our style guide, we strongly advise you t
 $ pre-commit install
 ```
 
-This is not strictly necessary, because our [Tox] file contains an environment that runs:
+This is not strictly necessary, because our [Nox] file contains an environment that runs:
 
 ```console
 $ pre-commit run --all-files
@@ -108,7 +108,7 @@ But it's way more comfortable to run it locally and *git* catching avoidable err
   ```
 - If you add or change public APIs, tag the docstring using `..  versionadded:: 16.0.0 WHAT` or `..  versionchanged:: 16.2.0 WHAT`.
 - We use [*isort*](https://github.com/PyCQA/isort) to sort our imports, and we use [*Black*](https://github.com/psf/black) with line length of 79 characters to format our code.
-  As long as you run our full [Tox] suite before committing, or install our [*pre-commit*] hooks (ideally you'll do both – see [*Local Development Environment*](#local-development-environment) above), you won't have to spend any time on formatting your code at all.
+  As long as you run our full [Nox] suite before committing, or install our [*pre-commit*] hooks (ideally you'll do both – see [*Local Development Environment*](#local-development-environment) above), you won't have to spend any time on formatting your code at all.
   If you don't, [CI] will catch it for you – but that seems like a waste of your time!
 
 
@@ -123,11 +123,8 @@ But it's way more comfortable to run it locally and *git* catching avoidable err
   assert "foo" == x._a_private_attribute
   ```
 
-- To run the test suite, all you need is a recent [Tox].
+- To run the test suite, all you need is a recent [Nox].
   It will ensure the test suite runs with all dependencies against all Python versions just as it will in our [CI].
-  If you lack some Python versions, you can can always limit the environments like `tox -e py38,py39`, or make it a non-failure using `tox --skip-missing-interpreters`.
-
-  In that case you should look into [*asdf*](https://asdf-vm.com) or [*pyenv*](https://github.com/pyenv/pyenv), which make it very easy to install many different Python versions in parallel.
 - Write [good test docstrings](https://jml.io/pages/test-docstrings.html).
 - If you've changed or added public APIs, please update our type stubs (files ending in `.pyi`).
 
@@ -197,7 +194,7 @@ or:
 [CI]: https://github.com/hynek/environ-config/actions
 [Hynek Schlawack]: https://hynek.me/about/
 [*pre-commit*]: https://pre-commit.com/
-[Tox]: https://tox.wiki/
+[Nox]: https://nox.thea.codes/
 [semantic newlines]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [*reStructuredText*]: https://www.sphinx-doc.org/en/stable/usage/restructuredtext/basics.html
 [Markdown]: https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
