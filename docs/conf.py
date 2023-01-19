@@ -45,7 +45,6 @@ if "dev" in release:
 
 linkcheck_ignore = [
     r"https://github.com/.*/(issues|pull)/\d+",
-    r"https://ko-fi.com/",
 ]
 
 

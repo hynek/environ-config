@@ -56,7 +56,6 @@ Changelog = "https://environ-config.rtfd.io/en/stable/changelog.html"
 "Source Code" = "https://github.com/hynek/environ-config"
 Funding = "https://github.com/sponsors/hynek"
 Tidelift = "https://tidelift.com/subscription/pkg/pypi-environ-config?utm_source=pypi-environ-config&utm_medium=pypi"
-Ko-fi = "https://ko-fi.com/the_hynek"
 
 [tool.hatch.version]
 source = "vcs"
