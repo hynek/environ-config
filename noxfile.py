@@ -30,7 +30,7 @@ def tests_cov(session: nox.Session) -> None:
     _cov(session)
 
 
-@nox.session(python=["3.8", "3.9", "3.10"], tags=["tests"])
+@nox.session(python=["3.8", "3.9", "3.10", "3.12"], tags=["tests"])
 def tests(session: nox.Session) -> None:
     session.install(".[tests]")
 
