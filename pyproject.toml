@@ -90,6 +90,19 @@ target-version = ["py37"]
 [tool.isort]
 profile = "attrs"
 
+
+[tool.mypy]
+strict = true
+
+show_error_codes = true
+enable_error_code = ["ignore-without-code"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
 content-type = "text/markdown"
 

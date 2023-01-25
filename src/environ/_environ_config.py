@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 
 import logging
 import os
+
+from typing import Any, Callable, TypeVar
 
 import attr
 
@@ -54,13 +57,16 @@ class Raise:
 RAISE = Raise()
 
 
+T = TypeVar("T")
+
+
 def config(
-    maybe_cls=None,
-    prefix=PREFIX_NOT_SET,
-    from_environ="from_environ",
-    generate_help="generate_help",
-    frozen=False,
-):
+    maybe_cls: type[T] | None = None,
+    prefix: str | Sentinel = PREFIX_NOT_SET,
+    from_environ: str = "from_environ",
+    generate_help: str = "generate_help",
+    frozen: bool = False,
+) -> T:
     """
     Make a class a configuration class.
 
@@ -104,20 +110,26 @@ def config(
 
     if maybe_cls is None:
         return wrap
-    else:
-        return wrap(maybe_cls)
+
+    return wrap(maybe_cls)
 
 
-@attr.s(slots=True)
+@attr.s(slots=True, auto_attribs=True)
 class _ConfigEntry:
-    name = attr.ib(default=None)
-    default = attr.ib(default=RAISE)
-    sub_cls = attr.ib(default=None)
-    callback = attr.ib(default=None)
-    help = attr.ib(default=None)
+    name: str | None = attr.ib(default=None)
+    default: Any = attr.ib(default=RAISE)
+    sub_cls: type | None = attr.ib(default=None)
+    callback: Callable | None = attr.ib(default=None)
+    help: str | None = attr.ib(default=None)
 
 
-def var(default=RAISE, converter=None, name=None, validator=None, help=None):
+def var(
+    default: Any = RAISE,
+    converter: Callable | None = None,
+    name: str | None = None,
+    validator: Callable | None = None,
+    help: str | None = None,
+) -> Any:
     """
     Declare a configuration attribute on the body of `config`-decorated class.
 
@@ -132,7 +144,7 @@ def var(default=RAISE, converter=None, name=None, validator=None, help=None):
         its return value is used.  Please not that it is also run for default
         values.
     :param validator: A callable that is run with the final value.
-        See ``attrs``'s `chapter on validation
+        See *attrs*'s `chapter on validation
         <https://www.attrs.org/en/stable/init.html#validators>`_ for details.
         You can also use any validator that is `shipped with attrs
         <https://www.attrs.org/en/stable/api.html#validators>`_.
@@ -146,7 +158,7 @@ def var(default=RAISE, converter=None, name=None, validator=None, help=None):
     )
 
 
-def _env_to_bool(val):
+def _env_to_bool(val: str | bool) -> bool:
     """
     Convert *val* to a bool if it's not a bool in the first place.
     """
@@ -159,7 +171,9 @@ def _env_to_bool(val):
     return False
 
 
-def bool_var(default=RAISE, name=None, help=None):
+def bool_var(
+    default: Any = RAISE, name: str | None = None, help: str | None = None
+) -> Any:
     """
     Like `var`, but converts the value to a `bool`.
 
@@ -176,7 +190,7 @@ def bool_var(default=RAISE, name=None, help=None):
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
-def group(cls, optional=False):
+def group(cls: type[T], optional: bool = False) -> T:
     """
     A configuration attribute that is another configuration class.
 
@@ -290,7 +304,7 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
     return config_cls(**defaulted)
 
 
-def to_config(config_cls, environ=os.environ):
+def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
     """
     Load the configuration as declared by *config_cls* from *environ*.
 
@@ -415,7 +429,9 @@ def _generate_help_dicts(config_cls, _prefix=PREFIX_NOT_SET):
     return help_dicts
 
 
-def generate_help(config_cls, formatter=None, **kwargs):
+def generate_help(
+    config_cls: type[T], formatter: Callable | None = None, **kwargs: Any
+) -> str:
     """
     Autogenerate a help string for a config class.
 

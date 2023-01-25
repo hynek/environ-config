@@ -29,6 +29,8 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 - `environ.secrets.DirectorySecrets.from_path()` now works when loading from `os.environ`.
   [#45](https://github.com/hynek/environ-config/issues/45)
+- Public APIs now carry type hints (except in-class methods like ``AppConfig.from_environ()``).
+  [#49](https://github.com/hynek/environ-config/issues/49)
 
 
 ## [22.1.0](https://github.com/hynek/environ-config/compare/21.2.0...22.1.0) - 2022-04-02
