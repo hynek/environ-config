@@ -1,19 +1,25 @@
-API Reference
-=============
+# API Reference
 
+```{eval-rst}
 .. automodule:: environ
 
 .. autofunction:: config
+
 .. autofunction:: var
+
 .. autofunction:: bool_var
+
 .. autofunction:: group
+
 .. autofunction:: to_config(config_cls, environ=os.environ)
+
 .. autofunction:: generate_help
+```
 
 
-Secrets
--------
+## Secrets
 
+```{eval-rst}
 .. automodule:: environ.secrets
 
 .. autoclass:: INISecrets
@@ -31,11 +37,15 @@ Secrets
 
 .. autoclass:: SecretsManagerSecrets
    :members: secret
+```
 
-Exceptions
-----------
 
+## Exceptions
+
+```{eval-rst}
 .. automodule:: environ.exceptions
 
 .. autoexception:: MissingEnvValueError
+
 .. autoexception:: MissingSecretError
+```
