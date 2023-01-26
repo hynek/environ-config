@@ -38,7 +38,7 @@ Now you only have to write two functions:
 
 - `setup_logging()` that takes a configuration and configures {mod}`logging`.
 - `make_app()` that creates a WSGI application based on your configuration.
-  For Flask, you would instantiate `flask.Flask`, load your [blueprints](https://flask.palletsprojects.com/en/latest/blueprints/), et cetera here.
+  Flask calls this an [*Application Factory*](https://flask.palletsprojects.com/en/latest/patterns/appfactories/) and you would instantiate `flask.Flask`, load your [blueprints](https://flask.palletsprojects.com/en/latest/blueprints/), et cetera here.
 
 As you can see: you can now test both `setup_logging` as well as `make_app` without loading the configuration from your environment every single time.
 
