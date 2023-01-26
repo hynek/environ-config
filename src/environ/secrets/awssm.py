@@ -15,7 +15,12 @@
 """
 Handling of sensitive data stored in AWS Secrets Manager
 """
+
+from __future__ import annotations
+
 import logging
+
+from typing import Any, Callable
 
 import attr
 import boto3
@@ -43,7 +48,7 @@ def _build_secretsmanager_client():
     return client
 
 
-@attr.s(init=False)
+@attr.s(auto_attribs=True)
 class SecretsManagerSecrets:
     """
     Load secrets from the *AWS Secrets Manager*.
@@ -59,21 +64,21 @@ class SecretsManagerSecrets:
     .. versionadded:: 21.4.0
     """
 
-    def __init__(self, client=None):
-        self._client = client
+    _client: boto3.client | None = None
 
     @property
-    def client(self):
+    def client(self) -> boto3.client:
         if self._client is None:
             self._client = _build_secretsmanager_client()
+
         return self._client
 
     def secret(
         self,
-        default=RAISE,
-        converter=convert_secret("SecretString"),
-        name=None,
-        help=None,
+        default: Any = RAISE,
+        converter: Callable = convert_secret("SecretString"),
+        name: str | None = None,
+        help: str | None = None,
     ):
         """
         Declare a secrets manager secret on an `environ.config`-decorated class

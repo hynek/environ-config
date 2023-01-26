@@ -16,12 +16,15 @@
 Handling of sensitive data.
 """
 
+from __future__ import annotations
 
 import logging
 import os
 import sys
 
 from configparser import NoOptionError, RawConfigParser
+from pathlib import Path
+from typing import Any, Callable
 
 import attr
 
@@ -42,6 +45,13 @@ except ImportError:  # pragma: no cover
             )
 
 
+__all__ = [
+    "DirectorySecrets",
+    "INISecrets",
+    "SecretsManagerSecrets",
+    "VaultEnvSecrets",
+]
+
 log = logging.getLogger(__name__)
 
 
@@ -55,24 +65,28 @@ class INISecrets:
     using `configparser.RawConfigParser`.
     """
 
-    section = attr.ib()
-    _cfg = attr.ib(default=None)
-    _env_name = attr.ib(default=None)
-    _env_default = attr.ib(default=None)
+    section: str = attr.ib()
+    _cfg: RawConfigParser = attr.ib(default=None)
+    _env_name: str | None = attr.ib(default=None)
+    _env_default: Any = attr.ib(default=None)
 
     @classmethod
-    def from_path(cls, path, section="secrets"):
+    def from_path(cls, path: str | Path, section="secrets") -> INISecrets:
         """
         Look for secrets in *section* of *path*.
 
-        :param str path: A path to an INI file.
-        :param str section: The section in the INI file to read the secrets
-            from.
+        :param path: A path to an INI file.
+        :param section: The section in the INI file to read the secrets from.
         """
-        return cls(section, _load_ini(path), None, None)
+        return cls(section, _load_ini(str(path)), None, None)
 
     @classmethod
-    def from_path_in_env(cls, env_name, default=None, section="secrets"):
+    def from_path_in_env(
+        cls,
+        env_name: str,
+        default: str | None = None,
+        section: str = "secrets",
+    ) -> INISecrets:
         """
         Get the path from the environment variable *env_name* **at runtime**
         and then load the secrets from it.
@@ -80,21 +94,25 @@ class INISecrets:
         This allows you to overwrite the path to the secrets file in
         development.
 
-        :param str env_name: Environment variable that is used to determine the
+        :param env_name: Environment variable that is used to determine the
             path of the secrets file.
-        :param str default: The default path to load from.
-        :param str section: The section in the INI file to read the secrets
-            from.
+        :param default: The default path to load from.
+        :param section: The section in the INI file to read the secrets from.
         """
         return cls(section, None, env_name, default)
 
     def secret(
-        self, default=RAISE, converter=None, name=None, section=None, help=None
-    ):
+        self,
+        default: Any = RAISE,
+        converter: Callable | None = None,
+        name: str | None = None,
+        section: str | None = None,
+        help: str | None = None,
+    ) -> Any:
         """
         Declare a secret on an `environ.config`-decorated class.
 
-        :param str section: Overwrite the section where to look for the values.
+        :param section: Overwrite the section where to look for the values.
 
         Other parameters work just like in `environ.var`.
         """
@@ -110,7 +128,7 @@ class INISecrets:
             converter=converter,
         )
 
-    def _get(self, environ, metadata, prefix, name):
+    def _get(self, environ, metadata, prefix, name) -> _SecretStr:
         # Delayed loading.
         if self._cfg is None and self._env_name is not None:
             log.debug("looking for env var '%s'.", self._env_name)
@@ -129,6 +147,7 @@ class INISecrets:
         try:
             log.debug("looking for '%s' in section '%s'.", var, section)
             val = self._cfg.get(section, var)
+
             return _SecretStr(val)
         except NoOptionError:
             return _get_default_secret(var, ce.default)
@@ -138,40 +157,49 @@ class INISecrets:
 class DirectorySecrets:
     """
     Load secrets from a directory containing secrets in separate files.
-    Suitable for reading Docker or Kubernetes secrets
-    from the filesystem inside a container.
+    Suitable for reading Docker or Kubernetes secrets from the filesystem
+    inside a container.
 
     .. versionadded:: 21.1.0
     """
 
-    secrets_dir = attr.ib()
-    _env_name = attr.ib(default=None)
+    secrets_dir: str | Path = attr.ib()
+    _env_name: str | None = attr.ib(default=None)
 
     @classmethod
-    def from_path(cls, path):
+    def from_path(cls, path: str | Path) -> DirectorySecrets:
         """
         Look for secrets in *path* directory.
 
-        :param str path: A path to directory containing secrets as files.
+        :param path: A path to directory containing secrets
+            as files.
         """
         return cls(path)
 
     @classmethod
-    def from_path_in_env(cls, env_name, default):
+    def from_path_in_env(
+        cls, env_name: str, default: str | Path | None
+    ) -> DirectorySecrets:
         """
-        Get the path from the environment variable *env_name* and
-        then load the secrets from that directory at runtime.
+        Get the path from the environment variable *env_name* and then load the
+        secrets from that directory at runtime.
 
-        This allows you to overwrite the path to the secrets directory
-        in development.
+        This allows you to overwrite the path to the secrets directory in
+        development.
 
-        :param str env_name: Environment variable that is used to determine the
+        :param env_name: Environment variable that is used to determine the
             path of the secrets directory.
-        :param str default: The default path to load from.
+        :param default: The default path to load from.
         """
         return cls(default, env_name)
 
-    def secret(self, default=RAISE, converter=None, name=None, help=None):
+    def secret(
+        self,
+        default: Any = RAISE,
+        converter: Callable | None = None,
+        name: str | None = None,
+        help: str | None = None,
+    ) -> Any:
         return attr.ib(
             default=default,
             metadata={
@@ -180,7 +208,7 @@ class DirectorySecrets:
             converter=converter,
         )
 
-    def _get(self, environ, metadata, prefix, name):
+    def _get(self, environ, metadata, prefix, name) -> _SecretStr:
         ce = metadata[CNF_KEY]
         # conventions for file naming might be different
         # than for environment variables, so we don't call .upper()
@@ -210,9 +238,15 @@ class VaultEnvSecrets:
     `envconsul <https://github.com/hashicorp/envconsul>`_.
     """
 
-    vault_prefix = attr.ib()
+    vault_prefix: str = attr.ib()
 
-    def secret(self, default=RAISE, converter=None, name=None, help=None):
+    def secret(
+        self,
+        default: Any = RAISE,
+        converter: Callable | None = None,
+        name: str | None = None,
+        help: str | None = None,
+    ) -> Any:
         """
         Almost identical to `environ.var` except that it takes *envconsul*
         naming into account.
@@ -225,7 +259,7 @@ class VaultEnvSecrets:
             converter=converter,
         )
 
-    def _get(self, environ, metadata, prefix, name):
+    def _get(self, environ, metadata, prefix, name) -> _SecretStr:
         ce = metadata[CNF_KEY]
 
         if ce.name is not None:
@@ -250,7 +284,7 @@ class _SecretStr(str):
     String that censors its __repr__ if called from an attrs repr.
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # The frame numbers varies across attrs versions. Use this convoluted
         # form to make the call lazy.
         if (
@@ -267,10 +301,10 @@ CNF_INI_SECRET_KEY = CNF_KEY + "_ini_secret"
 
 @attr.s
 class _INIConfig:
-    section = attr.ib()
+    section: str = attr.ib()
 
 
-def _load_ini(path):
+def _load_ini(path: str) -> RawConfigParser:
     """
     Load an INI file from *path*.
     """

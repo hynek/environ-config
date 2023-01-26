@@ -70,19 +70,19 @@ def config(
     """
     Make a class a configuration class.
 
-    :param str prefix: The prefix that is used for the env variables.  If you
-        have an `var` attribute on the class and you leave the default argument
+    :param prefix: The prefix that is used for the env variables.  If you have
+        an `var` attribute on the class and you leave the default argument
         value of *PREFIX_NOT_SET*, the *DEFAULT_PREFIX* value of ``APP`` will
         be used and *environ-config* will look for an environment variable
         called ``APP_VAR``.
-    :param str from_environ: If not `None`, attach a config loading method with
-        the name *from_environ* to the class.  See `to_config` for more
+    :param from_environ: If not `None`, attach a config loading method with the
+        name *from_environ* to the class.  See `to_config` for more
         information.
-    :param str generate_help: If not `None`, attach a config loading method
-        with the name *generate_help* to the class.  See `generate_help` for
-        more information.
-    :param bool frozen: The configuration will be immutable after
-        instantiation, if `True`.
+    :param generate_help: If not `None`, attach a config loading method with
+        the name *generate_help* to the class.  See `generate_help` for more
+        information.
+    :param frozen: The configuration will be immutable after instantiation, if
+        `True`.
 
     .. versionadded:: 19.1.0
        *from_environ*
@@ -114,7 +114,7 @@ def config(
     return wrap(maybe_cls)
 
 
-@attr.s(slots=True, auto_attribs=True)
+@attr.s(slots=True)
 class _ConfigEntry:
     name: str | None = attr.ib(default=None)
     default: Any = attr.ib(default=RAISE)
@@ -138,17 +138,17 @@ def var(
 
     :param default: Setting this to a value makes the config attribute
         optional.
-    :param str name: Overwrite name detection with a string.  If not set, the
-        name of the attribute is used.
-    :param converter: A callable that is run with the found value and
-        its return value is used.  Please not that it is also run for default
+    :param name: Overwrite name detection with a string.  If not set, the name
+        of the attribute is used.
+    :param converter: A callable that is run with the found value and its
+        return value is used.  Please not that it is also run for default
         values.
-    :param validator: A callable that is run with the final value.
-        See *attrs*'s `chapter on validation
+    :param validator: A callable that is run with the final value. See
+        *attrs*'s `chapter on validation
         <https://www.attrs.org/en/stable/init.html#validators>`_ for details.
         You can also use any validator that is `shipped with attrs
         <https://www.attrs.org/en/stable/api.html#validators>`_.
-    :param str help: A help string that is used by `generate_help`.
+    :param help: A help string that is used by `generate_help`.
     """
     return attr.ib(
         default=default,
@@ -216,7 +216,7 @@ def group(cls: type[T], optional: bool = False) -> T:
     (including sub-groups) are not present in the environment being parsed, the
     attribute corresponding to the *optional* *group* will be set to `None`.
 
-    :param bool optional: Mark this group as *optional*. Defaults to `False`.
+    :param optional: Mark this group as *optional*. Defaults to `False`.
 
     :returns: An attribute which will be used as a nested *group* of variables.
 
@@ -309,7 +309,7 @@ def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
     Load the configuration as declared by *config_cls* from *environ*.
 
     :param config_cls: The configuration class to fill.
-    :param dict environ: Source of the configuration.  `os.environ` by default.
+    :param environ: Source of the configuration.  `os.environ` by default.
 
     :returns: An instance of *config_cls*.
 
@@ -323,7 +323,7 @@ def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
 
 def _format_help_dicts(help_dicts, display_defaults=False):
     """
-    Format the output of _generate_help_dicts into a str
+    Format the output of _generate_help_dicts into a str.
     """
     help_strs = []
     for help_dict in help_dicts:
@@ -344,8 +344,8 @@ def _format_help_dicts(help_dicts, display_defaults=False):
 
 def _generate_var_name(prefix, field_name):
     """
-    Generate the environment variable name, given a prefix
-    and the configuration field name.
+    Generate the environment variable name, given a prefix and the
+    configuration field name.
 
     Examples:
 
