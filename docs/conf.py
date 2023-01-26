@@ -3,6 +3,7 @@ from importlib import metadata
 
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autodoc.typehints",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "notfound.extension",
@@ -70,11 +71,15 @@ exclude_patterns = ["_build"]
 default_role = "any"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
-# add_function_parentheses = True
+add_function_parentheses = True
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
 # add_module_names = True
+
+# Move type hints into the description block, instead of the func definition.
+autodoc_typehints = "description"
+autodoc_typehints_description_target = "documented"
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.

@@ -53,6 +53,13 @@ def coverage_report(session: nox.Session) -> None:
     session.run("coverage", "report")
 
 
+@nox.session
+def mypy(session: nox.Session) -> None:
+    session.install(".", "mypy")
+
+    session.run("mypy", "typing_examples.py")
+
+
 # Keep python in sync with ci.yml/docs and .readthedocs.yaml.
 @nox.session(python="3.10")
 def docs(session: nox.Session) -> None:
