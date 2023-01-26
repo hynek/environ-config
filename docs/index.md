@@ -14,6 +14,7 @@ Release **{sub-ref}`release`**  ([What's new?](changelog))
 :maxdepth: 2
 
 tutorial
+testing
 api
 ```
 
