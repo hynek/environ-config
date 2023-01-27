@@ -34,6 +34,7 @@ jobs:
   release-test-pypi:
     # Upload to Test PyPI on every commit on main.
     environment: release-test-pypi
+    if: github.event_name == "push"
     runs-on: ubuntu-latest
     needs: build-package
 
@@ -68,7 +69,7 @@ jobs:
       - uses: step-security/harden-runner@v2
         with:
           disable-sudo: true
-          egress-policy: audit
+          egress-policy: block
           allowed-endpoints: >
             upload.pypi.org:443
 
