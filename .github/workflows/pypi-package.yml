@@ -18,12 +18,7 @@ jobs:
       - uses: step-security/harden-runner@v2
         with:
           disable-sudo: true
-          egress-policy: block
-          allowed-endpoints: >
-            actions-results-receiver-production.githubapp.com:443
-            files.pythonhosted.org:443
-            github.com:443
-            pypi.org:443
+          egress-policy: audit
 
       - uses: actions/checkout@v3
         with:
