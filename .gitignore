@@ -1,4 +1,6 @@
 *.pyc
+.mypy_cache
+.pytest_cache
 .DS_Store
 .cache
 .coverage

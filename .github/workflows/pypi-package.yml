@@ -36,10 +36,11 @@ jobs:
 
       - uses: hynek/build-and-inspect-python-package@v1
 
-      - name: Build package
-        run: |
-          python -m pip install -U build twine wheel
-          python -m build
+      - name: Download built packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: Packages
+          path: dist
 
       - name: Publish package to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
