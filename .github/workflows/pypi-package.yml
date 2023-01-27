@@ -3,7 +3,6 @@ name: Deploy to (Test-) PyPI
 
 on:
   push:
-    tags: ["*"]
     branches: [main]
   release:
     types:
@@ -33,7 +32,7 @@ jobs:
       - uses: hynek/build-and-inspect-python-package@v1
 
   release-test-pypi:
-    # Upload to Test PyPI on every commit & pushed tag.
+    # Upload to Test PyPI on every commit on main.
     environment: release-test-pypi
     runs-on: ubuntu-latest
     needs: build-package
