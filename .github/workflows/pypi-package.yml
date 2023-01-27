@@ -37,10 +37,12 @@ jobs:
       - uses: hynek/build-and-inspect-python-package@v1
 
       - name: Download built packages
-        uses: actions/upload-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: Packages
           path: dist
+
+      - run: tree dist
 
       - name: Publish package to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
