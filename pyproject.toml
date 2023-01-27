@@ -57,9 +57,10 @@ Changelog = "https://environ-config.rtfd.io/en/stable/changelog.html"
 Funding = "https://github.com/sponsors/hynek"
 Tidelift = "https://tidelift.com/subscription/pkg/pypi-environ-config?utm_source=pypi-environ-config&utm_medium=pypi"
 
+
 [tool.hatch.version]
 source = "vcs"
-raw-options = { version_scheme = "no-guess-dev" }
+raw-options = { local_scheme = "no-local-version" }
 
 
 [tool.pytest.ini_options]
