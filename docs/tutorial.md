@@ -216,7 +216,7 @@ Check out *attrs*'s [documentation](https://www.attrs.org/en/stable/init.html#va
 
 ## Secrets
 
-Secrets should be stored in specialized systems and [not passed as environment variables](https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/) .
+Secrets should be stored in specialized systems and [not passed as environment variables](https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/) .
 The *12 Factor App* manifesto is plain wrong here.
 
 Therefore *environ-config* comes with support for getting secrets from somewhere else.

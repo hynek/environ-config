@@ -30,7 +30,7 @@
 
    .. warning::
 
-      Please note that `it's a bad idea to store secrets in environment variables <https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
+      Please note that `it's a bad idea to store secrets in environment variables <https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/>`_.
 
 .. autoclass:: DirectorySecrets
    :members: from_path, from_path_in_env, secret

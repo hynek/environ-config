@@ -46,6 +46,9 @@ if "dev" in release:
 
 linkcheck_ignore = [
     r"https://github.com/.*/(issues|pull)/\d+",
+    # Rate limits and the latest tag is missing anyways on release.
+    "https://github.com/hynek/.*/tree/.*",
+    "https://github.com/hynek/.*/compare/.*",
 ]
 
 

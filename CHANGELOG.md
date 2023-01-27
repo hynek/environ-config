@@ -128,7 +128,7 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 *none*
 
 
-## [18.1.0](https://github.com/hynek/environ-config/compare/...18.1.0) - 2018-01-04
+## [18.1.0](https://github.com/hynek/environ-config/compare/17.1.0...18.1.0) - 2018-01-04
 
 ### Backwards-incompatible Changes
 
