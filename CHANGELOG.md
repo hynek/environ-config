@@ -15,6 +15,9 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 <!-- changelog follows -->
 
+
+## [Unreleased](https://github.com/hynek/environ-config/compare/23.1.0...HEAD)
+
 ## [23.1.0](https://github.com/hynek/environ-config/compare/22.1.0...23.1.0) - 2023-01-27
 
 ### Backwards-incompatible Changes
