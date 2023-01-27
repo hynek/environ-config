@@ -20,7 +20,8 @@ jobs:
           disable-sudo: true
           egress-policy: block
           allowed-endpoints: >
-            files.pythonhosted.org
+            actions-results-receiver-production.githubapp.com:443
+            files.pythonhosted.org:443
             github.com:443
             pypi.org:443
 
