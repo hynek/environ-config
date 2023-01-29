@@ -31,6 +31,7 @@ jobs:
             github.com:443
             pypi.org:443
             actions-results-receiver-production.githubapp.com:443
+            productionresultssa1.blob.core.windows.net:443
 
       - uses: actions/checkout@v3
         with:
