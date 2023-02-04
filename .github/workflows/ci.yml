@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install `pypa/build` PEP 517 front-end
-        run: python -m pip install 'build ~= 0.10.0'
+        run: python -m pip install build
 
       - name: 📦 Build an sdist
         run: python -m build --sdist
