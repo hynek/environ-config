@@ -9,14 +9,15 @@ on:
   workflow_dispatch:
 
 env:
-  dists-artifact-name: python-package-distributions
-  sdist-artifact-name-wildcard: environ_config-*.tar.gz
-
   FORCE_COLOR: "1" # Make tools pretty.
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PIP_NO_PYTHON_VERSION_WARNING: "1"
-  SETUPTOOLS_SCM_PRETEND_VERSION: "1.0" # avoid warnings about shallow checkout
   PYTHON_LATEST: "3.11"
+  SETUPTOOLS_SCM_PRETEND_VERSION: "1.0" # avoid warnings about shallow checkout
+
+  # For re-actors/checkout-python-sdist
+  sdist-artifact: python-package-distributions
+  sdist-name: environ_config-1.0.tar.gz
 
 permissions:
   contents: read
@@ -27,37 +28,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Grab the src from GH
-        uses: actions/checkout@v3
-
-      - name: Install `pypa/build` PEP 517 front-end
-        run: python -m pip install build
-
-      - name: 📦 Build an sdist
-        run: python -m build --sdist
-
-      - name: Verify that the artifact with expected name got created
-        run: >-
-          ls -1
-          dist/${{ env.sdist-artifact-name-wildcard }}
-
-      - name: Store the distribution package
-        uses: actions/upload-artifact@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          name: ${{ env.dists-artifact-name }}
+          python-version: ${{ env.PYTHON_LATEST }}
+      - run: python -Im pip install build
+
+      - run: python -Im build --sdist
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.sdist-artifact }}
           # NOTE: Exact expected file names are specified here
           # NOTE: as a safety measure — if anything weird ends
           # NOTE: up being in this dir or not all dists will be
           # NOTE: produced, this will fail the workflow.
-          path: |
-            dist/${{ env.sdist-artifact-name-wildcard }}
+          path: dist/${{ env.sdist-name }}
           retention-days: 15
 
   tests:
     name: Tests on ${{ matrix.python-version }}
-    needs:
-      - build-sdist
-
+    needs: [build-sdist]
     runs-on: ubuntu-latest
 
     strategy:
@@ -73,15 +64,15 @@ jobs:
       ${{ contains(matrix.python-version, '~') && true || false }}
 
     steps:
-      - name: Retrieve the project source from an sdist inside the GHA artifact
+      - name: Get source code from pre-built sdist
         uses: re-actors/checkout-python-sdist@release/v1
         with:
-          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
-          workflow-artifact-name: ${{ env.dists-artifact-name }}
+          source-tarball-name: ${{ env.sdist-name }}
+          workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - run: python -m pip install --upgrade wheel nox
+      - run: python -Im pip install --upgrade wheel nox
 
       - name: Determine Python version for Nox
         run: |
@@ -108,17 +99,17 @@ jobs:
     needs: tests
 
     steps:
-      - name: Retrieve the project source from an sdist inside the GHA artifact
+      - name: Get source code from pre-built sdist
         uses: re-actors/checkout-python-sdist@release/v1
         with:
-          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
-          workflow-artifact-name: ${{ env.dists-artifact-name }}
+          source-tarball-name: ${{ env.sdist-name }}
+          workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
         with:
           # Use latest Python, so it understands all syntax.
-          python-version: ${{env.PYTHON_LATEST}}
+          python-version: ${{ env.PYTHON_LATEST }}
 
-      - run: python -m pip install --upgrade coverage[toml]
+      - run: python -Im pip install --upgrade coverage[toml]
 
       - uses: actions/download-artifact@v3
         with:
@@ -126,14 +117,14 @@ jobs:
 
       - name: Combine coverage & fail if it's <100%.
         run: |
-          python -m coverage combine
-          python -m coverage html --skip-covered --skip-empty
+          python -Im coverage combine
+          python -Im coverage html --skip-covered --skip-empty
 
           # Report and write to summary.
-          python -m coverage report | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
+          python -Im coverage report | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
 
           # Report again and fail if under 100%.
-          python -m coverage report --fail-under=100
+          python -Im coverage report --fail-under=100
 
       - name: Upload HTML report if check failed.
         uses: actions/upload-artifact@v3
@@ -143,10 +134,8 @@ jobs:
         if: ${{ failure() }}
 
   mypy:
-    name: mypy on ${{ matrix.python-version }}
-    needs:
-      - build-sdist
-
+    name: Mypy on ${{ matrix.python-version }}
+    needs: [build-sdist]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -159,51 +148,50 @@ jobs:
           - "3.11"
 
     steps:
-      - name: Retrieve the project source from an sdist inside the GHA artifact
+      - name: Get source code from pre-built sdist
         uses: re-actors/checkout-python-sdist@release/v1
         with:
-          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
-          workflow-artifact-name: ${{ env.dists-artifact-name }}
+          source-tarball-name: ${{ env.sdist-name }}
+          workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - run: python -m pip install --upgrade wheel nox
+      - run: python -Im pip install --upgrade wheel nox
 
       - run: python -Im nox -e mypy
   docs:
     name: Build docs & run doctests
-    needs:
-      - build-sdist
-
+    needs: [build-sdist]
     runs-on: ubuntu-latest
+
     steps:
-      - name: Retrieve the project source from an sdist inside the GHA artifact
+      - name: Get source code from pre-built sdist
         uses: re-actors/checkout-python-sdist@release/v1
         with:
-          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
-          workflow-artifact-name: ${{ env.dists-artifact-name }}
+          source-tarball-name: ${{ env.sdist-name }}
+          workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
         with:
           # Keep in sync with noxfile.py/docs & .readthedocs.yaml
           python-version: "3.10"
-      - run: python -m pip install --upgrade wheel nox
+      - run: python -Im pip install --upgrade wheel nox
 
       - run: python -Im nox -e docs
 
   install-dev:
+    name: Verify dev env on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-
-    name: Verify dev env on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: ${{env.PYTHON_LATEST}}
-      - run: python -m pip install -e .[dev]
+          python-version: ${{ env.PYTHON_LATEST }}
+
+      - run: python -Im pip install -e .[dev]
       - run: python -c 'import environ; print(environ.__version__)'
 
   # Ensure everything required is passing for branch protection.
