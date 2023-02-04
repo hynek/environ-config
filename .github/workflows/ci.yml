@@ -9,6 +9,9 @@ on:
   workflow_dispatch:
 
 env:
+  dists-artifact-name: python-package-distributions
+  sdist-artifact-name-wildcard: environ_config-*.tar.gz
+
   FORCE_COLOR: "1" # Make tools pretty.
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PIP_NO_PYTHON_VERSION_WARNING: "1"
@@ -19,8 +22,42 @@ permissions:
   contents: read
 
 jobs:
+  build-sdist:
+    name: 📦 Build the source distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Grab the src from GH
+        uses: actions/checkout@v3
+
+      - name: Install `pypa/build` PEP 517 front-end
+        run: python -m pip install build
+
+      - name: 📦 Build an sdist
+        run: python -m build --sdist
+
+      - name: Verify that the artifact with expected name got created
+        run: >-
+          ls -1
+          dist/${{ env.sdist-artifact-name-wildcard }}
+
+      - name: Store the distribution package
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.dists-artifact-name }}
+          # NOTE: Exact expected file names are specified here
+          # NOTE: as a safety measure — if anything weird ends
+          # NOTE: up being in this dir or not all dists will be
+          # NOTE: produced, this will fail the workflow.
+          path: |
+            dist/${{ env.sdist-artifact-name-wildcard }}
+          retention-days: 15
+
   tests:
     name: Tests on ${{ matrix.python-version }}
+    needs:
+      - build-sdist
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -36,7 +73,11 @@ jobs:
       ${{ contains(matrix.python-version, '~') && true || false }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Retrieve the project source from an sdist inside the GHA artifact
+        uses: re-actors/checkout-python-sdist@release/v1
+        with:
+          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
+          workflow-artifact-name: ${{ env.dists-artifact-name }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -67,7 +108,11 @@ jobs:
     needs: tests
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Retrieve the project source from an sdist inside the GHA artifact
+        uses: re-actors/checkout-python-sdist@release/v1
+        with:
+          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
+          workflow-artifact-name: ${{ env.dists-artifact-name }}
       - uses: actions/setup-python@v4
         with:
           # Use latest Python, so it understands all syntax.
@@ -99,6 +144,9 @@ jobs:
 
   mypy:
     name: mypy on ${{ matrix.python-version }}
+    needs:
+      - build-sdist
+
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -111,7 +159,11 @@ jobs:
           - "3.11"
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Retrieve the project source from an sdist inside the GHA artifact
+        uses: re-actors/checkout-python-sdist@release/v1
+        with:
+          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
+          workflow-artifact-name: ${{ env.dists-artifact-name }}
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -120,9 +172,16 @@ jobs:
       - run: python -Im nox -e mypy
   docs:
     name: Build docs & run doctests
+    needs:
+      - build-sdist
+
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Retrieve the project source from an sdist inside the GHA artifact
+        uses: re-actors/checkout-python-sdist@release/v1
+        with:
+          source-tarball-name: ${{ env.sdist-artifact-name-wildcard }}
+          workflow-artifact-name: ${{ env.dists-artifact-name }}
       - uses: actions/setup-python@v4
         with:
           # Keep in sync with noxfile.py/docs & .readthedocs.yaml
