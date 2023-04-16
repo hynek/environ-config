@@ -62,7 +62,7 @@ def coverage_report(session: nox.Session) -> None:
     session.install("coverage[toml]")
 
     session.run("coverage", "combine")
-    session.run("coverage", "report")
+    session.run("coverage", "report", "--fail-under=100")
 
 
 @nox.session
