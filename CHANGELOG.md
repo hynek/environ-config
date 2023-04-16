@@ -20,8 +20,8 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ### Fixed
 
-- Type hints for `environ.config()` now allow for arguments (e.g.
-  `@environ.config(prefix="")`.
+- Type hints for `environ.config()` now allow for arguments (e.g. `@environ.config(prefix="")`).
+  [#56](https://github.com/hynek/environ-config/issues/56)
 
 
 ## [23.1.0](https://github.com/hynek/environ-config/compare/22.1.0...23.1.0) - 2023-01-27
