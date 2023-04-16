@@ -1,12 +1,23 @@
 from __future__ import annotations
 
 import os
+import re
+
+from pathlib import Path
 
 import nox
 
 
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
+
+
+MATCH_PYTHON = re.compile(r"\s+python\: \"(\d\.\d\d)\"").match
+# Avoid dependency on a YAML lib using a questionable hack.
+for line in Path(".readthedocs.yaml").read_text().splitlines():
+    if m := MATCH_PYTHON(line):
+        DOCS_PYTHON = m.group(1)
+        break
 
 
 @nox.session
@@ -60,8 +71,7 @@ def mypy(session: nox.Session) -> None:
     session.run("mypy", "typing_examples.py")
 
 
-# Keep python in sync with ci.yml/docs and .readthedocs.yaml.
-@nox.session(python="3.10")
+@nox.session(python=DOCS_PYTHON)
 def docs(session: nox.Session) -> None:
     session.install(".[docs]")
 
