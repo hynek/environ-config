@@ -15,7 +15,8 @@ nox.options.error_on_external_run = True
 MATCH_PYTHON = re.compile(r"\s+python\: \"(\d\.\d\d)\"").match
 # Avoid dependency on a YAML lib using a questionable hack.
 for line in Path(".readthedocs.yaml").read_text().splitlines():
-    if m := MATCH_PYTHON(line):
+    m = MATCH_PYTHON(line)
+    if m:
         DOCS_PYTHON = m.group(1)
         break
 
