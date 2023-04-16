@@ -58,3 +58,13 @@ s: str = cfg.secret
 ds: str = cfg.d_secret
 vs: str = cfg.v_secret
 as_: str = cfg.a_secret
+
+
+@environ.config(prefix="")
+class ConfigNoPrefix:
+    test_var = environ.var()
+
+
+@environ.config()
+class ConfigEmptyParens:
+    test_var = environ.var()

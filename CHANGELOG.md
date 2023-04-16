@@ -18,6 +18,12 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/23.1.0...HEAD)
 
+### Fixed
+
+- Type hints for `environ.config()` now allow for arguments (e.g.
+  `@environ.config(prefix="")`.
+
+
 ## [23.1.0](https://github.com/hynek/environ-config/compare/22.1.0...23.1.0) - 2023-01-27
 
 ### Backwards-incompatible Changes
