@@ -373,7 +373,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
         )
         assert cfg.child.grandchild == "FOO"
         with pytest.raises(environ.MissingEnvValueError) as e:
-            environ.to_config(WithRequiredChild, dict())
+            environ.to_config(WithRequiredChild, {})
         assert ("PARENT_CHILD_GRANDCHILD",) == e.value.args
 
     def test_required_group_optional_child_missing(self):
@@ -389,7 +389,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
 
             child = environ.group(Child)
 
-        cfg = environ.to_config(WithRequiredChild, dict())
+        cfg = environ.to_config(WithRequiredChild, {})
         assert cfg.child.grandchild == "FOO"
 
     def test_optional_group_required_child_missing(self):
@@ -405,7 +405,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
 
             child = environ.group(Child, optional=True)
 
-        cfg = environ.to_config(WithOptionalChild, dict())
+        cfg = environ.to_config(WithOptionalChild, {})
         assert cfg.child is None
 
     def test_optional_group_optional_child_missing(self):
@@ -421,7 +421,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
 
             child = environ.group(Child, optional=True)
 
-        cfg = environ.to_config(WithOptionalChild, dict())
+        cfg = environ.to_config(WithOptionalChild, {})
         assert cfg.child.grandchild == "FOO"
 
     def test_optional_group_mixed_children_all_missing(self):
@@ -438,7 +438,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
 
             child = environ.group(Child, optional=True)
 
-        cfg = environ.to_config(WithOptionalChild, dict())
+        cfg = environ.to_config(WithOptionalChild, {})
         assert cfg.child is None
 
     def test_optional_group_mixed_children_optional_present(self):
@@ -480,7 +480,7 @@ _START_WITH_UNDERSCORE (Required): this starts with an underscore"""
 
         # By providing nothing, we expect the grandchild to default to `None`
         # which will fulfill the requirement that it have a value in the child
-        cfg = environ.to_config(WithOptionalGrandChild, dict())
+        cfg = environ.to_config(WithOptionalGrandChild, {})
         assert cfg.child.grandchild is None
         # We also ensure that a properly set value is stored as expected
         cfg = environ.to_config(

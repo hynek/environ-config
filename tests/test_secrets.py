@@ -245,16 +245,16 @@ class TestVaultEnvSecrets:
 
 
 @pytest.fixture
-def secrets_dir(tmpdir):
+def secrets_dir(tmp_path):
     def make_secrets_file(name, content):
-        secret_file = tmpdir.join(name)
-        secret_file.write(content)
+        secret_file = tmp_path / name
+        secret_file.write_text(content)
 
     make_secrets_file("empty", "")
     make_secrets_file("apples", "apples\n")
     make_secrets_file("oranges", "oranges")
 
-    return str(tmpdir)
+    return str(tmp_path)
 
 
 class TestDirectorySecrets:
@@ -299,7 +299,7 @@ class TestDirectorySecrets:
         """
         A directory can be specified in an environment variable.
         """
-        dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", "/tmp")
+        dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", None)
 
         @environ.config
         class Cfg:

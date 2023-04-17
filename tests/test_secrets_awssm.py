@@ -33,7 +33,7 @@ from environ.secrets import SecretsManagerSecrets, _SecretStr
 def _shut_boto_up():
     import logging
 
-    for name in logging.Logger.manager.loggerDict.keys():
+    for name in logging.Logger.manager.loggerDict:
         if ("boto" in name) or ("urllib3" in name):
             logging.getLogger(name).setLevel(logging.WARNING)
 

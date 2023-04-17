@@ -76,7 +76,7 @@ class SecretsManagerSecrets:
     def secret(
         self,
         default: Any = RAISE,
-        converter: Callable = convert_secret("SecretString"),
+        converter: Callable = convert_secret("SecretString"),  # noqa: B008
         name: str | None = None,
         help: str | None = None,
     ):
@@ -102,7 +102,7 @@ class SecretsManagerSecrets:
                 secret_name_envvar,
             )
         else:
-            parts = prefix + (name,)
+            parts = (*prefix, name)
             secret_name_envvar = "_".join(parts).upper()
             log.debug(
                 "secret name environment variable %s", secret_name_envvar

@@ -140,10 +140,9 @@ class INISecrets:
         ic = metadata[CNF_INI_SECRET_KEY]
         section = ic.section
 
-        if ce.name is not None:
-            var = ce.name
-        else:
-            var = "_".join(prefix[1:] + (name,))
+        var = (
+            ce.name if ce.name is not None else "_".join(prefix[1:] + (name,))
+        )
         try:
             log.debug("looking for '%s' in section '%s'.", var, section)
             val = self._cfg.get(section, var)
@@ -292,8 +291,8 @@ class _SecretStr(str):
             or sys._getframe(2).f_code.co_name == "__repr__"
         ):
             return "<SECRET>"
-        else:
-            return str.__repr__(self)
+
+        return str.__repr__(self)
 
 
 CNF_INI_SECRET_KEY = CNF_KEY + "_ini_secret"

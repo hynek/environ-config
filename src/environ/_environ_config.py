@@ -164,8 +164,7 @@ def _env_to_bool(val: str | bool) -> bool:
     """
     if isinstance(val, bool):
         return val
-    val = val.strip().lower()
-    if val in ("1", "true", "yes"):
+    if val.strip().lower() in ("1", "true", "yes"):
         return True
 
     return False
@@ -235,15 +234,12 @@ def _default_getter(environ, metadata, prefix, name):
     This default lookup implementation simply gets values from *environ*.
     """
     ce = metadata[CNF_KEY]
-    if ce.name is not None:
-        var = ce.name
-    else:
-        var = "_".join(prefix + (name,)).upper()
+    var = ce.name if ce.name is not None else "_".join((*prefix, name)).upper()
     log.debug("looking for env var '%s'.", var)
     try:
         return environ[var]
     except KeyError:
-        raise MissingEnvValueError(var)
+        raise MissingEnvValueError(var) from None
 
 
 def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
@@ -274,7 +270,7 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
         if ce.sub_cls is not None:
             prefix = ce.sub_cls._prefix or name
             got[name] = _to_config_recurse(
-                ce.sub_cls, environ, prefixes + (prefix,), default=ce.default
+                ce.sub_cls, environ, (*prefixes, prefix), default=ce.default
             )
         else:
             getter = ce.callback or _default_getter
@@ -294,11 +290,12 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
         # If we were told to raise OR if we got *any* values for our attrs, we
         # will raise a `MissingEnvValueError` with all the missing variables
         if isinstance(default, Raise) or got:
-            raise MissingEnvValueError(*missing_vars)
-        # otherwise we will simply use the default passed into this call
-        else:
-            # Should be no need to handle `Factory`s here
-            return default
+            raise MissingEnvValueError(*missing_vars) from None
+
+        # Otherwise we will simply use the default passed into this call.
+        # Should be no need to handle `Factory`s here.
+        return default
+
     # Merge the defaulted and actually collected values into the config type
     defaulted.update(got)
     return config_cls(**defaulted)

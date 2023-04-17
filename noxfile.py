@@ -50,7 +50,7 @@ def tests(session: nox.Session) -> None:
 
 
 @nox.session(python="3.7", tags=["tests"])
-def tests_oldestAttrs(session: nox.Session) -> None:
+def tests_oldest_attrs(session: nox.Session) -> None:
     # Keeps attrs pin in sync with pyproject.toml/dependencies.
     session.install(".[tests]", "attrs==17.4.0")
 

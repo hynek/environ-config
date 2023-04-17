@@ -12,8 +12,10 @@ def _get_default_secret(var, default):
     """
     if isinstance(default, attr.Factory):
         return attr.NOTHING
-    elif isinstance(default, Raise):
+
+    if isinstance(default, Raise):
         raise MissingSecretError(var)
+
     return default
 
 
