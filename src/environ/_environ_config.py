@@ -67,12 +67,12 @@ def config(
     from_environ: str = "from_environ",
     generate_help: str = "generate_help",
     frozen: bool = False,
-) -> Callable[[T], T]:
+) -> Callable[[type[T]], type[T]]:
     ...
 
 
 @overload
-def config(maybe_cls: type[T]) -> T:
+def config(maybe_cls: type[T]) -> type[T]:
     ...
 
 
@@ -83,7 +83,7 @@ def config(
     from_environ: str = "from_environ",
     generate_help: str = "generate_help",
     frozen: bool = False,
-) -> T | Callable[[T], T]:
+) -> type[T] | Callable[[type[T]], type[T]]:
     """
     Make a class a configuration class.
 
