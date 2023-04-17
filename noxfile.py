@@ -12,13 +12,27 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-MATCH_PYTHON = re.compile(r"\s+python\: \"(\d\.\d\d)\"").match
-# Avoid dependency on a YAML lib using a questionable hack.
+# Avoid dependencies on YAML / TOML libs using a questionable hacks.
+match_docs_python = re.compile(r"\s+python\: \"(\d\.\d\d)\"").fullmatch
 for line in Path(".readthedocs.yaml").read_text().splitlines():
-    m = MATCH_PYTHON(line)
+    m = match_docs_python(line)
     if m:
         DOCS_PYTHON = m.group(1)
         break
+
+match_oldest_python = re.compile(
+    r"requires-python = \">=(\d\.\d+)\""
+).fullmatch
+match_oldest_attrs = re.compile(r".*\"attrs>=(\d+\.\d+\.\d+)\",.*").match
+for line in Path("pyproject.toml").read_text().splitlines():
+    m = match_oldest_python(line)
+    if m:
+        OLDEST_PYTHON = m.group(1)
+
+    m = match_oldest_attrs(line)
+    if m:
+        OLDEST_ATTRS = m.group(1)
+        break  # dependencies always come after requires-python
 
 
 @nox.session
@@ -49,10 +63,9 @@ def tests(session: nox.Session) -> None:
     session.run("pytest", *session.posargs)
 
 
-@nox.session(python="3.7", tags=["tests"])
+@nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
-    # Keeps attrs pin in sync with pyproject.toml/dependencies.
-    session.install(".[tests]", "attrs==17.4.0")
+    session.install(".[tests]", f"attrs=={OLDEST_ATTRS}")
 
     _cov(session)
 
