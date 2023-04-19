@@ -14,7 +14,6 @@ dynamic = ["readme", "version"]
 name = "environ-config"
 description = "Boilerplate-free configuration with env variables."
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-# Keep in sync with noxfile.py/tests_oldest_attrs
 requires-python = ">=3.7"
 license = "Apache-2.0"
 keywords = ["app", "config", "env", "cfg"]
@@ -31,11 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = [
-    # Keep in sync with noxfile.py/tests_oldest_attrs
-    "attrs>=17.4.0",
-    "importlib_metadata; python_version<'3.8'",
-]
+dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
 [project.optional-dependencies]
 tests = ["pytest", "coverage[toml]", "moto"]
