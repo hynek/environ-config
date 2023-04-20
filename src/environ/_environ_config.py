@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 import os
 
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, TypeVar, overload
 
 import attr
 
@@ -60,13 +60,30 @@ RAISE = Raise()
 T = TypeVar("T")
 
 
+@overload
 def config(
-    maybe_cls: type[T] | None = None,
+    *,
     prefix: str | Sentinel = PREFIX_NOT_SET,
     from_environ: str = "from_environ",
     generate_help: str = "generate_help",
     frozen: bool = False,
-) -> T:
+) -> Callable[[type[T]], type[T]]:
+    ...
+
+
+@overload
+def config(maybe_cls: type[T]) -> type[T]:
+    ...
+
+
+def config(
+    maybe_cls: type[T] | None = None,
+    *,
+    prefix: str | Sentinel = PREFIX_NOT_SET,
+    from_environ: str = "from_environ",
+    generate_help: str = "generate_help",
+    frozen: bool = False,
+) -> type[T] | Callable[[type[T]], type[T]]:
     """
     Make a class a configuration class.
 
