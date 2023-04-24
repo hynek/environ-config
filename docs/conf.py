@@ -284,8 +284,8 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-# Refer to the Python standard library.
+# Refer to the Python standard library.and attrts
 intersphinx_mapping = {
-    "https://docs.python.org/3/": None,
-    "https://www.attrs.org/en/stable": None,
+    "python": ("https://docs.python.org/3/", None),
+    "attrs": ("https://www.attrs.org/en/stable", None),
 }
