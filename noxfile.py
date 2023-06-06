@@ -1,9 +1,6 @@
 from __future__ import annotations
 
 import os
-import re
-
-from pathlib import Path
 
 import nox
 
@@ -12,27 +9,53 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-# Avoid dependencies on YAML / TOML libs using a questionable hacks.
-match_docs_python = re.compile(r"\s+python\: \"(\d\.\d\d)\"").fullmatch
-for line in Path(".readthedocs.yaml").read_text().splitlines():
-    m = match_docs_python(line)
-    if m:
-        DOCS_PYTHON = m.group(1)
-        break
+RUN_UNDER_COVERAGE = ["3.7", "3.11"]
+ALL_SUPPORTED = [
+    # [[[cog
+    # for line in open("pyproject.toml"):
+    #     if "Programming Language :: Python :: " in line:
+    #         cog.outl(f'"{line.rsplit(" ")[-1][:-3]}",')
+    # ]]]
+    "3.7",
+    "3.8",
+    "3.9",
+    "3.10",
+    "3.11",
+    "3.12",
+    # [[[end]]]
+]
+OLDEST_PYTHON = ALL_SUPPORTED[0]
+NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 
-match_oldest_python = re.compile(
-    r"requires-python = \">=(\d\.\d+)\""
-).fullmatch
-match_oldest_attrs = re.compile(r".*\"attrs>=(\d+\.\d+\.\d+)\",.*").match
-for line in Path("pyproject.toml").read_text().splitlines():
-    m = match_oldest_python(line)
-    if m:
-        OLDEST_PYTHON = m.group(1)
+# [[[cog
+# import yaml
+# with open(".readthedocs.yaml") as f:
+#     rtd = yaml.safe_load(f)
+# cog.outl(f'DOCS_PYTHON = "{rtd["build"]["tools"]["python"]}"')
+# ]]]
+DOCS_PYTHON = "3.11"
+# [[[end]]]
 
-    m = match_oldest_attrs(line)
-    if m:
-        OLDEST_ATTRS = m.group(1)
-        break  # dependencies always come after requires-python
+# [[[cog
+# import tomllib
+# with open("pyproject.toml", "rb") as f:
+#     deps = tomllib.load(f)["project"]["dependencies"]
+# for dep in deps:
+#     if dep.startswith("attrs"):
+#         cog.outl(f'OLDEST_ATTRS = "{dep[7:]}"')
+#         break
+# ]]]
+OLDEST_ATTRS = "17.4.0"
+# [[[end]]]
+
+
+@nox.session
+def cog(session: nox.Session) -> None:
+    session.install("cogapp", "PyYAML")
+
+    session.run(
+        "cog", *session.posargs, "-r", "noxfile.py", ".github/workflows/ci.yml"
+    )
 
 
 @nox.session
@@ -49,14 +72,14 @@ def _cov(session: nox.Session) -> None:
         session.notify("coverage_report")
 
 
-@nox.session(python=["3.7", "3.11"], tags=["tests"])
+@nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
     session.install(".[tests]")
 
     _cov(session)
 
 
-@nox.session(python=["3.8", "3.9", "3.10", "3.12"], tags=["tests"])
+@nox.session(python=NOT_COVERAGE, tags=["tests"])
 def tests(session: nox.Session) -> None:
     session.install(".[tests]")
 
