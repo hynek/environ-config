@@ -12,12 +12,15 @@ env:
   FORCE_COLOR: "1" # Make tools pretty.
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PIP_NO_PYTHON_VERSION_WARNING: "1"
-  PYTHON_LATEST: "3.11"
   SETUPTOOLS_SCM_PRETEND_VERSION: "1.0" # avoid warnings about shallow checkout
 
   # For re-actors/checkout-python-sdist
   sdist-artifact: python-package-distributions
   sdist-name: environ_config-1.0.tar.gz
+
+  # N.B. default Python version for setup-python comes from the .python-version
+  # file at the root of the project.
+
 
 permissions:
   contents: read
@@ -30,8 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_LATEST }}
       - run: python -Im pip install build
 
       - run: python -Im build --sdist
@@ -105,9 +106,6 @@ jobs:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
-        with:
-          # Use latest Python, so it understands all syntax.
-          python-version: ${{ env.PYTHON_LATEST }}
 
       - run: python -Im pip install --upgrade coverage[toml]
 
@@ -188,8 +186,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_LATEST }}
 
       - run: python -Im pip install -e .[dev]
       - run: python -c 'import environ; print(environ.__version__)'
