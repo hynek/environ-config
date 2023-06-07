@@ -62,7 +62,7 @@ AppConfig(env='dev', lang='C', db=AppConfig.DB(name='default_db', host='localhos
 
   - [HashiCorp Vault](https://www.vaultproject.io) support via [*envconsul*](https://github.com/hashicorp/envconsul).
   - [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) (needs [*boto3*](https://pypi.org/project/boto3/))
-  - INI files, because secrets in env variables are icky.
+  - INI files, because secrets in env variables are [icky](https://blog.diogomonica.com//2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/).
 
 - Helpful debug logging that will tell you which variables are present and what *environ-config* is looking for.
 
