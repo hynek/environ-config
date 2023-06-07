@@ -105,7 +105,7 @@ def coverage_report(session: nox.Session) -> None:
 def mypy(session: nox.Session) -> None:
     session.install(".", "mypy")
 
-    session.run("mypy", "typing_examples.py")
+    session.run("mypy", "tests/typing")
 
 
 @nox.session(python=DOCS_PYTHON)
