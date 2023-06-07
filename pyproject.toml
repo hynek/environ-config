@@ -138,7 +138,7 @@ pattern = "\n\n(###.+?\n)## "
 text = """
  ---
 
- [**Full Changelog**](https://www.structlog.org/en/stable/changelog.html)
+ [**Full Changelog**](https://environ-config.readthedocs.io/en/stable/changelog.html)
  """
 
 

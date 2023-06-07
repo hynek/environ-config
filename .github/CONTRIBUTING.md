@@ -43,7 +43,7 @@ If you're using [*direnv*](https://direnv.net), you can automate the creation of
 layout python python$(cat .python-version)
 ```
 
-[Create a fork](https://github.com/hynek/environ-config/fork) of the *structlog* repository and clone it:
+[Create a fork](https://github.com/hynek/environ-config/fork) of the repository and clone it:
 
 ```console
 $ git clone git@github.com:YOU/environ-config.git
