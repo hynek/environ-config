@@ -76,7 +76,7 @@ class SecretsManagerSecrets:
     def secret(
         self,
         default: Any = RAISE,
-        converter: Callable = convert_secret("SecretString"),  # noqa: B008
+        converter: Callable = convert_secret("SecretString"),
         name: str | None = None,
         help: str | None = None,
     ):
