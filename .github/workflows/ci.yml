@@ -18,10 +18,6 @@ env:
   sdist-artifact: python-package-distributions
   sdist-name: environ_config-1.0.tar.gz
 
-  # N.B. default Python version for setup-python comes from the .python-version
-  # file at the root of the project.
-
-
 permissions:
   contents: read
 
@@ -32,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
 
       - run: python -Im pip install --upgrade wheel nox
 
@@ -44,6 +42,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
       - run: python -Im pip install build
 
       - run: python -Im build --sdist
@@ -71,7 +71,6 @@ jobs:
           #     if "Programming Language :: Python :: " in line:
           #         cog.outl(f'- "{line.rsplit(" ")[-1][:-3]}"')
           # ]]]
-          - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
@@ -89,6 +88,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
+          cache: pip
 
       - run: python -Im pip install --upgrade wheel nox
 
@@ -113,6 +113,8 @@ jobs:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
 
       - run: python -Im pip install --upgrade coverage[toml]
 
@@ -151,7 +153,6 @@ jobs:
           #     if "Programming Language :: Python :: " in line:
           #         cog.outl(f'- "{line.rsplit(" ")[-1][:-3]}"')
           # ]]]
-          - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
@@ -169,6 +170,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
+          cache: pip
+
       - run: python -Im pip install --upgrade wheel nox
 
       - run: python -Im nox -e mypy
@@ -185,6 +188,7 @@ jobs:
           workflow-artifact-name: ${{ env.sdist-artifact }}
       - uses: actions/setup-python@v4
         with:
+          cache: pip
           # [[[cog
           # import yaml
           # with open(".readthedocs.yaml") as f:
@@ -207,6 +211,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          cache: pip
 
       - run: python -Im pip install -e .[dev]
       - run: python -c 'import environ; print(environ.__version__)'

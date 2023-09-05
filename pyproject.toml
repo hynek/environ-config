@@ -14,7 +14,7 @@ dynamic = ["readme", "version"]
 name = "environ-config"
 description = "Boilerplate-free configuration with env variables."
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = "Apache-2.0"
 keywords = ["app", "config", "env", "cfg"]
 classifiers = [
@@ -22,7 +22,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -34,7 +33,7 @@ classifiers = [
 dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
 [project.optional-dependencies]
-tests = ["pytest", "coverage[toml]", "moto"]
+tests = ["pytest", "coverage[toml]", "moto<4.2.1"]
 aws = ["boto3"]
 docs = [
     "environ-config[aws]",

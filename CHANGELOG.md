@@ -18,6 +18,10 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/23.2.0...HEAD)
 
+### Removed
+
+- Support for Python 3.7.
+
 
 ## [23.2.0](https://github.com/hynek/environ-config/compare/23.1.0...23.2.0) - 2023-04-24
 

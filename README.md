@@ -76,7 +76,6 @@ You can find the full documentation including a step-by-step tutorial on [Read t
 ## Project Information
 
 *environ-config* is maintained by [Hynek Schlawack](https://hynek.me/) and is released under the [Apache License 2.0](https://github.com/hynek/environ-config/blob/main/LICENSE) license.
-It targets Python 3.7 and newer, and PyPy.
 Development takes place on [GitHub](https://github.com/hynek/environ-config).
 
 The development is kindly supported by [Variomedia AG](https://www.variomedia.de/).
