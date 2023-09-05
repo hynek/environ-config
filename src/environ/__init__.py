@@ -46,13 +46,9 @@ def __getattr__(name: str) -> str:
     if name not in dunder_to_metadata:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
-    import sys
     import warnings
 
-    if sys.version_info < (3, 8):
-        from importlib_metadata import metadata
-    else:
-        from importlib.metadata import metadata
+    from importlib.metadata import metadata
 
     warnings.warn(
         f"Accessing environ_config.{name} is deprecated and will be "
