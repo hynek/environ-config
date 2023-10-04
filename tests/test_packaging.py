@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-
 from importlib import metadata
 
 import pytest
