@@ -197,7 +197,7 @@ jobs:
           #     rtd = yaml.safe_load(f)
           # cog.outl(f'python-version: "{rtd["build"]["tools"]["python"]}"')
           # ]]]
-          python-version: "3.11"
+          python-version: "3.12"
           # [[[end]]]
       - run: python -Im pip install --upgrade wheel nox
 

@@ -16,7 +16,6 @@ ALL_SUPPORTED = [
     #     if "Programming Language :: Python :: " in line:
     #         cog.outl(f'"{line.rsplit(" ")[-1][:-3]}",')
     # ]]]
-    "3.7",
     "3.8",
     "3.9",
     "3.10",
@@ -33,7 +32,7 @@ NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 #     rtd = yaml.safe_load(f)
 # cog.outl(f'DOCS_PYTHON = "{rtd["build"]["tools"]["python"]}"')
 # ]]]
-DOCS_PYTHON = "3.11"
+DOCS_PYTHON = "3.12"
 # [[[end]]]
 
 # [[[cog
