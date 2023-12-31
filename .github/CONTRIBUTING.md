@@ -35,12 +35,12 @@ You can (and should) run our test suite using [Nox].
 However, you’ll probably want a more traditional environment as well.
 
 First, create a [virtual environment](https://virtualenv.pypa.io/) so you don't break your system-wide Python installation.
-We recommend using the Python version from the `.python-version` file in project's root directory.
+We recommend using the Python version from the `.python-version-default` file in project's root directory.
 
 If you're using [*direnv*](https://direnv.net), you can automate the creation of a virtual environment with the correct Python version by adding the following `.envrc` to the project root after cloning it:
 
 ```bash
-layout python python$(cat .python-version)
+layout python python$(cat .python-version-default)
 ```
 
 [Create a fork](https://github.com/hynek/environ-config/fork) of the repository and clone it:
