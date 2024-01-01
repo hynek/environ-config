@@ -48,7 +48,7 @@ jobs:
 
       - run: python -Im build --sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.sdist-artifact }}
           # NOTE: Exact expected file names are specified here
@@ -95,7 +95,7 @@ jobs:
       - run: python -Im nox --python ${{ matrix.python-version }} --tags tests
 
       - name: Upload coverage data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-data
           path: .coverage.*
@@ -135,7 +135,7 @@ jobs:
           python -Im coverage report --fail-under=100
 
       - name: Upload HTML report if check failed.
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-report
           path: htmlcov
