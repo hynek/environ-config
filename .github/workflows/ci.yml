@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           cache: pip
           python-version: "3.x"
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
           cache: pip
@@ -84,7 +84,7 @@ jobs:
         with:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
@@ -112,7 +112,7 @@ jobs:
         with:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
           cache: pip
@@ -167,7 +167,7 @@ jobs:
         with:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
@@ -187,7 +187,7 @@ jobs:
         with:
           source-tarball-name: ${{ env.sdist-name }}
           workflow-artifact-name: ${{ env.sdist-artifact }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           cache: pip
           # [[[cog
@@ -211,7 +211,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version-default
           cache: pip
