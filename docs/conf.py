@@ -20,8 +20,6 @@ myst_enable_extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
 
-html_css_files = ["custom.css"]
-
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 source_suffix = [".rst", ".md"]
@@ -108,12 +106,16 @@ todo_include_todos = False
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "furo"
-
-
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-# html_theme_options = {}
+html_theme_options = {
+    "top_of_page_button": None,
+    "light_css_variables": {
+        "font-stack": "Inter, sans-serif",
+        "font-stack--monospace": "BerkeleyMono, MonoLisa, ui-monospace, "
+        "SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace",
+    },
+}
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
