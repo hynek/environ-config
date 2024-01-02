@@ -9,7 +9,7 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-RUN_UNDER_COVERAGE = ["3.7", "3.11"]
+RUN_UNDER_COVERAGE = ["3.8", "3.11"]
 ALL_SUPPORTED = [
     # [[[cog
     # for line in open("pyproject.toml"):
@@ -64,8 +64,24 @@ def pre_commit(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files")
 
 
-def _cov(session: nox.Session) -> None:
-    session.run("coverage", "run", "-m", "pytest", *session.posargs)
+def _get_pkg(posargs: list[str]) -> tuple[str, list[str]]:
+    """
+    Allow `--installpkg path/to/wheel.whl` to be passed.
+    """
+    posargs = list(posargs)
+
+    try:
+        i = posargs.index("--installpkg")
+        pkg = posargs[i + 1]
+        del posargs[i : i + 2]
+    except ValueError:
+        pkg = "."
+
+    return f"{pkg}[tests]", posargs
+
+
+def _cov(session: nox.Session, posargs: list[str]) -> None:
+    session.run("coverage", "run", "-m", "pytest", *posargs)
 
     if os.environ.get("CI") != "true":
         session.notify("coverage_report")
@@ -73,23 +89,26 @@ def _cov(session: nox.Session) -> None:
 
 @nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
-    session.install(".[tests]")
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(pkg, "coverage[toml]")
 
-    _cov(session)
+    _cov(session, posargs)
 
 
 @nox.session(python=NOT_COVERAGE, tags=["tests"])
 def tests(session: nox.Session) -> None:
-    session.install(".[tests]")
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(pkg, "coverage[toml]")
 
-    session.run("pytest", *session.posargs)
+    session.run("pytest", *posargs)
 
 
 @nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
-    session.install(".[tests]", f"attrs=={OLDEST_ATTRS}")
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(pkg, "coverage[toml]", f"attrs=={OLDEST_ATTRS}")
 
-    _cov(session)
+    _cov(session, posargs)
 
 
 @nox.session
