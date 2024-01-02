@@ -128,6 +128,24 @@ def mypy(session: nox.Session) -> None:
 
 @nox.session(python=DOCS_PYTHON)
 def docs(session: nox.Session) -> None:
+    if session.posargs and session.posargs[0] == "watch":
+        session.install("-e", ".[docs]", "watchfiles")
+        session.run(
+            "watchfiles",
+            "--ignore-paths",
+            "docs/_build",
+            "python -Im sphinx "
+            "-T -E "
+            "-W --keep-going "
+            "-b html "
+            "-d docs/_build/doctrees "
+            "-D language=en "
+            "-n "
+            "docs "
+            "docs/_build/html",
+        )
+        return
+
     session.install(".[docs]")
 
     for cmd in ["html", "doctest"]:
@@ -139,6 +157,7 @@ def docs(session: nox.Session) -> None:
             "-b", cmd,
             "-d", "docs/_build/doctrees",
             "-D", "language=en",
+            "-n",
             "docs",
             "docs/_build/html",
             # fmt: on
