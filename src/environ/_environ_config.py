@@ -1,11 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+#
 # Copyright 2017 Hynek Schlawack
-
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,19 +89,25 @@ def config(
     """
     Make a class a configuration class.
 
-    :param prefix: The prefix that is used for the env variables.  If you have
-        an `var` attribute on the class and you leave the default argument
-        value of *PREFIX_NOT_SET*, the *DEFAULT_PREFIX* value of ``APP`` will
-        be used and *environ-config* will look for an environment variable
-        called ``APP_VAR``.
-    :param from_environ: If not `None`, attach a config loading method with the
-        name *from_environ* to the class.  See `to_config` for more
-        information.
-    :param generate_help: If not `None`, attach a config loading method with
-        the name *generate_help* to the class.  See `generate_help` for more
-        information.
-    :param frozen: The configuration will be immutable after instantiation, if
-        `True`.
+    Args:
+        prefix:
+            The prefix that is used for the env variables.  If you have an
+            `var` attribute on the class and you leave the default argument
+            value of *PREFIX_NOT_SET*, the *DEFAULT_PREFIX* value of ``APP``
+            will be used and *environ-config* will look for an environment
+            variable called ``APP_VAR``.
+
+        from_environ:
+            If not `None`, attach a config loading method with the name
+            *from_environ* to the class.  See `to_config` for more information.
+
+        generate_help:
+            If not `None`, attach a config loading method with the name
+            *generate_help* to the class.  See `generate_help` for more
+            information.
+
+        frozen:
+            The configuration will be immutable after instantiation, if `True`.
 
     .. versionadded:: 19.1.0
        *from_environ*
@@ -153,19 +161,25 @@ def var(
     It will be attempted to be filled from an environment variable based on the
     prefix and *name*.
 
-    :param default: Setting this to a value makes the config attribute
-        optional.
-    :param name: Overwrite name detection with a string.  If not set, the name
-        of the attribute is used.
-    :param converter: A callable that is run with the found value and its
-        return value is used.  Please not that it is also run for default
-        values.
-    :param validator: A callable that is run with the final value. See
-        *attrs*'s `chapter on validation
-        <https://www.attrs.org/en/stable/init.html#validators>`_ for details.
-        You can also use any validator that is `shipped with attrs
-        <https://www.attrs.org/en/stable/api.html#validators>`_.
-    :param help: A help string that is used by `generate_help`.
+    Args:
+        default: Setting this to a value makes the config attribute optional.
+
+        name:
+            Overwrite name detection with a string.  If not set, the name of
+            the attribute is used.
+
+        converter:
+            A callable that is run with the found value and its return value is
+            used.  Please not that it is also run for default values.
+
+        validator:
+            A callable that is run with the final value. See *attrs*'s `chapter
+            on validation
+            <https://www.attrs.org/en/stable/init.html#validators>`_ for
+            details. You can also use any validator that is `shipped with attrs
+            <https://www.attrs.org/en/stable/api.html#validators>`_.
+
+        help: A help string that is used by `generate_help`.
     """
     return attr.ib(
         default=default,
@@ -232,12 +246,13 @@ def group(cls: type[T], optional: bool = False) -> T:
     (including sub-groups) are not present in the environment being parsed, the
     attribute corresponding to the *optional* *group* will be set to `None`.
 
-    :param optional: Mark this group as *optional*. Defaults to `False`.
+    Args:
+        optional: Mark this group as *optional*. Defaults to `False`.
 
-    :returns: An attribute which will be used as a nested *group* of variables.
+    Returns:
+        An attribute which will be used as a nested *group* of variables.
 
-    .. versionadded:: 21.1.0
-       *optional*
+    .. versionadded:: 21.1.0 *optional*
     """
     default = None if optional else RAISE
     return attr.ib(
@@ -322,10 +337,13 @@ def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
     """
     Load the configuration as declared by *config_cls* from *environ*.
 
-    :param config_cls: The configuration class to fill.
-    :param environ: Source of the configuration.  `os.environ` by default.
+    Args:
+        config_cls: The configuration class to fill.
 
-    :returns: An instance of *config_cls*.
+        environ: Source of the configuration.  `os.environ` by default.
+
+    Returns:
+        An instance of *config_cls*.
 
     This is equivalent to calling ``config_cls.from_environ()``.
     """
@@ -368,8 +386,10 @@ def _generate_var_name(prefix, field_name):
     >>> _generate_var_name("my_app", "some_var")
     "MY_APP_SOME_VAR"
 
-    :param prefix: the prefix to be used, can be empty
-    :param field_name: the name of the field from which the variable is derived
+    Args:
+        prefix: the prefix to be used, can be empty
+
+        field_name: the name of the field from which the variable is derived
     """
     return (
         "_".join((prefix, field_name)).upper()
@@ -389,8 +409,10 @@ def _generate_new_prefix(current_prefix, class_name):
     >>> _generate_new_prefix("my_app", "another_config_group")
     "MY_APP_ANOTHER_CONFIG_GROUP"
 
-    :param prefix: the prefix to be used, can be empty
-    :param field_name: the name of the field from which the variable is derived
+    Args:
+        prefix: the prefix to be used, can be empty
+
+        field_name: the name of the field from which the variable is derived
     """
     return (
         "_".join((current_prefix, class_name)).upper()
@@ -449,14 +471,18 @@ def generate_help(
     """
     Autogenerate a help string for a config class.
 
-    :param formatter: A callable that will be called with the help dictionaries
-       as an argument and the remaining *kwargs*.  It should return the help
-       string.
-    :param bool display_defaults: When using the default formatter, passing
-       `True` for *display_defaults* makes the default values part of the
-       output.
+    Args:
+        formatter:
+            A callable that will be called with the help dictionaries as an
+            argument and the remaining *kwargs*.  It should return the help
+            string.
 
-    :returns: A help string that can be printed to the user.
+        display_defaults (bool):
+            When using the default formatter, passing `True` for
+            *display_defaults* makes the default values part of the output.
+
+    Returns:
+        A help string that can be printed to the user.
 
     This is equivalent to calling ``config_cls.generate_help()``.
 

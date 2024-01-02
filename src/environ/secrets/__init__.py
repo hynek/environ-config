@@ -1,11 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+#
 # Copyright 2017 Hynek Schlawack
-
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,8 +77,10 @@ class INISecrets:
         """
         Look for secrets in *section* of *path*.
 
-        :param path: A path to an INI file.
-        :param section: The section in the INI file to read the secrets from.
+        Args:
+            path: A path to an INI file.
+
+            section: The section in the INI file to read the secrets from.
         """
         return cls(section, _load_ini(str(path)), None, None)
 
@@ -94,10 +98,14 @@ class INISecrets:
         This allows you to overwrite the path to the secrets file in
         development.
 
-        :param env_name: Environment variable that is used to determine the
-            path of the secrets file.
-        :param default: The default path to load from.
-        :param section: The section in the INI file to read the secrets from.
+        Args:
+            env_name:
+                Environment variable that is used to determine the path of the
+                secrets file.
+
+            default: The default path to load from.
+
+            section: The section in the INI file to read the secrets from.
         """
         return cls(section, None, env_name, default)
 
@@ -112,7 +120,8 @@ class INISecrets:
         """
         Declare a secret on an `environ.config`-decorated class.
 
-        :param section: Overwrite the section where to look for the values.
+        Args:
+            section: Overwrite the section where to look for the values.
 
         Other parameters work just like in `environ.var`.
         """
@@ -170,8 +179,8 @@ class DirectorySecrets:
         """
         Look for secrets in *path* directory.
 
-        :param path: A path to directory containing secrets
-            as files.
+        Args:
+            path: A path to directory containing secrets as files.
         """
         return cls(path)
 
@@ -186,9 +195,12 @@ class DirectorySecrets:
         This allows you to overwrite the path to the secrets directory in
         development.
 
-        :param env_name: Environment variable that is used to determine the
-            path of the secrets directory.
-        :param default: The default path to load from.
+        Args:
+            env_name:
+                Environment variable that is used to determine the path of the
+                secrets directory.
+
+            default: The default path to load from.
         """
         return cls(default, env_name)
 

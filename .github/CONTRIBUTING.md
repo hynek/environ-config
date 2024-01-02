@@ -75,14 +75,21 @@ At this point,
 $ python -m pytest
 ```
 
-should work and pass, as should:
+For documentation, you can use:
 
 ```console
-$ cd docs
-$ make html
+$ nox --session docs -- watch
 ```
 
-The built documentation can then be found in `docs/_build/html/`.
+This will build the documentation, and then watch for changes and rebuild it whenever you save a file.
+
+To just build the documentation and run doctests, use:
+
+```console
+$ nox --session docs
+```
+
+You will find the built documentation in `docs/_build/html`.
 
 ---
 
@@ -104,19 +111,23 @@ But it's way more comfortable to run it locally and *git* catching avoidable err
 
 ## Code
 
-- Obey [PEP 8](https://www.python.org/dev/peps/pep-0008/) and [PEP 257](https://www.python.org/dev/peps/pep-0257/).
-  We use the `"""`-on-separate-lines style for docstrings:
+- Obey [PEP 8] and [PEP 257].
+  We use the `"""`-on-separate-lines style for docstrings with [Napoleon](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)-style API documentation:
 
   ```python
   def func(x: str) -> str:
       """
       Do something.
 
-      :param str x: A very important parameter.
+      Args:
+        x: A very important parameter.
 
-      :rtype: str
+      Returns:
+        The result of doing something.
       """
   ```
+
+  Please note that unlike everything else, the API docstrings are still [reStructuredText].
 - If you add or change public APIs, tag the docstring using `..  versionadded:: 16.0.0 WHAT` or `..  versionchanged:: 16.2.0 WHAT`.
 - We use [*isort*](https://github.com/PyCQA/isort) to sort our imports, and we use [*Black*](https://github.com/psf/black) with line length of 79 characters to format our code.
   As long as you run our full [Nox] suite before committing, or install our [*pre-commit*] hooks (ideally you'll do both – see [*Local Development Environment*](#local-development-environment) above), you won't have to spend any time on formatting your code at all.
@@ -144,7 +155,7 @@ But it's way more comfortable to run it locally and *git* catching avoidable err
 
 - We use [Markdown] everywhere except in `docs/api.rst` and docstrings.
 
-- Use [semantic newlines] in [*reStructuredText*] and [Markdown] files (files ending in `.rst` and `.md`):
+- Use [semantic newlines] in [reStructuredText] and [Markdown] files (files ending in `.rst` and `.md`):
 
   ```markdown
   This is a sentence.
@@ -207,5 +218,5 @@ or:
 [*pre-commit*]: https://pre-commit.com/
 [Nox]: https://nox.thea.codes/
 [semantic newlines]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
-[*reStructuredText*]: https://www.sphinx-doc.org/en/stable/usage/restructuredtext/basics.html
+[reStructuredText]: https://www.sphinx-doc.org/en/stable/usage/restructuredtext/basics.html
 [Markdown]: https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax

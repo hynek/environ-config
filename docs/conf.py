@@ -6,6 +6,7 @@ extensions = [
     "sphinx.ext.autodoc.typehints",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "notfound.extension",
     "myst_parser",
 ]

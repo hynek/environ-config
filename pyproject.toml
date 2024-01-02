@@ -42,7 +42,7 @@ docs = [
     "sphinx-notfound-page",
     "sphinx",
 ]
-dev = ["environ-config[tests,docs]"]
+dev = ["environ-config[tests]", "nox", "pre-commit"]
 
 [project.urls]
 Documentation = "https://environ-config.readthedocs.io/"
@@ -62,7 +62,11 @@ raw-options = { local_scheme = "no-local-version" }
 addopts = ["-ra", "--strict-markers", "--strict-config"]
 xfail_strict = true
 testpaths = "tests"
-filterwarnings = ["once::Warning"]
+filterwarnings = [
+    "once::Warning",
+    # Not our warnings; can't do anything about them.
+    'ignore:datetime.datetime.utc(fromtimestamp|now).*:DeprecationWarning:',
+]
 
 
 [tool.coverage.run]

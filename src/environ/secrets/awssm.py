@@ -1,11 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+#
 # Copyright 2021 Chris Rose
-
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,14 +53,14 @@ def _build_secretsmanager_client():
 @attr.s(auto_attribs=True)
 class SecretsManagerSecrets:
     """
-    Load secrets from the *AWS Secrets Manager*.
+    Load secrets from the AWS Secrets Manager.
 
     The secret name should be stored in the environment variable
 
     .. warning::
 
        Requires `boto3 <https://pypi.org/project/boto3/>`_! Please install
-       *environ-config* with the ``aws`` extra: ``python -m pip install
+       *environ-config* with the ``aws`` extra: ``python -Im pip install
        environ-config[aws]``
 
     .. versionadded:: 21.4.0
