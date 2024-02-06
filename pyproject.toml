@@ -141,12 +141,14 @@ pattern = "\n\n(###.+?\n)## "
 text = """
  ---
 
- [**Full Changelog**](https://environ-config.readthedocs.io/en/stable/changelog.html)
+ [Full Changelog →](https://environ-config.readthedocs.io/en/stable/changelog.html)
  """
 
 
 [tool.ruff]
 src = ["src", "tests", "noxfile.py"]
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle
     "W",   # pycodestyle
@@ -173,7 +175,7 @@ ignore = [
     "RUF001", # leave my smart characters alone
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "B018",    # useless statements can be actually useful
     "PLC1901", # empty strings are falsey, but are less specific in tests
@@ -182,6 +184,6 @@ ignore = [
     "SIM300",  # Yoda rocks in tests
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 lines-between-types = 1
 lines-after-imports = 2
