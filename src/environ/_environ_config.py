@@ -389,11 +389,7 @@ def _generate_var_name(prefix, field_name):
 
         field_name: the name of the field from which the variable is derived
     """
-    return (
-        "_".join((prefix, field_name)).upper()
-        if prefix
-        else field_name.upper()
-    )
+    return f"{prefix}_{field_name}".upper() if prefix else field_name.upper()
 
 
 def _generate_new_prefix(current_prefix, class_name):
@@ -413,7 +409,7 @@ def _generate_new_prefix(current_prefix, class_name):
         field_name: the name of the field from which the variable is derived
     """
     return (
-        "_".join((current_prefix, class_name)).upper()
+        f"{current_prefix}_{class_name}".upper()
         if current_prefix
         else class_name.upper()
     )

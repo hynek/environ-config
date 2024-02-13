@@ -21,7 +21,6 @@ Handling of sensitive data.
 from __future__ import annotations
 
 import logging
-import os
 import sys
 
 from configparser import NoOptionError, RawConfigParser
@@ -33,7 +32,7 @@ import attr
 from environ._environ_config import CNF_KEY, RAISE, _ConfigEntry
 from environ.exceptions import MissingSecretImplementationError
 
-from ._utils import _get_default_secret, _open_file
+from ._utils import _get_default_secret
 
 
 try:
@@ -42,9 +41,8 @@ except ImportError:  # pragma: no cover
 
     class SecretsManagerSecrets:
         def secret(self, *args, **kwargs):
-            raise MissingSecretImplementationError(
-                "AWS secrets manager requires boto3"
-            )
+            msg = "AWS secrets manager requires boto3"
+            raise MissingSecretImplementationError(msg)
 
 
 __all__ = [
@@ -231,13 +229,11 @@ class DirectorySecrets:
         else:
             secrets_dir = self.secrets_dir
 
-        secret_path = os.path.join(secrets_dir, filename)
+        secret_path = Path(secrets_dir) / filename
         log.debug("looking for secret in file '%s'.", secret_path)
 
         try:
-            with _open_file(secret_path) as f:
-                val = f.read()
-            return _SecretStr(val)
+            return _SecretStr(secret_path.read_text())
         except FileOpenError:
             return _get_default_secret(filename, ce.default)
 
@@ -295,6 +291,8 @@ class _SecretStr(str):
     String that censors its __repr__ if called from an attrs repr.
     """
 
+    __slots__ = ()
+
     def __repr__(self) -> str:
         # The frame numbers varies across attrs versions. Use this convoluted
         # form to make the call lazy.
@@ -320,7 +318,7 @@ def _load_ini(path: str) -> RawConfigParser:
     Load an INI file from *path*.
     """
     cfg = RawConfigParser()
-    with _open_file(path) as f:
+    with Path(path).open() as f:
         cfg.read_file(f)
 
     return cfg
