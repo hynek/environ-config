@@ -9,7 +9,7 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-RUN_UNDER_COVERAGE = ["3.8", "3.11"]
+RUN_UNDER_COVERAGE = ["3.8", "3.12"]
 ALL_SUPPORTED = [
     # [[[cog
     # for line in open("pyproject.toml"):
