@@ -48,9 +48,10 @@ dev = ["environ-config[tests]", "nox", "pre-commit"]
 [project.urls]
 Documentation = "https://environ-config.readthedocs.io/"
 Changelog = "https://environ-config.rtfd.io/en/stable/changelog.html"
-"Bug Tracker" = "https://github.com/hynek/environ-config/issues"
-"Source Code" = "https://github.com/hynek/environ-config"
+GitHub = "https://github.com/hynek/environ-config/"
 Funding = "https://github.com/sponsors/hynek"
+Mastodon = "https://mastodon.social/@hynek"
+Twitter = "https://twitter.com/hynek"
 Tidelift = "https://tidelift.com/subscription/pkg/pypi-environ-config?utm_source=pypi-environ-config&utm_medium=pypi"
 
 
