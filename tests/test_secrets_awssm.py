@@ -23,7 +23,7 @@ import attr
 import boto3
 import pytest
 
-from moto import mock_secretsmanager
+from moto import mock_aws
 
 import environ
 
@@ -62,7 +62,7 @@ def _mock_aws_credentials(force_region):
 
 @pytest.fixture(name="secretsmanager")
 def _secretsmanager():
-    with mock_secretsmanager():
+    with mock_aws():
         yield boto3.client("secretsmanager", region_name="us-east-2")
 
 
@@ -122,7 +122,7 @@ class TestAWSSMSecret:
         class Cfg:
             pw = sm.secret()
 
-        with mock_secretsmanager():
+        with mock_aws():
             # we need to make sure we're using the same region. It doesn't
             # matter which -- moto _and_ boto will try figure it out from the
             # environment -- but it has to be the same.

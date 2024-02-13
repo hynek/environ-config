@@ -33,7 +33,7 @@ classifiers = [
 dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
 [project.optional-dependencies]
-tests = ["pytest", "moto<4.2.1"]
+tests = ["pytest", "moto"]
 aws = ["boto3"]
 docs = [
     "environ-config[aws]",
