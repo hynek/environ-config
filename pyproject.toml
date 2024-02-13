@@ -34,6 +34,7 @@ dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
 [project.optional-dependencies]
 tests = ["pytest", "moto"]
+cov = ["environ-config[tests]", "coverage[toml]>=7.2.0"]
 aws = ["boto3"]
 docs = [
     "environ-config[aws]",
@@ -80,21 +81,8 @@ source = ["src", ".nox/tests*/**/site-packages"]
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
-exclude_lines = [
-    # a more strict default pragma
-    "\\# pragma: no cover\\b",
-
-    # allow defensive code
-    "^\\s*raise AssertionError\\b",
-    "^\\s*raise NotImplementedError\\b",
-    "^\\s*return NotImplemented\\b",
-    "^\\s*raise$",
-
-    # typing-related code
-    "^if (False|TYPE_CHECKING):",
-    ": \\.\\.\\.(\\s*#.*)?$",
-    "^ +\\.\\.\\.$",
-    "-> ['\"]?NoReturn['\"]?:",
+exclude_also = [
+    ': \.\.\.$', # Function/method stubs.
 ]
 
 
