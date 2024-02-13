@@ -4,11 +4,11 @@
 
 To get started, install *environ-config* using *pip* from PyPI into your project's virtual environment:
 
-```shell
-$ python -m pip install environ-config
+```console
+$ python -Im pip install environ-config
 ```
 
-(If you want to use the *AWS Secrets Manager, please install `environ-config[aws]` because it needs extra dependencies.)
+If you want to use the *AWS Secrets Manager, please install `environ-config[aws]` because it needs extra dependencies.
 
 Let's start with a very simple configuration and pick up advanced features iteratively:
 
@@ -21,11 +21,11 @@ Let's start with a very simple configuration and pick up advanced features itera
 ```
 
 Now you can try loading this configuration either using the function `environ.to_config` (mnemonic: "environment to configuration") or using the class method `AppConfig.from_environ()` that has been automatically attached to the `AppConfig` class.
-Both methods are equivalent and we will use them in this tutorial interchangeably.
+Both methods are equivalent, and we will use them interchangeably in this tutorial.
 
 To do that, *environ-config* will concatenate a common prefix (`APP` by default, but can be changed) and the attribute names with underscores as separators.
 Then it tries to load those values from the process environment (`os.environ`) -- or a dictionary that you can pass to `environ.to_config`/`AppConfig.from_environ()` instead.
-This is what we will do in this tutorial to make things more transparent.
+We will do that in this tutorial to make things more transparent.
 
 :::{note}
 The class and the configuration attributes can have *any* valid Python name.
@@ -34,7 +34,7 @@ The fact that all our configurations are called `AppConfig` is just *our* naming
 If you want to use an invalid name for the environment variable, you can overwrite the attribute name using the *name* argument to `environ.to_config`.
 :::
 
-So in this case, *environ-config* will look for two environment variables: `APP_VALUE` and `APP_FLAG`.
+So, in this case, *environ-config* will look for two environment variables: `APP_VALUE` and `APP_FLAG`.
 Let's pass a dictionary to it that contains them:
 
 ```{doctest}
@@ -50,8 +50,8 @@ As you can see, since we used `environ.bool_var`, the `"yes"` string has been co
 
 ## Defaults
 
-Now let's assume you want to keep `AppConfig.value` on 42, but have an option to overwrite it when needed.
-Assign a default value for it and that will be used if the variable in question is not present:
+Now let's assume you want to keep `AppConfig.value` on 42 but have an option to overwrite it when needed.
+Assign a default value for it, and that will be used if the variable in question is not present:
 
 ```{doctest}
 >>> @environ.config
@@ -76,14 +76,14 @@ AppConfig(value='23', flag=True)
 
 :::{warning}
 As a general advice: don't set your defaults to dangerous values.
-For example if your web application has some kind of development mode that activates a debugger view on exceptions, that should be strictly opt-in.
+For example, if your web application has some development mode that activates a debugger view on exceptions, that should be strictly opt-in.
 
-Otherwise one forgotten or mistyped option name can fully expose your application.
+Otherwise, one forgotten or mistyped option name can fully expose your application.
 :::
 
 ## Nesting
 
-Sometimes it makes sense to give your configuration more structure than a flat class.
+Sometimes, giving your configuration more structure than a flat class makes sense.
 For that *environ-config* comes with the concept of groups; implemented using `environ.group`:
 
 ```{doctest}
@@ -103,13 +103,13 @@ AppConfig(svc=AppConfig.SomeService(host='localhost', port='5555'))
 
 :::{note}
 It's usually better to store access information to servers in URLs in use cases like this.
-Python has great libraries for creating and parsing them (e.g. [*yarl*](https://yarl.readthedocs.io/)) and they allow you to keep all information needed to connect to a service serialized into a single string.
+Python has excellent libraries for creating and parsing them (e.g. [*yarl*](https://yarl.readthedocs.io/)), and they allow you to keep all information needed to connect to a service serialized into a single string.
 
 Some libraries like [*SQLAlchemy*](https://www.sqlalchemy.org) or the [Redis](https://redis-py.readthedocs.io/) package allow you to pass URL strings directly into them.
 :::
 
-`environ.group` objects may also be marked as `optional` to handle situations where the configuration variables described in that group are not present in the environment but the application is capable of continuing without that data.
-This might be used, as an example, for configuring application components which are entirely optional, have multi-variable configuration and must be fully configured via the environment if configured at all.
+`environ.group` objects may also be marked as `optional` to handle situations where the configuration variables described in that group are not present in the environment, but the application can continue without that data.
+This might be used, as an example, for configuring application components that are entirely optional, have multi-variable configuration, and must be fully configured via the environment if configured at all.
 
 ```{doctest}
 >>> @environ.config
@@ -129,8 +129,8 @@ AppConfig(component=None)
 AppConfig(component=AppConfig.ComponentConfiguration(value='foo', flag=True))
 ```
 
-An `environ.group` which is `optional` will be set to `None` in an instantiated `environ.config` if *none* of its children are present in the environment being loaded from.
-If *any* of the children are defined, then the `group` will be instantiated as normal which means that *all* of its required children must be defined.
+An `environ.group`, which is `optional`, will be set to `None` in an instantiated `environ.config` if *none* of its children are present in the environment being loaded from.
+If *any* of the children are defined, then the `group` will be instantiated as usual, which means that *all* of its required children must be defined.
 This ensures that the `group` is either absent or fully defined.
 
 ```{doctest}
@@ -168,7 +168,7 @@ environ.exceptions.MissingEnvValueError: ('APP_COMPONENT_REQUIRED_1', 'APP_COMPO
 ## Converters
 
 *environ-config* also inherited *attrs*'s converters.
-They are especially useful with integers or `enum` s:
+They are handy with integers or `enum` s:
 
 ```{doctest}
 >>> import enum
@@ -216,13 +216,13 @@ Check out *attrs*'s [documentation](https://www.attrs.org/en/stable/init.html#va
 
 ## Secrets
 
-Secrets should be stored in specialized systems and [not passed as environment variables](https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/) .
+Secrets should be stored in specialized systems and [not passed as environment variables](https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/).
 The *12 Factor App* manifesto is plain wrong here.
 
 Therefore *environ-config* comes with support for getting secrets from somewhere else.
-The simplest way is to safe them into an INI file and tell *environ-config* to load that file on startup, based on an environment variable.
+The simplest way is to save them into an INI file and tell *environ-config* to load that file on startup based on an environment variable.
 
-For example this is a common pattern:
+For example, this is a typical pattern:
 
 ```
 ini_file = environ.secrets.INISecrets.from_path_in_env(
@@ -244,12 +244,12 @@ This allows you in development to set the environment variable `APP_SECRETS_INI`
 db_url=postgresql://user@localhost/database-name
 ```
 
-And in production it will just work without any further work.
+And in production, it will just work without any further work.
 
 
 ## Debugging
 
-*environ-config* comes with two tools to help you to debug your configuration.
+*environ-config* comes with two tools to help debug your configuration.
 Firstly, you can tell it to generate a help string using `environ.generate_help`/`AppConfig.generate_help()`:
 
 ```{doctest}
@@ -277,7 +277,7 @@ APP_SUBCONFIG_AMET (Required)
 ```
 
 The other option is to activate debug-level logging for the `environ_config` logger by setting its level to `logging.DEBUG`.
-*environ-config* will tell you what its looking for in real time:
+*environ-config* will tell you what it's looking for in real-time:
 
 ```
 import logging
