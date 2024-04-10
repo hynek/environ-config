@@ -166,7 +166,7 @@ class TestAWSSMSecret:
 
     def test_name_overwrite(self, sm, secret):
         """
-        Passsing a specific key name is respected.
+        Passing a specific key name is respected.
         """
         sm.client.put_secret_value(SecretId=secret, SecretString="foobar")
 

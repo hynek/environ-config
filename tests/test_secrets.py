@@ -118,7 +118,7 @@ class TestIniSecret:
 
     def test_name_overwrite(self, ini):
         """
-        Passsing a specific key name is respected.
+        Passing a specific key name is respected.
         """
 
         @environ.config
