@@ -8,7 +8,7 @@ To get started, install *environ-config* using *pip* from PyPI into your project
 $ python -Im pip install environ-config
 ```
 
-If you want to use the *AWS Secrets Manager, please install `environ-config[aws]` because it needs extra dependencies.
+If you want to use the AWS Secrets Manager, please install `environ-config[aws]` because it needs extra dependencies.
 
 Let's start with a very simple configuration and pick up advanced features iteratively:
 
@@ -74,8 +74,8 @@ But you can still overwrite it if needed:
 AppConfig(value='23', flag=True)
 ```
 
-:::{warning}
-As a general advice: don't set your defaults to dangerous values.
+:::{danger}
+Don't set your defaults to dangerous values.
 For example, if your web application has some development mode that activates a debugger view on exceptions, that should be strictly opt-in.
 
 Otherwise, one forgotten or mistyped option name can fully expose your application.
@@ -101,9 +101,9 @@ For that *environ-config* comes with the concept of groups; implemented using `e
 AppConfig(svc=AppConfig.SomeService(host='localhost', port='5555'))
 ```
 
-:::{note}
+:::{hint}
 It's usually better to store access information to servers in URLs in use cases like this.
-Python has excellent libraries for creating and parsing them (e.g. [*yarl*](https://yarl.readthedocs.io/)), and they allow you to keep all information needed to connect to a service serialized into a single string.
+Python has excellent libraries for creating and parsing them (for example, [*yarl*](https://yarl.readthedocs.io/)), and they allow you to keep all information needed to connect to a service serialized into a single string.
 
 Some libraries like [*SQLAlchemy*](https://www.sqlalchemy.org) or the [Redis](https://redis-py.readthedocs.io/) package allow you to pass URL strings directly into them.
 :::
@@ -250,7 +250,7 @@ And in production, it will just work without any further work.
 ## Debugging
 
 *environ-config* comes with two tools to help debug your configuration.
-Firstly, you can tell it to generate a help string using `environ.generate_help`/`AppConfig.generate_help()`:
+Firstly, you can tell it to generate a help string using {func}`environ.generate_help` and `AppConfig.generate_help()`:
 
 ```{doctest}
 >>> import environ
