@@ -7,7 +7,7 @@
 
 <!-- teaser-begin -->
 
-*environ-config* allows you to configure your applications using environment variables – as recommended in [*The Twelve-Factor App*](https://12factor.net/config) methodology – with elegant, boilerplate-free, and declarative code:
+*environ-config* allows you to load your application's configuration from environment variables – as recommended in [*The Twelve-Factor App*](https://12factor.net/config) methodology – with elegant, boilerplate-free, and declarative code:
 
 ```pycon
 >>> import environ
