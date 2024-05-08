@@ -362,11 +362,11 @@ def _format_help_dicts(help_dicts, display_defaults=False):
             "Required" if help_dict["required"] else "Optional",
         )
         if help_dict.get("default") and display_defaults:
-            help_str += f", Default={help_dict["default"]})"
+            help_str += f", Default={help_dict['default']})"
         else:
             help_str += ")"
         if help_dict.get("help_str"):
-            help_str += f": {help_dict["help_str"]}"
+            help_str += f": {help_dict['help_str']}"
         help_strs.append(help_str)
 
     return "\n".join(help_strs)
