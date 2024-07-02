@@ -193,10 +193,7 @@ def _env_to_bool(val: str | bool) -> bool:
     """
     if isinstance(val, bool):
         return val
-    if val.strip().lower() in ("1", "true", "yes"):
-        return True
-
-    return False
+    return val.strip().lower() in ("1", "true", "yes")
 
 
 def bool_var(
