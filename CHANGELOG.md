@@ -22,6 +22,9 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 - Support for Python 3.13.
 
+- Support for Moto 5.
+  [#76](https://github.com/hynek/environ-config/pull/76)
+
 
 ### Removed
 
