@@ -5,15 +5,14 @@ on:
   push:
     branches: [main]
     tags: ["*"]
-  pull_request:
   release:
     types:
       - published
   workflow_dispatch:
 
 permissions:
+  attestations: write
   contents: read
-  # Needed for trusted publishing.
   id-token: write
 
 jobs:
@@ -28,6 +27,8 @@ jobs:
           fetch-depth: 0
 
       - uses: hynek/build-and-inspect-python-package@v2
+        with:
+          attest-build-provenance-github: 'true'
 
   # Upload to Test PyPI on every commit on main.
   release-test-pypi:

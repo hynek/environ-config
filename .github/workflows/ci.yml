@@ -40,6 +40,12 @@ jobs:
           fetch-depth: 0
 
       - uses: hynek/build-and-inspect-python-package@v2
+        id: baipp
+
+    outputs:
+      # Used to define the matrix for tests below. The value is based on
+      # packaging metadata (trove classifiers).
+      supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
 
   tests:
     name: Tests on ${{ matrix.python-version }}
@@ -49,18 +55,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          # [[[cog
-          # for line in open("pyproject.toml"):
-          #     if "Programming Language :: Python :: " in line:
-          #         cog.outl(f'- "{line.rsplit(" ")[-1][:-3]}"')
-          # ]]]
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          # [[[end]]]
+        # Created by the build-and-inspect-python-package action above.
+        python-version: ${{ fromJson(needs.build-package.outputs.supported-python-versions) }}
 
     steps:
       - name: Download pre-built packages
@@ -68,14 +64,15 @@ jobs:
         with:
           name: Packages
           path: dist
-      - run: tar xf dist/*.tar.gz --strip-components=1
+      - run: |
+          tar xf dist/*.tar.gz --strip-components=1
+          rm -rf src  # ensure we run against wheel
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
-          cache: pip
-
-      - run: python -Im pip install --upgrade wheel nox
+      - uses: hynek/setup-cached-uv@v2
+      - run: uv pip install --system nox
 
       - name: Run tests
         run: |
@@ -99,11 +96,16 @@ jobs:
     if: always()
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Download pre-built packages
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+      - run: tar xf dist/*.tar.gz --strip-components=1
       - uses: actions/setup-python@v5
         with:
-          cache: pip
           python-version-file: .python-version-default
+      - uses: hynek/setup-cached-uv@v2
 
       - uses: actions/download-artifact@v4
         with:
@@ -112,7 +114,7 @@ jobs:
 
       - name: Combine coverage & fail if it's <100%.
         run: |
-          python -Im pip install --upgrade coverage[toml]
+          uv pip install --system coverage[toml]
 
           python -Im coverage combine
           python -Im coverage html --skip-covered --skip-empty
@@ -137,18 +139,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          # [[[cog
-          # for line in open("pyproject.toml"):
-          #     if "Programming Language :: Python :: " in line:
-          #         cog.outl(f'- "{line.rsplit(" ")[-1][:-3]}"')
-          # ]]]
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          # [[[end]]]
+        # Created by the build-and-inspect-python-package action above.
+        python-version: ${{ fromJson(needs.build-package.outputs.supported-python-versions) }}
 
     steps:
       - name: Download pre-built packages
@@ -157,15 +149,13 @@ jobs:
           name: Packages
           path: dist
       - run: tar xf dist/*.tar.gz --strip-components=1
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
-          cache: pip
+      - uses: hynek/setup-cached-uv@v2
 
-      - run: python -Im pip install --upgrade wheel nox
-
+      - run: uv pip install --system nox
       - run: python -Im nox --session mypy
 
   docs:
@@ -180,10 +170,8 @@ jobs:
           name: Packages
           path: dist
       - run: tar xf dist/*.tar.gz --strip-components=1
-
       - uses: actions/setup-python@v5
         with:
-          cache: pip
           # [[[cog
           # import yaml
           # with open(".readthedocs.yaml") as f:
@@ -192,8 +180,9 @@ jobs:
           # ]]]
           python-version: "3.12"
           # [[[end]]]
-      - run: python -Im pip install --upgrade wheel nox
+      - uses: hynek/setup-cached-uv@v2
 
+      - run: uv pip install --system nox
       - run: python -Im nox --session docs
 
   install-dev:

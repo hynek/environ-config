@@ -57,6 +57,10 @@ source = "vcs"
 raw-options = { local_scheme = "no-local-version" }
 
 
+[tool.uv]
+reinstall-package = ["environ-config"]
+
+
 [tool.pytest.ini_options]
 addopts = ["-ra", "--strict-markers", "--strict-config"]
 xfail_strict = true
