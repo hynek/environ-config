@@ -78,7 +78,7 @@ You can find the full documentation including a step-by-step tutorial on [Read t
 *environ-config* is maintained by [Hynek Schlawack](https://hynek.me/) and is released under the [Apache License 2.0](https://github.com/hynek/environ-config/blob/main/LICENSE) license.
 Development takes place on [GitHub](https://github.com/hynek/environ-config).
 
-The development is kindly supported by [Variomedia AG](https://www.variomedia.de/).
+The development is kindly supported by [Variomedia AG](https://www.variomedia.de/) and all my amazing [GitHub Sponsors](https://github.com/sponsors/hynek).
 
 *environ-config* wouldn't be possible without the [*attrs* project](https://www.attrs.org).
 
