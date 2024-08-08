@@ -153,7 +153,9 @@ def docs(session: nox.Session) -> None:
 
     session.install(".[docs]")
 
-    for cmd in ["html", "doctest"]:
+    for cmd in (
+        [session.posargs[0]] if session.posargs else ["html", "doctest"]
+    ):
         session.run(
             # fmt: off
             "python", "-m", "sphinx",
