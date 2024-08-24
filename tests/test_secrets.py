@@ -50,7 +50,7 @@ class TestSecretStr:
         assert "Cfg(s=<SECRET>)" == repr(Cfg(s))
 
 
-@pytest.fixture()
+@pytest.fixture
 def ini_file(tmpdir):
     f = tmpdir.join("foo.ini")
     f.write(
@@ -67,7 +67,7 @@ secret = qux
     return f
 
 
-@pytest.fixture()
+@pytest.fixture
 def ini(ini_file):
     return INISecrets.from_path(str(ini_file))
 
@@ -177,7 +177,7 @@ class TestIniSecret:
         assert "foobar" == cfg.password
 
 
-@pytest.fixture()
+@pytest.fixture
 def vault():
     return VaultEnvSecrets(vault_prefix="SECRET")
 
@@ -245,7 +245,7 @@ class TestVaultEnvSecrets:
         assert _SecretStr("foo") == cfg.pw
 
 
-@pytest.fixture()
+@pytest.fixture
 def secrets_dir(tmp_path):
     def make_secrets_file(name, content):
         secret_file = tmp_path / name
