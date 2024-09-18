@@ -67,7 +67,7 @@ def pre_commit(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files")
 
 
-def _get_pkg(posargs: list[str], cov: bool) -> tuple[str, list[str]]:
+def _get_pkg(posargs: list[str]) -> tuple[str, list[str]]:
     """
     Allow `--installpkg path/to/wheel.whl` to be passed.
     """
@@ -80,9 +80,7 @@ def _get_pkg(posargs: list[str], cov: bool) -> tuple[str, list[str]]:
     except ValueError:
         pkg = "."
 
-    extra = "cov" if cov else "tests"
-
-    return f"{pkg}[{extra}]", posargs
+    return pkg, posargs
 
 
 def _cov(session: nox.Session, posargs: list[str]) -> None:
@@ -94,24 +92,24 @@ def _cov(session: nox.Session, posargs: list[str]) -> None:
 
 @nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=True)
-    session.install(pkg)
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(f"{pkg}[cov]")
 
     _cov(session, posargs)
 
 
 @nox.session(python=NOT_COVERAGE, tags=["tests"])
 def tests(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=False)
-    session.install(pkg)
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(f"{pkg}[tests]")
 
     session.run("pytest", *posargs)
 
 
 @nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=True)
-    session.install(pkg, f"attrs=={OLDEST_ATTRS}")
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(f"{pkg}[cov]", f"attrs=={OLDEST_ATTRS}")
 
     _cov(session, posargs)
 

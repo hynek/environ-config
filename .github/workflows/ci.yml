@@ -23,12 +23,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          cache: pip
           python-version: "3.x"
+      - uses: hynek/setup-cached-uv@v2
 
-      - run: python -Im pip install --upgrade wheel nox
-
-      - run: python -Im nox --session cog -- --check
+      - run: uvx nox --session cog -- --check
 
   build-package:
     name: Build & verify package
@@ -72,15 +70,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
       - uses: hynek/setup-cached-uv@v2
-      - run: uv pip install --system nox
 
       - name: Run tests
-        run: |
-          python -Im nox \
-            --python ${{ matrix.python-version }} \
-            --tags tests \
-            -- \
-            --installpkg dist/*.whl
+        run: >
+          uvx nox
+          --python ${{ matrix.python-version }}
+          --tags tests
+          -- --installpkg dist/*.whl
 
       - name: Upload coverage data
         uses: actions/upload-artifact@v4
@@ -156,8 +152,7 @@ jobs:
           allow-prereleases: true
       - uses: hynek/setup-cached-uv@v2
 
-      - run: uv pip install --system nox
-      - run: python -Im nox --session mypy
+      - run: uvx nox --session mypy
 
   docs:
     name: Build docs & run doctests
@@ -183,8 +178,7 @@ jobs:
           # [[[end]]]
       - uses: hynek/setup-cached-uv@v2
 
-      - run: uv pip install --system nox
-      - run: python -Im nox --session docs
+      - run: uvx nox --session docs
 
   install-dev:
     name: Verify dev env on ${{ matrix.os }}
