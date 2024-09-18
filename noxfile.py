@@ -93,8 +93,7 @@ def _cov(session: nox.Session, posargs: list[str]) -> None:
 @nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
     pkg, posargs = _get_pkg(session.posargs)
-    session.install(f"{pkg}[tests]")
-    session.install("coverage[toml]")
+    session.install(f"{pkg}[cov]")
 
     _cov(session, posargs)
 
@@ -110,8 +109,7 @@ def tests(session: nox.Session) -> None:
 @nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
     pkg, posargs = _get_pkg(session.posargs)
-    session.install(pkg, f"attrs=={OLDEST_ATTRS}")
-    session.install("coverage[toml]")
+    session.install(f"{pkg}[cov]", f"attrs=={OLDEST_ATTRS}")
 
     _cov(session, posargs)
 
