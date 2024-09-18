@@ -32,7 +32,6 @@ dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
 [project.optional-dependencies]
 tests = ["pytest", "moto"]
-cov = ["environ-config[tests]", "coverage[toml]>=7.2.0"]
 aws = ["boto3"]
 docs = [
     "environ-config[aws]",

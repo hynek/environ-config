@@ -6,7 +6,7 @@ import nox
 
 
 nox.needs_version = ">=2024.3.2"
-nox.options.default_venv_backend = "uv|virtualenv"
+nox.options.default_venv_backend = "uv"
 nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
@@ -67,7 +67,7 @@ def pre_commit(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files")
 
 
-def _get_pkg(posargs: list[str], cov: bool) -> tuple[str, list[str]]:
+def _get_pkg(posargs: list[str]) -> tuple[str, list[str]]:
     """
     Allow `--installpkg path/to/wheel.whl` to be passed.
     """
@@ -80,9 +80,7 @@ def _get_pkg(posargs: list[str], cov: bool) -> tuple[str, list[str]]:
     except ValueError:
         pkg = "."
 
-    extra = "cov" if cov else "tests"
-
-    return f"{pkg}[{extra}]", posargs
+    return pkg, posargs
 
 
 def _cov(session: nox.Session, posargs: list[str]) -> None:
@@ -94,24 +92,26 @@ def _cov(session: nox.Session, posargs: list[str]) -> None:
 
 @nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=True)
-    session.install(pkg)
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(f"{pkg}[tests]")
+    session.install("coverage[toml]")
 
     _cov(session, posargs)
 
 
 @nox.session(python=NOT_COVERAGE, tags=["tests"])
 def tests(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=False)
-    session.install(pkg)
+    pkg, posargs = _get_pkg(session.posargs)
+    session.install(f"{pkg}[tests]")
 
     session.run("pytest", *posargs)
 
 
 @nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
-    pkg, posargs = _get_pkg(session.posargs, cov=True)
+    pkg, posargs = _get_pkg(session.posargs)
     session.install(pkg, f"attrs=={OLDEST_ATTRS}")
+    session.install("coverage[toml]")
 
     _cov(session, posargs)
 
