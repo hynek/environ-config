@@ -157,7 +157,6 @@ def docs(session: nox.Session) -> None:
         [session.posargs[0]] if session.posargs else ["html", "doctest"]
     ):
         session.run(
-            # fmt: off
             "python", "-m", "sphinx",
             "-T", "-E",
             "-W", "--keep-going",
@@ -167,6 +166,5 @@ def docs(session: nox.Session) -> None:
             "-n",
             "docs",
             "docs/_build/html",
-            # fmt: on
-        )
+        )  # fmt: skip
     session.run("python", "-m", "doctest", "README.md")

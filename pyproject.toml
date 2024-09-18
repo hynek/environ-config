@@ -89,10 +89,6 @@ exclude_also = [
 ]
 
 
-[tool.black]
-line-length = 79
-
-
 [tool.interrogate]
 omit-covered-files = true
 verbose = 2
@@ -145,6 +141,7 @@ text = """
 
 [tool.ruff]
 src = ["src", "tests", "noxfile.py"]
+line-length = 79
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -155,11 +152,12 @@ ignore = [
     "ANN",     # Mypy is better at this
     "ARG001",  # unused arguments are normal when implementing interfaces
     "ARG002",  # unused arguments are normal when implementing interfaces
-    "COM",     # Black takes care of our commas
+    "COM",     # Formatter takes care of our commas
     "D",       # We prefer our own docstring style.
-    "E501",    # leave line-length enforcement to Black
+    "E501",    # leave line-length enforcement to formatter
     "FBT",     # bools are fine
     "INP001",  # sometimes we want Python files outside of packages
+    "ISC001",  # conflicts with formatter
     "PLR0913", # sometimes 6 arguments are ok
     "RUF001",  # leave my smart characters alone
     "SLF001",  # private members are accessed by friendly functions
