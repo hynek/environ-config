@@ -76,3 +76,15 @@ def test_generated_helps_equals_display_defaults(display_defaults):
     assert environ.generate_help(
         ConfigRenamed, display_defaults=display_defaults
     ) == ConfigRenamed.gen_help(display_defaults=display_defaults)
+
+
+def test_generate_help_with_prefix():
+    """
+    Class methods generate help using a passed prefix.
+    """
+    assert environ.generate_help(
+        AppConfig, prefix="FOO"
+    ) == AppConfig.generate_help(prefix="FOO")
+    assert environ.generate_help(
+        ConfigRenamed, prefix="BAR"
+    ) == ConfigRenamed.gen_help(prefix="BAR")

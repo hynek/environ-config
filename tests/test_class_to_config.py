@@ -99,3 +99,30 @@ def test_factory_default():
 
     assert cfg.x == []
     assert cfg.y == "baz"
+
+
+def test_from_environ_with_prefix():
+    """
+    Class methods create a config using a passed prefix.
+    """
+    foo_environ = {
+        "APP_HOST": "nope",
+        "APP_PORT": "0",
+        "FOO_HOST": "foo",
+        "FOO_PORT": "1",
+    }
+
+    assert environ.to_config(
+        AppConfig, foo_environ, prefix="FOO"
+    ) == AppConfig.from_environ(foo_environ, prefix="FOO")
+
+    bar_environ = {
+        "APP_HOST": "nope",
+        "APP_PORT": "0",
+        "BAR_HOST": "bar",
+        "BAR_PORT": "2",
+    }
+
+    assert environ.to_config(
+        ConfigRenamed, bar_environ, prefix="BAR"
+    ) == ConfigRenamed.from_env(bar_environ, prefix="BAR")
