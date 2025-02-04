@@ -4,7 +4,9 @@ version: 2
 build:
   os: ubuntu-lts-latest
   tools:
-    python: "3.13"
+    # Don't update before Sphinx 8.2 is out:
+    # https://github.com/sphinx-doc/sphinx/issues/13178
+    python: "3.12"
   jobs:
     # Need the tags to calculate the version (sometimes).
     post_checkout:

@@ -179,7 +179,7 @@ jobs:
           #     rtd = yaml.safe_load(f)
           # cog.outl(f'python-version: "{rtd["build"]["tools"]["python"]}"')
           # ]]]
-          python-version: "3.13"
+          python-version: "3.12"
           # [[[end]]]
       - uses: hynek/setup-cached-uv@v2
 
