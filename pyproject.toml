@@ -149,6 +149,7 @@ select = ["ALL"]
 ignore = [
     "A001",    # shadowing is fine
     "A002",    # shadowing is fine
+    "A005",    # shadowing is fine
     "ANN",     # Mypy is better at this
     "ARG001",  # unused arguments are normal when implementing interfaces
     "ARG002",  # unused arguments are normal when implementing interfaces
