@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 import os
 
-from typing import Any, Callable, TypeVar, overload
+from typing import Any, Callable, Literal, TypeVar, overload
 
 import attr
 
@@ -215,7 +215,15 @@ def bool_var(
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
-def group(cls: type[T], optional: bool = False) -> T:
+@overload
+def group(cls: type[T], optional: Literal[True]) -> T | None: ...
+
+
+@overload
+def group(cls: type[T], optional: Literal[False] = False) -> T: ...
+
+
+def group(cls: type[T], optional: bool = False) -> T | None:
     """
     A configuration attribute that is another configuration class.
 
