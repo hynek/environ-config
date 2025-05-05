@@ -334,3 +334,40 @@ class TestDirectorySecrets:
 
         cfg = environ.to_config(Cfg, {})
         assert "Test default value" == cfg.doesnt_exist
+
+    def test_group_missing_optional_one(self, ini):
+        """
+        If secret is part of a group and is missing,
+        raise MissingSecretError.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                another_option = environ.var()
+                secret = ini.secret()
+
+            opt_sub = environ.group(OptSub, optional=True)
+
+        with pytest.raises(MissingSecretError):
+            environ.to_config(Cfg, {"APP_OPT_SUB_ANOTHER_OPTION": "23"})
+
+    def test_optional_group_missing_all(self, ini):
+        """
+        If secret is part of an optional group and is missing,
+        use implicit default.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                another_option = environ.var(default=42)
+                secret = ini.secret()
+
+            opt_sub = environ.group(OptSub, optional=True)
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert None is cfg.opt_sub
