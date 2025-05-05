@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import environ
 
 
@@ -45,9 +47,14 @@ class Config:
     class Sub:
         y: int = environ.var(converter=int)
 
+    @environ.config
+    class OptSub:
+        z: int = environ.var(converter=int)
+
     x: str = environ.var()
     b: bool = environ.bool_var(name="BOOL")
     sub: Sub = environ.group(Sub)
+    opt_sub: OptSub | None = environ.group(OptSub, optional=True)
     secret: str = ini_secrets.secret()
     d_secret: str = dir_secrets.secret(help="help!")
     v_secret: str = vault_secrets.secret()
