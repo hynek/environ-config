@@ -217,7 +217,7 @@ class TestIniSecret:
 
     def test_group_missing_optional_both_env_and_secret(self, ini):
         """
-        If both a secret and an env var is missing from an optioanl group
+        If both a secret and an env var is missing from an optional group
         raise MissingSecretError.
         """
 
