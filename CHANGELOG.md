@@ -23,6 +23,11 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 - Type hints for `environ.group()` now respects the `optional` argument.
   [#98](https://github.com/hynek/environ-config/pull/98)
 
+### Changes
+
+- Secrets are now handled like environment variables in optional groups, so that if all secrets (and environment variables) are missing, the group becomes `None`.
+  This change also causes the `MissingSecretError` exceptions to include *all* missing secrets, not just the first one.
+  [#100](https://github.com/hynek/environ-config/pull/100)
 
 ## [24.1.0](https://github.com/hynek/environ-config/compare/23.2.0...24.1.0) - 2024-08-08
 

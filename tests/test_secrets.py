@@ -19,7 +19,7 @@ import pytest
 
 import environ
 
-from environ.exceptions import MissingSecretError
+from environ.exceptions import MissingEnvValueError, MissingSecretError
 from environ.secrets import (
     DirectorySecrets,
     INISecrets,
@@ -175,6 +175,84 @@ class TestIniSecret:
         cfg = environ.to_config(Cfg, {"APP_SECRETS_INI": str(ini_file)})
 
         assert "foobar" == cfg.password
+
+    def test_group_missing_optional_var(self, ini):
+        """
+        If a missing env variable is part of an
+        optional group together with a secret,
+        raise MissingEnvValueError.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                another_option = environ.var()
+                password = ini.secret()
+
+            db = environ.group(OptSub, optional=True)
+
+        with pytest.raises(MissingEnvValueError) as e:
+            environ.to_config(Cfg, {})
+        assert ("APP_DB_ANOTHER_OPTION",) == e.value.args
+
+    def test_group_missing_optional_secret(self, ini):
+        """
+        If secret is part of a group and is missing,
+        raise MissingSecretError.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                another_option = environ.var()
+                secret = ini.secret()
+
+            opt_sub = environ.group(OptSub, optional=True)
+
+        with pytest.raises(MissingSecretError) as e:
+            environ.to_config(Cfg, {"APP_OPT_SUB_ANOTHER_OPTION": "23"})
+        assert ("opt_sub_secret",) == e.value.args
+
+    def test_group_missing_optional_both_env_and_secret(self, ini):
+        """
+        If both a secret and an env var is missing from an optional group
+        raise MissingSecretError.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                first_option = environ.var()
+                another_option = environ.var()
+                secret = ini.secret()
+
+            opt_sub = environ.group(OptSub, optional=True)
+
+        with pytest.raises(MissingSecretError) as e:
+            environ.to_config(Cfg, {"APP_OPT_SUB_ANOTHER_OPTION": "23"})
+        assert ("opt_sub_secret",) == e.value.args
+
+    def test_optional_group_missing_all(self, ini):
+        """
+        If secret is part of an optional group and is missing,
+        use implicit default.
+        """
+
+        @environ.config
+        class Cfg:
+            @environ.config
+            class OptSub:
+                another_option = environ.var(default=42)
+                secret = ini.secret()
+
+            opt_sub = environ.group(OptSub, optional=True)
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert None is cfg.opt_sub
 
 
 @pytest.fixture
