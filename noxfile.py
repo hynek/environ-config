@@ -11,7 +11,7 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-RUN_UNDER_COVERAGE = ["3.8", "3.12"]
+RUN_UNDER_COVERAGE = ["3.8", "3.13"]
 ALL_SUPPORTED = [
     # [[[cog
     # for line in open("pyproject.toml"):
@@ -24,6 +24,7 @@ ALL_SUPPORTED = [
     "3.11",
     "3.12",
     "3.13",
+    "3.14",
     # [[[end]]]
 ]
 OLDEST_PYTHON = ALL_SUPPORTED[0]
@@ -35,7 +36,7 @@ NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 #     rtd = yaml.safe_load(f)
 # cog.outl(f'DOCS_PYTHON = "{rtd["build"]["tools"]["python"]}"')
 # ]]]
-DOCS_PYTHON = "3.12"
+DOCS_PYTHON = "3.13"
 # [[[end]]]
 
 # [[[cog
@@ -93,7 +94,7 @@ def _cov(session: nox.Session, posargs: list[str]) -> None:
 @nox.session(python=RUN_UNDER_COVERAGE, tags=["tests"])
 def tests_cov(session: nox.Session) -> None:
     pkg, posargs = _get_pkg(session.posargs)
-    session.install(f"{pkg}[cov]")
+    session.install(pkg, "--group", "cov")
 
     _cov(session, posargs)
 
@@ -101,7 +102,7 @@ def tests_cov(session: nox.Session) -> None:
 @nox.session(python=NOT_COVERAGE, tags=["tests"])
 def tests(session: nox.Session) -> None:
     pkg, posargs = _get_pkg(session.posargs)
-    session.install(f"{pkg}[tests]")
+    session.install(pkg, "--group", "tests")
 
     session.run("pytest", *posargs)
 
@@ -109,7 +110,7 @@ def tests(session: nox.Session) -> None:
 @nox.session(python=OLDEST_PYTHON, tags=["tests"])
 def tests_oldest_attrs(session: nox.Session) -> None:
     pkg, posargs = _get_pkg(session.posargs)
-    session.install(f"{pkg}[cov]", f"attrs=={OLDEST_ATTRS}")
+    session.install(pkg, "--group", "cov", f"attrs=={OLDEST_ATTRS}")
 
     _cov(session, posargs)
 
@@ -132,7 +133,7 @@ def mypy(session: nox.Session) -> None:
 @nox.session(python=DOCS_PYTHON)
 def docs(session: nox.Session) -> None:
     if session.posargs and session.posargs[0] == "watch":
-        session.install("-e", ".[docs]", "watchfiles")
+        session.install("-e", ".", "--group", "docs", "watchfiles")
         session.run(
             "watchfiles",
             "--ignore-paths",
@@ -149,7 +150,7 @@ def docs(session: nox.Session) -> None:
         )
         return
 
-    session.install(".[docs]")
+    session.install(".", "--group", "docs")
 
     for cmd in (
         [session.posargs[0]] if session.posargs else ["html", "doctest"]

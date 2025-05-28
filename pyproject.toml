@@ -26,22 +26,23 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
 ]
 dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
 
-[project.optional-dependencies]
+[dependency-groups]
 tests = ["pytest", "moto"]
-cov = ["environ-config[tests]", "coverage[toml]"]
+cov = [{ include-group = "tests" }, "coverage[toml]"]
 aws = ["boto3"]
 docs = [
-    "environ-config[aws]",
+    { include-group = "aws" },
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
 ]
-dev = ["environ-config[tests]", "nox", "pre-commit"]
+dev = [{ include-group = "tests" }, "nox", "pre-commit"]
 
 [project.urls]
 Documentation = "https://environ-config.readthedocs.io/"
@@ -98,6 +99,7 @@ whitelist-regex = ["test_.*"]
 
 [tool.mypy]
 strict = true
+pretty = true
 
 show_error_codes = true
 enable_error_code = ["ignore-without-code"]
@@ -149,6 +151,7 @@ select = ["ALL"]
 ignore = [
     "A001",    # shadowing is fine
     "A002",    # shadowing is fine
+    "A005",    # shadowing is fine
     "ANN",     # Mypy is better at this
     "ARG001",  # unused arguments are normal when implementing interfaces
     "ARG002",  # unused arguments are normal when implementing interfaces
@@ -161,7 +164,7 @@ ignore = [
     "PLR0913", # sometimes 6 arguments are ok
     "RUF001",  # leave my smart characters alone
     "SLF001",  # private members are accessed by friendly functions
-    "TCH",     # TYPE_CHECKING blocks break autodocs
+    "TC",      # TYPE_CHECKING blocks break autodocs
     "TID252",  # relative imports are always awesome
 ]
 
@@ -171,7 +174,6 @@ ignore = [
     "B018",    # useless statements can be actually useful
     "EM101",   # no need for exception msg hygiene in tests
     "PLC1901", # empty strings are falsey, but are less specific in tests
-    "PT005",   # we always add underscores and explicit name
     "PT011",   # broad is fine
     "PLR2004", # magic constants are fine in tests
     "S101",    # assert

@@ -19,11 +19,11 @@ from __future__ import annotations
 import logging
 import os
 
-from typing import Any, Callable, TypeVar, overload
+from typing import Any, Callable, Literal, TypeVar, overload
 
 import attr
 
-from .exceptions import MissingEnvValueError
+from .exceptions import MissingEnvValueError, MissingSecretError
 
 
 CNF_KEY = "environ_config"
@@ -223,7 +223,15 @@ def bool_var(
     return var(default=default, name=name, converter=_env_to_bool, help=help)
 
 
-def group(cls: type[T], optional: bool = False) -> T:
+@overload
+def group(cls: type[T], optional: Literal[True]) -> T | None: ...
+
+
+@overload
+def group(cls: type[T], optional: Literal[False] = False) -> T: ...
+
+
+def group(cls: type[T], optional: bool = False) -> T | None:
     """
     A configuration attribute that is another configuration class.
 
@@ -296,6 +304,7 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
     got = {}
     defaulted = {}
     missing_vars = set()
+    missing_secrets = set()
 
     for attr_obj in attr.fields(config_cls):
         try:
@@ -313,9 +322,12 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
             getter = ce.callback or _default_getter
             try:
                 got[name] = getter(environ, attr_obj.metadata, prefixes, name)
-            except MissingEnvValueError as exc:
+            except (MissingEnvValueError, MissingSecretError) as exc:
                 if isinstance(ce.default, Raise):
-                    missing_vars |= set(exc.args)
+                    if isinstance(exc, MissingSecretError):
+                        missing_secrets |= set(exc.args)
+                    else:
+                        missing_vars |= set(exc.args)
                 else:
                     defaulted[name] = (
                         attr.NOTHING
@@ -323,10 +335,15 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
                         else ce.default
                     )
 
-    if missing_vars:
+    if missing_vars or missing_secrets:
         # If we were told to raise OR if we got *any* values for our attrs, we
-        # will raise a `MissingEnvValueError` with all the missing variables
+        # will raise a `Missing..Error` with all the missing variables
         if isinstance(default, Raise) or got:
+            # Raise MissingSecretError if there was any missing secrets, since
+            # that used to bubble all the way up, and thus was always prioritized
+            # over `MissingEnvValueError`.
+            if missing_secrets:
+                raise MissingSecretError(*missing_secrets) from None
             raise MissingEnvValueError(*missing_vars) from None
 
         # Otherwise we will simply use the default passed into this call.

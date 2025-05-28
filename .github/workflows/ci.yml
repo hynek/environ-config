@@ -116,7 +116,7 @@ jobs:
 
       - name: Combine coverage & fail if it's <100%.
         run: |
-          uv tool install 'coverage[toml]'
+          uv tool install coverage
 
           coverage combine
           coverage html --skip-covered --skip-empty
@@ -179,7 +179,7 @@ jobs:
           #     rtd = yaml.safe_load(f)
           # cog.outl(f'python-version: "{rtd["build"]["tools"]["python"]}"')
           # ]]]
-          python-version: "3.12"
+          python-version: "3.13"
           # [[[end]]]
       - uses: hynek/setup-cached-uv@v2
 
@@ -200,7 +200,7 @@ jobs:
         with:
           python-version-file: .python-version-default
 
-      - run: python -Im pip install -e .[dev]
+      - run: python -Im pip install -e . --group dev
       - run: python -c 'import environ; print(environ.__version__)'
 
   # Ensure everything required is passing for branch protection.

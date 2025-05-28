@@ -65,14 +65,14 @@ Change into the newly created directory and after activating a virtual environme
 
 ```console
 $ cd environ-config
-$ python -Im pip install --upgrade pip wheel  # PLEASE don't skip this step
-$ python -Im pip install -e '.[dev]'
+$ python -Im pip install --upgrade pip  # PLEASE don't skip this step
+$ python -Im pip install -e . --group dev
 ```
 
 At this point,
 
 ```console
-$ python -m pytest
+$ python -Im pytest
 ```
 
 For documentation, you can use:
