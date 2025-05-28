@@ -118,11 +118,19 @@ def config(
     """
 
     def wrap(cls):
-        def from_environ_fnc(cls, environ=os.environ):
-            return __to_config(cls, environ)
+        def from_environ_fnc(
+            cls, environ=os.environ, *, prefix=PREFIX_NOT_SET
+        ):
+            return __to_config(cls, environ, prefix=prefix)
 
-        def generate_help_fnc(cls, **kwargs):
-            return __generate_help(cls, **kwargs)
+        def generate_help_fnc(
+            cls,
+            formatter=None,
+            *,
+            prefix=PREFIX_NOT_SET,
+            **kwargs,
+        ):
+            return __generate_help(cls, formatter, prefix=prefix, **kwargs)
 
         cls._prefix = prefix
         if from_environ is not None:
@@ -168,7 +176,7 @@ def var(
 
         converter:
             A callable that is run with the found value and its return value is
-            used.  Please not that it is also run for default values.
+            used. Please note that it is also run for default values.
 
         validator:
             A callable that is run with the final value. See *attrs*'s `chapter
@@ -264,12 +272,14 @@ def group(cls: type[T], optional: bool = False) -> T | None:
     )
 
 
-def _default_getter(environ, metadata, prefix, name):
+def _default_getter(environ, metadata, prefixes, name):
     """
     This default lookup implementation simply gets values from *environ*.
     """
     ce = metadata[CNF_KEY]
-    var = ce.name if ce.name is not None else "_".join((*prefix, name)).upper()
+    var = (
+        ce.name if ce.name is not None else "_".join((*prefixes, name)).upper()
+    )
     log.debug("looking for env var '%s'.", var)
     try:
         return environ[var]
@@ -345,24 +355,46 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
     return config_cls(**defaulted)
 
 
-def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
+def to_config(
+    config_cls: type[T],
+    environ: dict[str, str] = os.environ,
+    *,
+    prefix: str | Sentinel = PREFIX_NOT_SET,
+) -> T:
     """
     Load the configuration as declared by *config_cls* from *environ*.
 
     Args:
         config_cls: The configuration class to fill.
 
-        environ: Source of the configuration.  `os.environ` by default.
+        environ: Source of the configuration. `os.environ` by default.
+
+        prefix:
+            Prefix that is used for environment variables. May be used to
+            dynamically change a prefix or to instantiate a nested
+            configuration class without all of its parent configuration
+            classes.
 
     Returns:
         An instance of *config_cls*.
 
+    Examples:
+
+        .. code-block:: python
+
+            environ.to_config(ComponentConfig, prefix="APP_COMPONENT")
+
     This is equivalent to calling ``config_cls.from_environ()``.
+
+    .. versionadded:: 24.2.0 *prefix*
     """
     # The canonical app prefix might be falsey in which case we'll still set
     # the default prefix for this top level config object
-    app_prefix = tuple(p for p in (_get_prefix(config_cls),) if p)
-    return _to_config_recurse(config_cls, environ, app_prefix)
+    if prefix is PREFIX_NOT_SET:
+        prefix = _get_prefix(config_cls)
+
+    prefixes = (prefix,) if prefix else ()
+    return _to_config_recurse(config_cls, environ, prefixes)
 
 
 def _format_help_dicts(help_dicts, display_defaults=False):
@@ -474,7 +506,11 @@ def _generate_help_dicts(config_cls, _prefix=PREFIX_NOT_SET):
 
 
 def generate_help(
-    config_cls: type[T], formatter: Callable | None = None, **kwargs: Any
+    config_cls: type[T],
+    formatter: Callable | None = None,
+    *,
+    prefix: str | Sentinel = PREFIX_NOT_SET,
+    **kwargs: Any,
 ) -> str:
     """
     Autogenerate a help string for a config class.
@@ -489,16 +525,29 @@ def generate_help(
             When using the default formatter, passing `True` for
             *display_defaults* makes the default values part of the output.
 
+        prefix:
+            Prefix that is used for environment variables. May be used to
+            dynamically change a prefix or to generate a help string for a
+            nested configuration class without all of its parent configuration
+            classes.
+
     Returns:
         A help string that can be printed to the user.
+
+    Examples:
+
+        .. code-block:: python
+
+            environ.generate_help(ComponentConfig, prefix="APP_COMPONENT")
 
     This is equivalent to calling ``config_cls.generate_help()``.
 
     .. versionadded:: 19.1.0
+    .. versionadded:: 24.2.0 *prefix*
     """
     if formatter is None:
         formatter = _format_help_dicts
-    help_dicts = _generate_help_dicts(config_cls)
+    help_dicts = _generate_help_dicts(config_cls, prefix)
 
     return formatter(help_dicts, **kwargs)
 
