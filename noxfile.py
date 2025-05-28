@@ -36,7 +36,7 @@ NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 #     rtd = yaml.safe_load(f)
 # cog.outl(f'DOCS_PYTHON = "{rtd["build"]["tools"]["python"]}"')
 # ]]]
-DOCS_PYTHON = "3.12"
+DOCS_PYTHON = "3.13"
 # [[[end]]]
 
 # [[[cog
