@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+
 import nox
 
 
@@ -152,6 +154,8 @@ def docs(session: nox.Session) -> None:
 
     session.install(".", "--group", "docs")
 
+    dest = Path(os.environ.get("READTHEDOCS_OUTPUT", "docs/_build")) / "html"
+
     for cmd in (
         [session.posargs[0]] if session.posargs else ["html", "doctest"]
     ):
@@ -164,6 +168,6 @@ def docs(session: nox.Session) -> None:
             "-D", "language=en",
             "-n",
             "docs",
-            "docs/_build/html",
+            dest,
         )  # fmt: skip
     session.run("python", "-m", "doctest", "README.md")
