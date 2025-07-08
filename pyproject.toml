@@ -161,6 +161,7 @@ ignore = [
     "FBT",     # bools are fine
     "INP001",  # sometimes we want Python files outside of packages
     "ISC001",  # conflicts with formatter
+    "PLC0415", # sometimes, imports must live elsewhere
     "PLR0913", # sometimes 6 arguments are ok
     "RUF001",  # leave my smart characters alone
     "SLF001",  # private members are accessed by friendly functions
