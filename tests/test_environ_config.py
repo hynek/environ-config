@@ -106,6 +106,25 @@ class TestEnvironConfig:
 
         assert Nested(x="foo", sub=Nested.Sub(y="bar")) == cfg
 
+    def test_nested_with_prefix(self):
+        """
+        A config is created using a passed prefix.
+        """
+        env = {"XYZ_X": "nope", "TMP_X": "foo", "TMP_SUB_Y": "bar"}
+        cfg = environ.to_config(Nested, env, prefix="TMP")
+
+        assert Nested(x="foo", sub=Nested.Sub(y="bar")) == cfg
+
+    def test_nested_with_prefix_only_child_config(self):
+        """
+        A config is created only for a child config class using a passed
+        prefix.
+        """
+        env = {"XYZ_X": "nope", "XYZ_SUB_Y": "bar"}
+        cfg = environ.to_config(Nested.Sub, env, prefix="XYZ_SUB")
+
+        assert Nested.Sub(y="bar") == cfg
+
     def test_missing(self):
         """
         If a var is missing, a human-readable MissingEnvValueError is raised.
@@ -235,11 +254,11 @@ class TestEnvironConfig:
 
         assert Cfg("e", 42) == cfg
 
-    def test_generate_help_str(self):
+    def test_generate_help(self):
         """
         A help string is generated for a config class.
 
-        Presence of defaults are indicated but they are not shown.
+        Presence of defaults is indicated, but they are not shown.
         """
         help_str = environ.generate_help(Parent)
         assert (
@@ -260,7 +279,7 @@ FOO_CHILD_VAR13 (Optional)
 FOO_CHILD_VAR14 (Required)"""
         )
 
-    def test_generate_help_str_with_defaults(self):
+    def test_generate_help_with_defaults(self):
         """
         A help string is generated for a config class.
 
@@ -286,7 +305,49 @@ FOO_CHILD_VAR13 (Optional, Default=default)
 FOO_CHILD_VAR14 (Required)"""
         )
 
-    def test_generate_help_str_when_prefix_is_empty(self):
+    def test_generate_help_with_prefix(self):
+        """
+        A help string is generated for a config class using a passed
+        prefix.
+        """
+        help_str = environ.generate_help(Parent, prefix="BAR")
+        assert (
+            help_str
+            == """BAR_VAR1 (Required): var1, no default
+BAR_VAR2 (Optional): var2, has default
+BAR_VAR3 (Required): var3, bool_var, no default
+BAR_VAR4 (Optional): var4, bool_var, has default
+DOG (Optional): var5, named, has default
+CAT (Required): var6, named, no default
+BAR_CHILD_VAR7 (Required): var7, no default
+BAR_CHILD_VAR8 (Optional): var8, has default
+BAR_CHILD_VAR9 (Required): var9, bool_var, no default
+BAR_CHILD_VAR10 (Optional): var10, bool_var, has default
+DOG2 (Optional): var11, named, has default
+CAT2 (Required): var12, named, no default
+BAR_CHILD_VAR13 (Optional)
+BAR_CHILD_VAR14 (Required)"""
+        )
+
+    def test_generate_help_with_prefix_only_child_config(self):
+        """
+        A help string is generated only for a child config class using a
+        passed prefix.
+        """
+        help_str = environ.generate_help(Parent.Child, prefix="FOO_CHILD")
+        assert (
+            help_str
+            == """FOO_CHILD_VAR7 (Required): var7, no default
+FOO_CHILD_VAR8 (Optional): var8, has default
+FOO_CHILD_VAR9 (Required): var9, bool_var, no default
+FOO_CHILD_VAR10 (Optional): var10, bool_var, has default
+DOG2 (Optional): var11, named, has default
+CAT2 (Required): var12, named, no default
+FOO_CHILD_VAR13 (Optional)
+FOO_CHILD_VAR14 (Required)"""
+        )
+
+    def test_generate_help_no_prefix(self):
         """
         Environment variables' names don't start with an underscore
         """
