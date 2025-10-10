@@ -168,7 +168,7 @@ def var(
 
         converter:
             A callable that is run with the found value and its return value is
-            used.  Please not that it is also run for default values.
+            used.  Please note that it is also run for default values.
 
         validator:
             A callable that is run with the final value. See *attrs*'s `chapter
