@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Download pre-built packages
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Packages
           path: dist
@@ -84,7 +84,7 @@ jobs:
           -- --installpkg dist/*.whl
 
       - name: Upload coverage data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-data-${{ matrix.python-version }}
           path: .coverage.*
@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: Download pre-built packages
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Packages
           path: dist
@@ -109,7 +109,7 @@ jobs:
           python-version-file: .python-version-default
       - uses: hynek/setup-cached-uv@v2
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           pattern: coverage-data-*
           merge-multiple: true
@@ -128,7 +128,7 @@ jobs:
           coverage report --fail-under=100
 
       - name: Upload HTML report if check failed.
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: html-report
           path: htmlcov
@@ -146,7 +146,7 @@ jobs:
 
     steps:
       - name: Download pre-built packages
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Packages
           path: dist
@@ -166,7 +166,7 @@ jobs:
 
     steps:
       - name: Download pre-built packages
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Packages
           path: dist
