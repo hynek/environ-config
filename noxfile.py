@@ -13,7 +13,7 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-RUN_UNDER_COVERAGE = ["3.8", "3.13"]
+RUN_UNDER_COVERAGE = ["3.8", "3.14"]
 ALL_SUPPORTED = [
     # [[[cog
     # for line in open("pyproject.toml"):
@@ -27,6 +27,7 @@ ALL_SUPPORTED = [
     "3.12",
     "3.13",
     "3.14",
+    "3.15",
     # [[[end]]]
 ]
 OLDEST_PYTHON = ALL_SUPPORTED[0]
@@ -38,7 +39,7 @@ NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 #     rtd = yaml.safe_load(f)
 # cog.outl(f'DOCS_PYTHON = "{rtd["build"]["tools"]["python"]}"')
 # ]]]
-DOCS_PYTHON = "3.13"
+DOCS_PYTHON = "3.14"
 # [[[end]]]
 
 # [[[cog
