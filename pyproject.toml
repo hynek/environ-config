@@ -27,9 +27,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Typing :: Typed",
 ]
-dependencies = ["attrs>=17.4.0", "importlib_metadata; python_version<'3.8'"]
+dependencies = ["attrs>=17.4.0"]
 
 [dependency-groups]
 tests = ["pytest", "moto"]
@@ -161,6 +162,7 @@ ignore = [
     "FBT",     # bools are fine
     "INP001",  # sometimes we want Python files outside of packages
     "ISC001",  # conflicts with formatter
+    "PLC0415", # sometimes, imports must live elsewhere
     "PLR0913", # sometimes 6 arguments are ok
     "RUF001",  # leave my smart characters alone
     "SLF001",  # private members are accessed by friendly functions

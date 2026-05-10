@@ -147,9 +147,7 @@ class INISecrets:
         ic = metadata[CNF_INI_SECRET_KEY]
         section = ic.section
 
-        var = (
-            ce.name if ce.name is not None else "_".join(prefix[1:] + (name,))
-        )
+        var = ce.name if ce.name is not None else "_".join((*prefix[1:], name))
         try:
             log.debug("looking for '%s' in section '%s'.", var, section)
             val = self._cfg.get(section, var)
@@ -221,7 +219,7 @@ class DirectorySecrets:
         ce = metadata[CNF_KEY]
         # conventions for file naming might be different
         # than for environment variables, so we don't call .upper()
-        filename = ce.name or "_".join(prefix[1:] + (name,))
+        filename = ce.name or "_".join((*prefix[1:], name))
 
         # Looking up None in os.environ is an error.
         if self._env_name:
@@ -276,7 +274,7 @@ class VaultEnvSecrets:
                 vp = self.vault_prefix(environ)
             else:
                 vp = self.vault_prefix
-            var = "_".join((vp,) + prefix[1:] + (name,)).upper()
+            var = "_".join((vp, *prefix[1:], name)).upper()
 
         log.debug("looking for env var '%s'.", var)
         try:
