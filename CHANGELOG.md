@@ -18,13 +18,19 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/24.1.0...HEAD)
 
+### Added
+
+- Add `prefix` keyword argument to `environ.to_config()`, `environ.generate_help()` and related class methods.
+  [#89](https://github.com/hynek/environ-config/pull/89)
+
+
 ### Fixed
 
 - Type hints for `environ.group()` now respects the `optional` argument.
   [#98](https://github.com/hynek/environ-config/pull/98)
 
 
-### Changes
+### Changed
 
 - Secrets are now handled like environment variables in optional groups, so that if all secrets (and environment variables) are missing, the group becomes `None`.
   This change also causes the `MissingSecretError` exceptions to include *all* missing secrets, not just the first one.

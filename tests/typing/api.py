@@ -61,7 +61,7 @@ class Config:
     a_secret: str = aws_secrets.secret()
 
 
-h: str = environ.generate_help(Config)
+h: str = environ.generate_help(Config, prefix="APP")
 
 cfg = environ.to_config(Config, {"APP_X": "123"})
 
