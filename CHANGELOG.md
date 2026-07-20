@@ -18,17 +18,36 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/24.1.0...HEAD)
 
-### Fixed
+### Removed
 
-- Type hints for `environ.group()` now respects the `optional` argument.
-  [#98](https://github.com/hynek/environ-config/pull/98)
+- Support for Python 3.8 and 3.9.
+  [#134](https://github.com/hynek/environ-config/pull/134)
+
+- Support for *attrs* older than 21.3.0 (the one that introduced the `attrs` namespace).
+  [#134](https://github.com/hynek/environ-config/pull/134)
 
 
-### Changes
+### Added
+
+- Support for Python 3.14 and 3.15.
+  [#134](https://github.com/hynek/environ-config/pull/134)
+
+
+### Changed
+
+- *environ-config* now uses `@attrs.define` et al instead of `@attr.s` to help with typing support.
+  This should not make any difference in practice, but people doing weird things (I know y'all are out there!) might run into paper cuts.
+  [#134](https://github.com/hynek/environ-config/pull/134)
 
 - Secrets are now handled like environment variables in optional groups, so that if all secrets (and environment variables) are missing, the group becomes `None`.
   This change also causes the `MissingSecretError` exceptions to include *all* missing secrets, not just the first one.
   [#100](https://github.com/hynek/environ-config/pull/100)
+
+
+### Fixed
+
+- Type hints for `environ.group()` now respects the `optional` argument.
+  [#98](https://github.com/hynek/environ-config/pull/98)
 
 
 ## [24.1.0](https://github.com/hynek/environ-config/compare/23.2.0...24.1.0) - 2024-08-08

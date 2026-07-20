@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
+import attrs
 import pytest
 
-from attr.exceptions import FrozenInstanceError
+from attrs.exceptions import FrozenInstanceError
 
 import environ
 
@@ -38,7 +38,9 @@ class Nested:
 
 @environ.config(prefix="FOO")
 class Parent:
-    not_a_var = attr.ib()  # For testing that only environ.var's are processed.
+    not_a_var = (
+        attrs.field()
+    )  # For testing that only environ.var's are processed.
     var1 = environ.var(help="var1, no default")
     var2 = environ.var("bar", help="var2, has default")
     var3 = environ.bool_var(help="var3, bool_var, no default")
@@ -142,8 +144,8 @@ class TestEnvironConfig:
 
         @environ.config
         class Defaults:
-            x = environ.var(attr.Factory(list))
-            y = environ.var(attr.Factory(list))
+            x = environ.var(attrs.Factory(list))
+            y = environ.var(attrs.Factory(list))
 
         cfg = environ.to_config(Defaults, environ={"APP_Y": "bar"})
 
@@ -229,7 +231,7 @@ class TestEnvironConfig:
         @environ.config
         class Cfg:
             e = environ.var()
-            x = attr.ib(default=42)
+            x = attrs.field(default=42)
 
         cfg = environ.to_config(Cfg, environ={"APP_E": "e"})
 

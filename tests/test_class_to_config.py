@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
+import attrs
 
 import environ
 
@@ -92,7 +92,7 @@ def test_factory_default():
 
     @environ.config()
     class FactoryConfig:
-        x = environ.var(attr.Factory(list))
+        x = environ.var(attrs.Factory(list))
         y = environ.var("bar")
 
     cfg = FactoryConfig.from_environ({"APP_Y": "baz"})

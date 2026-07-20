@@ -14,14 +14,12 @@ dynamic = ["readme", "version"]
 name = "environ-config"
 description = "Boilerplate-free configuration with env variables."
 authors = [{ name = "Hynek Schlawack", email = "hs@ox.cx" }]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 keywords = ["app", "config", "env", "cfg"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -30,7 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.15",
     "Typing :: Typed",
 ]
-dependencies = ["attrs>=17.4.0"]
+dependencies = ["attrs>=21.3.0"]
 
 [dependency-groups]
 tests = ["pytest", "moto"]
@@ -113,6 +111,15 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = "tests.typing.*"
 ignore_errors = false
+
+
+[tool.pyrefly]
+project-includes = ["typing-tests"]
+
+
+[[tool.ty.overrides]]
+include = ["tests"]
+rules.all = "ignore"
 
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

@@ -180,6 +180,10 @@ But it's way more comfortable to run it locally and *git* catching avoidable err
 
 If your change is noteworthy, there needs to be a changelog entry in [`CHANGELOG.md`](https://github.com/hynek/environ-config/blob/main/CHANGELOG.md), so our users can learn about it!
 
+- The changelog follows the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standard.
+  Add the best-fitting section if it's missing for the current release.
+  We use the following order: `Security`, `Removed`, `Deprecated`, `Added`, `Changed`, `Fixed`.
+
 - As with other docs, please use [semantic newlines] in the changelog.
 - Make the last line a link to your pull request.
   You probably have to open it first to know the number.

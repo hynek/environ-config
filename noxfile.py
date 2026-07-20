@@ -13,15 +13,12 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.error_on_external_run = True
 
 
-RUN_UNDER_COVERAGE = ["3.8", "3.14"]
 ALL_SUPPORTED = [
     # [[[cog
     # for line in open("pyproject.toml"):
     #     if "Programming Language :: Python :: " in line:
     #         cog.outl(f'"{line.rsplit(" ")[-1][:-3]}",')
     # ]]]
-    "3.8",
-    "3.9",
     "3.10",
     "3.11",
     "3.12",
@@ -31,6 +28,7 @@ ALL_SUPPORTED = [
     # [[[end]]]
 ]
 OLDEST_PYTHON = ALL_SUPPORTED[0]
+RUN_UNDER_COVERAGE = [OLDEST_PYTHON, ALL_SUPPORTED[-1]]
 NOT_COVERAGE = [v for v in ALL_SUPPORTED if v not in RUN_UNDER_COVERAGE]
 
 # [[[cog
@@ -51,7 +49,7 @@ DOCS_PYTHON = "3.14"
 #         cog.outl(f'OLDEST_ATTRS = "{dep[7:]}"')
 #         break
 # ]]]
-OLDEST_ATTRS = "17.4.0"
+OLDEST_ATTRS = "21.3.0"
 # [[[end]]]
 
 
@@ -120,17 +118,31 @@ def tests_oldest_attrs(session: nox.Session) -> None:
 
 @nox.session
 def coverage_report(session: nox.Session) -> None:
-    session.install("coverage[toml]")
+    session.install("coverage")
 
     session.run("coverage", "combine")
     session.run("coverage", "report", "--fail-under=100")
 
 
-@nox.session
+@nox.session(tags=["typing"])
 def mypy(session: nox.Session) -> None:
     session.install(".", "mypy")
 
-    session.run("mypy", "tests/typing")
+    session.run("mypy", "typing-tests")
+
+
+@nox.session(tags=["typing"])
+def pyrefly(session: nox.Session) -> None:
+    session.install(".", "pyrefly>=1.2.0-dev.2", "boto3", "typing-extensions")
+
+    session.run("pyrefly", "check")
+
+
+@nox.session(tags=["typing"])
+def ty(session: nox.Session) -> None:
+    session.install("ty", "boto3", "typing-extensions")
+
+    session.run("ty", "check", "typing-tests")
 
 
 @nox.session(python=DOCS_PYTHON)

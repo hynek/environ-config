@@ -19,9 +19,10 @@ from __future__ import annotations
 import logging
 import os
 
-from typing import Any, Callable, Literal, TypeVar, overload
+from collections.abc import Callable
+from typing import Any, Literal, TypeVar, overload
 
-import attr
+import attrs
 
 from .exceptions import MissingEnvValueError, MissingSecretError
 
@@ -51,7 +52,7 @@ def _get_prefix(obj):
     return obj._prefix if obj._prefix is not PREFIX_NOT_SET else DEFAULT_PREFIX
 
 
-@attr.s
+@attrs.define
 class Raise:
     pass
 
@@ -129,7 +130,7 @@ def config(
             setattr(cls, from_environ, classmethod(from_environ_fnc))
         if generate_help is not None:
             setattr(cls, generate_help, classmethod(generate_help_fnc))
-        return attr.s(cls, frozen=frozen, slots=True)
+        return attrs.define(cls, frozen=frozen, slots=True)
 
     if maybe_cls is None:
         return wrap
@@ -137,13 +138,13 @@ def config(
     return wrap(maybe_cls)
 
 
-@attr.s(slots=True)
+@attrs.define(slots=True)
 class _ConfigEntry:
-    name: str | None = attr.ib(default=None)
-    default: Any = attr.ib(default=RAISE)
-    sub_cls: type | None = attr.ib(default=None)
-    callback: Callable | None = attr.ib(default=None)
-    help: str | None = attr.ib(default=None)
+    name: str | None = attrs.field(default=None)
+    default: Any = attrs.field(default=RAISE)
+    sub_cls: type | None = attrs.field(default=None)
+    callback: Callable | None = attrs.field(default=None)
+    help: str | None = attrs.field(default=None)
 
 
 def var(
@@ -179,7 +180,7 @@ def var(
 
         help: A help string that is used by `generate_help`.
     """
-    return attr.ib(
+    return attrs.field(
         default=default,
         metadata={CNF_KEY: _ConfigEntry(name, default, None, None, help)},
         converter=converter,
@@ -258,7 +259,7 @@ def group(cls: type[T], optional: bool = False) -> T | None:
     .. versionadded:: 21.1.0 *optional*
     """
     default = None if optional else RAISE
-    return attr.ib(
+    return attrs.field(
         default=default,
         metadata={CNF_KEY: _ConfigEntry(None, default, cls, True)},
     )
@@ -296,7 +297,7 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
     missing_vars = set()
     missing_secrets = set()
 
-    for attr_obj in attr.fields(config_cls):
+    for attr_obj in attrs.fields(config_cls):
         try:
             ce = attr_obj.metadata[CNF_KEY]
         except KeyError:
@@ -320,8 +321,8 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
                         missing_vars |= set(exc.args)
                 else:
                     defaulted[name] = (
-                        attr.NOTHING
-                        if isinstance(ce.default, attr.Factory)
+                        attrs.NOTHING
+                        if isinstance(ce.default, attrs.Factory)
                         else ce.default
                     )
 
@@ -449,7 +450,7 @@ def _generate_help_dicts(config_cls, _prefix=PREFIX_NOT_SET):
     """
     help_dicts = []
     _prefix = _prefix if _prefix is not PREFIX_NOT_SET else config_cls._prefix
-    for a in attr.fields(config_cls):
+    for a in attrs.fields(config_cls):
         try:
             ce = a.metadata[CNF_KEY]
         except KeyError:

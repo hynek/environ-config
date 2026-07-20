@@ -16,7 +16,15 @@
 
 from __future__ import annotations
 
+import sys
+
 import environ
+
+
+if sys.version_info < (3, 11):
+    from typing_extensions import assert_type
+else:
+    from typing import assert_type
 
 
 ini_secrets: environ.secrets.INISecrets = (
@@ -61,7 +69,7 @@ class Config:
     a_secret: str = aws_secrets.secret()
 
 
-h: str = environ.generate_help(Config)
+assert_type(environ.generate_help(Config), str)
 
 cfg = environ.to_config(Config, {"APP_X": "123"})
 
@@ -74,13 +82,13 @@ def takes_sub(s: Config.Sub) -> int:
     return cfg.sub.y
 
 
-x: str = takes_cfg(cfg)
-b: bool = cfg.b
-y: int = takes_sub(cfg.sub)
-s: str = cfg.secret
-ds: str = cfg.d_secret
-vs: str = cfg.v_secret
-as_: str = cfg.a_secret
+assert_type(takes_cfg(cfg), str)
+assert_type(cfg.b, bool)
+assert_type(takes_sub(cfg.sub), int)
+assert_type(cfg.secret, str)
+assert_type(cfg.d_secret, str)
+assert_type(cfg.v_secret, str)
+assert_type(cfg.a_secret, str)
 
 
 @environ.config(prefix="")
