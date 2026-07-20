@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
+import attrs
 import pytest
 
 import environ
@@ -24,8 +24,8 @@ from environ.secrets import (
     DirectorySecrets,
     INISecrets,
     VaultEnvSecrets,
-    _SecretStr,
 )
+from environ.secrets._utils import _SecretStr
 
 
 class TestSecretStr:
@@ -43,9 +43,9 @@ class TestSecretStr:
         """
         s = _SecretStr("abc")
 
-        @attr.s
+        @attrs.define
         class Cfg:
-            s = attr.ib()
+            s = attrs.field()
 
         assert "Cfg(s=<SECRET>)" == repr(Cfg(s))
 
@@ -109,8 +109,8 @@ class TestIniSecret:
 
         @environ.config
         class Cfg:
-            password = ini.secret(default=attr.Factory(getpass))
-            secret = ini.secret(default=attr.Factory(getpass))
+            password = ini.secret(default=attrs.Factory(getpass))
+            secret = ini.secret(default=attrs.Factory(getpass))
 
         cfg = environ.to_config(Cfg, {})
 

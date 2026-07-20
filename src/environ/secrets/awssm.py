@@ -22,9 +22,10 @@ from __future__ import annotations
 
 import logging
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
-import attr
+import attrs
 import boto3
 
 from environ._environ_config import CNF_KEY, RAISE, _ConfigEntry
@@ -50,7 +51,7 @@ def _build_secretsmanager_client():
     return client
 
 
-@attr.s(auto_attribs=True)
+@attrs.define
 class SecretsManagerSecrets:
     """
     Load secrets from the AWS Secrets Manager.
@@ -95,7 +96,7 @@ class SecretsManagerSecrets:
     def secret(
         self,
         default: Any = RAISE,
-        converter: Callable = convert_secret("SecretString"),
+        converter: Callable = convert_secret("SecretString"),  # noqa: B008
         name: str | None = None,
         help: str | None = None,
     ):
@@ -104,7 +105,7 @@ class SecretsManagerSecrets:
 
         All parameters work just like in `environ.var`.
         """
-        return attr.ib(
+        return attrs.field(
             default=default,
             metadata={
                 CNF_KEY: _ConfigEntry(name, default, None, self._get, help)

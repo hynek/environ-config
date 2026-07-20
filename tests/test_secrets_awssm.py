@@ -19,7 +19,7 @@ import uuid
 
 from unittest.mock import patch
 
-import attr
+import attrs
 import boto3
 import pytest
 
@@ -28,7 +28,8 @@ from moto import mock_aws
 import environ
 
 from environ.exceptions import MissingSecretError
-from environ.secrets import SecretsManagerSecrets, _SecretStr
+from environ.secrets import SecretsManagerSecrets
+from environ.secrets._utils import _SecretStr
 
 
 @pytest.fixture(name="shut_boto_up", autouse=True, scope="session")
@@ -157,8 +158,8 @@ class TestAWSSMSecret:
 
         @environ.config
         class Cfg:
-            password = sm.secret(default=attr.Factory(getpass))
-            secret = sm.secret(default=attr.Factory(getpass))
+            password = sm.secret(default=attrs.Factory(getpass))
+            secret = sm.secret(default=attrs.Factory(getpass))
 
         cfg = environ.to_config(Cfg, {"APP_PASSWORD": secret})
 
