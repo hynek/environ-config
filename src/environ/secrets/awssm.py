@@ -104,6 +104,15 @@ class SecretsManagerSecrets:
         Declare a secrets manager secret on an `environ.config`-decorated class
 
         All parameters work just like in `environ.var`.
+
+        .. note::
+
+            By default, a converter is set that will extract the
+            ``SecretString`` field from the
+            ``SecretsManager.Client.get_secret_value()`` response for you. If
+            you wish you convert the value yourself and therefore overwrite the
+            converter, you must take this into account and grab
+            ``SecretString`` (or ``SecretBinary``) yourself.
         """
         return attrs.field(
             default=default,
