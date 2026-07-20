@@ -55,7 +55,24 @@ class SecretsManagerSecrets:
     """
     Load secrets from the AWS Secrets Manager.
 
-    The secret name should be stored in the environment variable
+    The secret ID should be stored in the environment variable by name:
+
+    Given this environment::
+
+        export APP_MY_SECRET=prod/db_password
+        export APP_A_DIFFERENT_NAME=prod/api_key
+
+    And this app::
+
+        sm = SecretsManagerSecrets()
+
+        @environ.config
+        class Cfg:
+            my_secret = sm.secret()
+            my_aliased_secret = sm.secret(name="A_DIFFERENT_NAME")
+
+    Then the secrets will be looked up in AWS Secrets Manager with the Secret
+    IDs ``prod/db_password`` and ``prod/api_key``, respectively.
 
     .. warning::
 
