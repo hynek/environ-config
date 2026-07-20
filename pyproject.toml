@@ -114,7 +114,7 @@ ignore_errors = false
 
 
 [tool.pyrefly]
-project-includes = ["tests/typing/"]
+project-includes = ["typing-examples"]
 
 
 [[tool.ty.overrides]]

@@ -128,21 +128,21 @@ def coverage_report(session: nox.Session) -> None:
 def mypy(session: nox.Session) -> None:
     session.install(".", "mypy")
 
-    session.run("mypy", "tests/typing")
+    session.run("mypy", "typing-examples")
 
 
 @nox.session(tags=["typing"])
 def pyrefly(session: nox.Session) -> None:
-    session.install(".", "pyrefly>=1.2.0-dev.2", "boto3")
+    session.install(".", "pyrefly>=1.2.0-dev.2", "boto3", "typing-extensions")
 
     session.run("pyrefly", "check")
 
 
 @nox.session(tags=["typing"])
 def ty(session: nox.Session) -> None:
-    session.install("ty", "boto3")
+    session.install("ty", "boto3", "typing-extensions")
 
-    session.run("ty", "check", "tests/typing")
+    session.run("ty", "check", "typing-examples")
 
 
 @nox.session(python=DOCS_PYTHON)
