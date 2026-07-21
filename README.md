@@ -3,6 +3,7 @@
 [![Documentation](https://img.shields.io/badge/Docs-Read%20The%20Docs-black)](https://environ-config.readthedocs.io/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-C06524)](https://github.com/hynek/environ-config/blob/main/LICENSE)
 [![PyPI version](https://img.shields.io/pypi/v/environ-config)](https://pypi.org/project/environ-config/)
+[![No AI slop inside.](https://img.shields.io/badge/no-slop-purple)](https://github.com/hynek/environ-config/blob/main/.github/AI_POLICY.md)
 [![Downloads / Month](https://static.pepy.tech/personalized-badge/environ-config?period=month&units=international_system&left_color=grey&right_color=blue&left_text=Downloads%20/%20Month)](https://pepy.tech/project/environ-config)
 
 <!-- teaser-begin -->
