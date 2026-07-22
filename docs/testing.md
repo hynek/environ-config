@@ -4,7 +4,7 @@ Since your configuration is usually loaded at the module level and, thus, at imp
 
 The best way is to isolate the interaction with the environment into one file as well as possible and then hand around instances of your configurations instead.
 
-Let's use a simple web application running on top of [Gunicorn](https://docs.gunicorn.org/) as an example.
+Let's use a simple web application running on top of [Gunicorn](https://gunicorn.org/) as an example.
 
 A WSGI server needs an entry point from where it's loading the web application.
 A good name for that is `wsgi.py`, either at the root of your application or within a directory like `entrypoints` (this is useful if you have more than one entrypoint – for instance, a worker process or CLI).

@@ -103,7 +103,7 @@ AppConfig(svc=AppConfig.SomeService(host='localhost', port='5555'))
 
 :::{hint}
 It's usually better to store access information to servers in URLs in use cases like this.
-Python has excellent libraries for creating and parsing them (for example, [*yarl*](https://yarl.readthedocs.io/)), and they allow you to keep all information needed to connect to a service serialized into a single string.
+Python has excellent libraries for creating and parsing them (for example, [*yarl*](https://yarl.aio-libs.org/)), and they allow you to keep all information needed to connect to a service serialized into a single string.
 
 Some libraries like [*SQLAlchemy*](https://www.sqlalchemy.org) or the [Redis](https://redis-py.readthedocs.io/) package allow you to pass URL strings directly into them.
 :::
