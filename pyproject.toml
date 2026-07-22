@@ -62,15 +62,11 @@ raw-options = { local_scheme = "no-local-version" }
 reinstall-package = ["environ-config"]
 
 
-[tool.pytest.ini_options]
-addopts = ["-ra", "--strict-markers", "--strict-config"]
-xfail_strict = true
-testpaths = "tests"
-filterwarnings = [
-    "once::Warning",
-    # Not our warnings; can't do anything about them.
-    'ignore:datetime.datetime.utc(fromtimestamp|now).*:DeprecationWarning:',
-]
+[tool.pytest]
+strict = true
+testpaths = ["tests"]
+addopts = ["-ra", "--import-mode=importlib"]
+filterwarnings = ["once::Warning"]
 
 
 [tool.coverage.run]
@@ -84,9 +80,7 @@ source = ["src", ".nox/tests*/**/site-packages"]
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
-exclude_also = [
-    ': \.\.\.$', # Function/method stubs.
-]
+exclude_also = []
 
 
 [tool.interrogate]
@@ -107,10 +101,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "tests.typing.*"
-ignore_errors = false
 
 
 [tool.pyrefly]
