@@ -164,7 +164,6 @@ ignore = [
     "RUF001",  # leave my smart characters alone
     "SLF001",  # private members are accessed by friendly functions
     "TC",      # TYPE_CHECKING blocks break autodocs
-    "TID252",  # relative imports are always awesome
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -187,3 +186,6 @@ ignore = [
 [tool.ruff.lint.isort]
 lines-between-types = 1
 lines-after-imports = 2
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"

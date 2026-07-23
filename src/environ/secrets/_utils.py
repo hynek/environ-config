@@ -21,8 +21,8 @@ from pathlib import Path
 
 import attrs
 
-from .._environ_config import Raise
-from ..exceptions import MissingSecretError
+from environ._environ_config import Raise
+from environ.exceptions import MissingSecretError
 
 
 def _get_default_secret(var, default):
