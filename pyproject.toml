@@ -154,6 +154,7 @@ ignore = [
     "ARG001",  # unused arguments are normal when implementing interfaces
     "ARG002",  # unused arguments are normal when implementing interfaces
     "COM",     # Formatter takes care of our commas
+    "CPY",     # they expect a very specific shape of a copyright notice
     "D",       # We prefer our own docstring style.
     "E501",    # leave line-length enforcement to formatter
     "FBT",     # bools are fine
