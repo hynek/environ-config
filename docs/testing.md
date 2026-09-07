@@ -56,9 +56,11 @@ Instead, assuming you're using *pytest*, you can create a bunch of fixtures that
 def _app_cfg():
     return environ.to_config(AppConfig, environ={"APP_ENV": "test"})
 
+
 @pytest.fixture(name="app")
 def _app(app_cfg):
     return make_app(app_cfg)
+
 
 @pytest.fixture(name="client")
 def _client(app):

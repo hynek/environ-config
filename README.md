@@ -16,18 +16,22 @@
 >>> vault = environ.secrets.VaultEnvSecrets(vault_prefix="SECRET_YOUR_APP")
 >>> @environ.config(prefix="APP")
 ... class AppConfig:
-...    @environ.config
-...    class DB:
-...        name = environ.var("default_db")
-...        host = environ.var("default.host")
-...        port = environ.var(5432, converter=int)  # Use attrs's converters and validators!
-...        user = environ.var("default_user")
-...        password = vault.secret()
+...     @environ.config
+...     class DB:
+...         name = environ.var("default_db")
+...         host = environ.var("default.host")
+...         port = environ.var(
+...             5432, converter=int
+...         )  # Use attrs's converters and validators!
+...         user = environ.var("default_user")
+...         password = vault.secret()
 ...
-...    env = environ.var()
-...    lang = environ.var(name="LANG")  # It's possible to overwrite the names of variables.
-...    db = environ.group(DB)
-...    awesome = environ.bool_var()
+...     env = environ.var()
+...     lang = environ.var(
+...         name="LANG"
+...     )  # It's possible to overwrite the names of variables.
+...     db = environ.group(DB)
+...     awesome = environ.bool_var()
 >>> cfg = environ.to_config(
 ...     AppConfig,
 ...     environ={
@@ -37,7 +41,8 @@
 ...         "APP_AWESOME": "yes",  # true and 1 work too, everything else is False
 ...         # Vault-via-envconsul-style var name:
 ...         "SECRET_YOUR_APP_DB_PASSWORD": "s3kr3t",
-... })  # Uses os.environ by default.
+...     },
+... )  # Uses os.environ by default.
 >>> cfg
 AppConfig(env='dev', lang='C', db=AppConfig.DB(name='default_db', host='localhost', port=5432, user='default_user', password=<SECRET>), awesome=True)
 >>> cfg.db.password
