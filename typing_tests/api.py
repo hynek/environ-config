@@ -16,15 +16,9 @@
 
 from __future__ import annotations
 
-import sys
+from typing import assert_type
 
 import environ
-
-
-if sys.version_info < (3, 11):
-    from typing_extensions import assert_type
-else:
-    from typing import assert_type
 
 
 ini_secrets: environ.secrets.INISecrets = (

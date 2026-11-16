@@ -19,7 +19,6 @@ ALL_SUPPORTED = [
     #     if "Programming Language :: Python :: " in line:
     #         cog.outl(f'"{line.rsplit(" ")[-1][:-3]}",')
     # ]]]
-    "3.10",
     "3.11",
     "3.12",
     "3.13",
