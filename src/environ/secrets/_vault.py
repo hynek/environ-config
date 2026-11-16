@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import logging
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any
 
 import attrs
@@ -42,7 +42,7 @@ class VaultEnvSecrets:
     `envconsul <https://github.com/hashicorp/envconsul>`_.
     """
 
-    vault_prefix: str = attrs.field()
+    vault_prefix: str | Callable[[Mapping[str, str]], str]
 
     def secret(
         self,
@@ -69,10 +69,10 @@ class VaultEnvSecrets:
         if ce.name is not None:
             var = ce.name
         else:
-            if callable(self.vault_prefix):
-                vp = self.vault_prefix(environ)
-            else:
+            if isinstance(self.vault_prefix, str):
                 vp = self.vault_prefix
+            else:
+                vp = self.vault_prefix(environ)
             var = "_".join((vp, *prefix[1:], name)).upper()
 
         log.debug("looking for env var '%s'.", var)

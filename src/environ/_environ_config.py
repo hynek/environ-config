@@ -19,8 +19,8 @@ from __future__ import annotations
 import logging
 import os
 
-from collections.abc import Callable
-from typing import Any, Literal, TypeVar, overload
+from collections.abc import Callable, Mapping
+from typing import Any, Literal, TypeVar, cast, overload
 
 import attrs
 
@@ -259,9 +259,12 @@ def group(cls: type[T], optional: bool = False) -> T | None:
     .. versionadded:: 21.1.0 *optional*
     """
     default = None if optional else RAISE
-    return attrs.field(
-        default=default,
-        metadata={CNF_KEY: _ConfigEntry(None, default, cls, True)},
+    return cast(
+        "T | None",
+        attrs.field(
+            default=default,
+            metadata={CNF_KEY: _ConfigEntry(None, default, cls)},
+        ),
     )
 
 
@@ -322,7 +325,8 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
                 else:
                     defaulted[name] = (
                         attrs.NOTHING
-                        if isinstance(ce.default, attrs.Factory)
+                        # The attrs stubs declare Factory as a function.
+                        if isinstance(ce.default, attrs.Factory)  # ty: ignore[invalid-argument-type]
                         else ce.default
                     )
 
@@ -346,7 +350,9 @@ def _to_config_recurse(config_cls, environ, prefixes, default=RAISE):
     return config_cls(**defaulted)
 
 
-def to_config(config_cls: type[T], environ: dict[str, str] = os.environ) -> T:
+def to_config(
+    config_cls: type[T], environ: Mapping[str, str] = os.environ
+) -> T:
     """
     Load the configuration as declared by *config_cls* from *environ*.
 

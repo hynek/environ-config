@@ -23,7 +23,7 @@ from __future__ import annotations
 import logging
 
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import attrs
 import boto3
@@ -31,6 +31,10 @@ import boto3
 from environ._environ_config import CNF_KEY, RAISE, _ConfigEntry
 
 from ._utils import _get_default_secret
+
+
+if TYPE_CHECKING:
+    from mypy_boto3_secretsmanager import SecretsManagerClient
 
 
 log = logging.getLogger(__name__)
@@ -45,7 +49,7 @@ def convert_secret(key):
     return converter
 
 
-def _build_secretsmanager_client():
+def _build_secretsmanager_client() -> SecretsManagerClient:
     client = boto3.client("secretsmanager")
     log.debug("Created a secretsmanager client %s", client)
     return client
@@ -84,10 +88,10 @@ class SecretsManagerSecrets:
     .. versionadded:: 21.4.0
     """
 
-    _client: boto3.client | None = None
+    _client: SecretsManagerClient | None = None
 
     @property
-    def client(self) -> boto3.client:
+    def client(self) -> SecretsManagerClient:
         if self._client is None:
             self._client = _build_secretsmanager_client()
 
