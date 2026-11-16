@@ -18,6 +18,14 @@ Whenever there is a need to break compatibility, it is announced here in the cha
 
 ## [Unreleased](https://github.com/hynek/environ-config/compare/26.1.0...HEAD)
 
+### Fixed
+
+- The `aws` extra is back.
+  It went missing in 26.1.0, so `environ-config[aws]` did not install *boto3*.
+
+- `environ.secrets.DirectorySecrets.from_path_in_env()` with *default* set to `None` no longer raises a `TypeError` if the environment variable is not set.
+  The secret is now treated as missing.
+
 
 ## [26.1.0](https://github.com/hynek/environ-config/compare/24.1.0...26.1.0) - 2026-07-22
 

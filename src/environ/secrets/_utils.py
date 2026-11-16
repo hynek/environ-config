@@ -29,7 +29,8 @@ def _get_default_secret(var, default):
     """
     Get default or raise MissingSecretError.
     """
-    if isinstance(default, attrs.Factory):
+    # The attrs stubs declare Factory as a function.
+    if isinstance(default, attrs.Factory):  # ty: ignore[invalid-argument-type]
         return attrs.NOTHING
 
     if isinstance(default, Raise):

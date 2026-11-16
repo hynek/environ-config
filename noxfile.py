@@ -132,14 +132,14 @@ def mypy(session: nox.Session) -> None:
 
 @nox.session(tags=["typing"])
 def pyrefly(session: nox.Session) -> None:
-    session.install(".", "pyrefly>=1.2.0-dev.2", "boto3", "typing-extensions")
+    session.install(".", "pyrefly", "boto3")
 
     session.run("pyrefly", "check")
 
 
 @nox.session(tags=["typing"])
 def ty(session: nox.Session) -> None:
-    session.install("ty", "boto3", "typing-extensions")
+    session.install(".", "ty", "boto3")
 
     session.run("ty", "check", "typing_tests")
 

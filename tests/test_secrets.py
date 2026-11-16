@@ -387,6 +387,37 @@ class TestDirectorySecrets:
         cfg = environ.to_config(Cfg, {"SECRETS_DIR": secrets_dir})
         assert _SecretStr("apples\n") == cfg.apples
 
+    def test_secret_from_env_no_directory(self):
+        """
+        If the environment variable is not set and there is no default
+        directory, the secret is missing.
+        """
+        dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", None)
+
+        @environ.config
+        class Cfg:
+            apples = dir.secret()
+
+        with pytest.raises(MissingSecretError) as ei:
+            environ.to_config(Cfg, {})
+
+        assert ("apples",) == ei.value.args
+
+    def test_secret_from_env_no_directory_default(self):
+        """
+        If the environment variable is not set and there is no default
+        directory, the default of the secret is used.
+        """
+        dir = DirectorySecrets.from_path_in_env("SECRETS_DIR", None)
+
+        @environ.config
+        class Cfg:
+            apples = dir.secret(default="pears")
+
+        cfg = environ.to_config(Cfg, {})
+
+        assert "pears" == cfg.apples
+
     def test_missing_default_value(self, tmpdir):
         """
         Missing secrets should raise Exceptions when loading the config.

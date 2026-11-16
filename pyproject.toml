@@ -29,18 +29,26 @@ classifiers = [
 ]
 dependencies = ["attrs>=21.3.0"]
 
+[project.optional-dependencies]
+aws = ["boto3"]
+
 [dependency-groups]
 tests = ["pytest", "moto"]
-cov = [{ include-group = "tests" }, "coverage[toml]"]
-aws = ["boto3"]
+cov = [{ include-group = "tests" }, "coverage"]
+typing = ["boto3", "mypy-boto3-secretsmanager"]
 docs = [
-    { include-group = "aws" },
+    "boto3",
     "furo",
     "myst-parser",
     "sphinx-notfound-page",
     "sphinx",
 ]
-dev = [{ include-group = "tests" }, "nox", "pre-commit"]
+dev = [
+    { include-group = "tests" },
+    { include-group = "typing" },
+    "nox",
+    "pre-commit",
+]
 
 [project.urls]
 Documentation = "https://environ-config.readthedocs.io/"

@@ -49,7 +49,7 @@ class DirectorySecrets:
     .. versionadded:: 21.1.0
     """
 
-    secrets_dir: str | Path = attrs.field()
+    secrets_dir: str | Path | None = attrs.field()
     _env_name: str | None = attrs.field(default=None)
 
     @classmethod
@@ -108,6 +108,10 @@ class DirectorySecrets:
             secrets_dir = environ.get(self._env_name, self.secrets_dir)
         else:
             secrets_dir = self.secrets_dir
+
+        if secrets_dir is None:
+            log.debug("no secrets directory for secret '%s'.", filename)
+            return _get_default_secret(filename, ce.default)
 
         secret_path = Path(secrets_dir) / filename
         log.debug("looking for secret in file '%s'.", secret_path)

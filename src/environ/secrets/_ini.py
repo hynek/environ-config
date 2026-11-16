@@ -48,7 +48,7 @@ class INISecrets:
     """
 
     section: str = attrs.field()
-    _cfg: RawConfigParser = attrs.field(default=None)
+    _cfg: RawConfigParser | None = attrs.field(default=None)
     _env_name: str | None = attrs.field(default=None)
     _env_default: Any = attrs.field(default=None)
 
@@ -132,7 +132,8 @@ class INISecrets:
         var = ce.name if ce.name is not None else "_".join((*prefix[1:], name))
         try:
             log.debug("looking for '%s' in section '%s'.", var, section)
-            val = self._cfg.get(section, var)
+            # _cfg is only None if someone bypassed the class methods.
+            val = self._cfg.get(section, var)  # ty: ignore[missing-union-attribute]
 
             return _SecretStr(val)
         except NoOptionError:
